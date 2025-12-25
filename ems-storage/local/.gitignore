@@ -1,0 +1,46 @@
+# ============================================
+# MinIO .gitignore
+# ============================================
+
+# Environment configuration (contains secrets!)
+.env
+
+# Data directories
+data/
+*.data
+
+# Logs
+*.log
+logs/
+
+# Backup files
+*.bak
+*.backup
+
+# Temporary files
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# MinIO configuration (may contain sensitive data)
+config/
+
+# SSL/TLS certificates
+*.pem
+*.key
+*.crt
+ssl/
+
+# Docker volumes data
+minio_data/
+
+# Nginx configuration (if customized with secrets)
+nginx/ssl/

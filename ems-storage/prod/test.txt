@@ -1,0 +1,7 @@
+# After you run your minio setup using this file to test upload to S3 compatible
+
+# Create a bucket first
+aws --endpoint-url http://localhost:9000 s3 mb s3://test-bucket
+
+# Then sse below command to upload this file to your local S3 compatible
+aws --endpoint-url http://localhost:9000 s3 cp ./test.txt s3://test-bucket/

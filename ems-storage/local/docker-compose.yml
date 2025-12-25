@@ -1,0 +1,127 @@
+volumes:
+  minio_data:
+    driver: local
+
+networks:
+  minio-net:
+    driver: bridge
+
+services:
+  minio:
+    image: minio/minio:${MINIO_VERSION:-RELEASE.2025-09-07T16-13-09Z}
+    container_name: ${MINIO_CONTAINER_NAME:-ems-minio}
+    hostname: ${MINIO_HOSTNAME:-minio}
+    restart: unless-stopped
+
+    # Environment Configuration
+    environment:
+      # Root Credentials (Required)
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+
+      # Optional: Additional Admin User
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-${MINIO_ROOT_USER}}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-${MINIO_ROOT_PASSWORD}}
+
+      # Server Configuration
+      MINIO_REGION: ${MINIO_REGION:-us-east-1}
+      MINIO_DOMAIN: ${MINIO_DOMAIN:-localhost}
+      MINIO_SERVER_URL: ${MINIO_SERVER_URL:-http://localhost:9000}
+      MINIO_BROWSER_REDIRECT_URL: ${MINIO_BROWSER_REDIRECT_URL:-http://localhost:9001}
+
+      # Performance & Limits
+      MINIO_API_REQUESTS_MAX: ${MINIO_API_REQUESTS_MAX:-1000}
+      MINIO_API_REQUESTS_DEADLINE: ${MINIO_API_REQUESTS_DEADLINE:-10s}
+
+      # Console Configuration
+      MINIO_BROWSER: ${MINIO_BROWSER:-on}
+      MINIO_PROMETHEUS_AUTH_TYPE: ${MINIO_PROMETHEUS_AUTH_TYPE:-public}
+
+      # Compression
+      MINIO_COMPRESSION_ENABLE: ${MINIO_COMPRESSION_ENABLE:-on}
+      MINIO_COMPRESSION_EXTENSIONS: ${MINIO_COMPRESSION_EXTENSIONS:-.txt,.log,.csv,.json,.tar,.xml,.bin}
+      MINIO_COMPRESSION_MIME_TYPES: ${MINIO_COMPRESSION_MIME_TYPES:-text/*,application/json,application/xml}
+
+    # Command: Start MinIO server
+    command: server /data --console-address ":9001"
+
+    # Volume Mounts
+    volumes:
+      - minio_data:/data
+      # Optional: Custom policies and configurations
+      # - ./config:/root/.minio
+
+    # Port Mappings
+    ports:
+      - "${MINIO_API_PORT:-9000}:9000"      # S3 API
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"  # Web Console
+
+    # Networking
+    networks:
+      - minio-net
+
+    # Health Check
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+    # Security
+    security_opt:
+      - no-new-privileges:true
+
+    # Resource Limits (Optional - Uncomment for production)
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: '2.0'
+    #       memory: 2G
+    #     reservations:
+    #       cpus: '1.0'
+    #       memory: 1G
+
+  # MinIO Client (mc) for initialization and management
+  minio-client:
+    image: minio/mc:${MC_VERSION:-RELEASE.2025-08-13T08-35-41Z}
+    container_name: ${MC_CONTAINER_NAME:-ems-minio-client}
+    depends_on:
+      minio:
+        condition: service_healthy
+
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      MINIO_HOST: ${MINIO_HOSTNAME:-minio}
+      MINIO_PORT: 9000
+      MINIO_DEFAULT_BUCKETS: ${MINIO_DEFAULT_BUCKETS:-uploads,backups,documents}
+      MINIO_BUCKET_PUBLIC: ${MINIO_BUCKET_PUBLIC:-}
+
+    networks:
+      - minio-net
+
+    volumes:
+      - ./scripts/init-minio.sh:/init-minio.sh:ro
+
+    entrypoint: /bin/sh
+    command: -c "/init-minio.sh"
+
+    restart: "no"
+
+  # Optional: Nginx reverse proxy for production-like setup
+  # Uncomment if you need SSL/TLS termination or custom domain routing
+  # nginx:
+  #   image: nginx:${NGINX_VERSION:-1.27-alpine}
+  #   container_name: ${NGINX_CONTAINER_NAME:-ems-minio-nginx}
+  #   depends_on:
+  #     - minio
+  #   ports:
+  #     - "${NGINX_HTTP_PORT:-80}:80"
+  #     - "${NGINX_HTTPS_PORT:-443}:443"
+  #   volumes:
+  #     - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+  #     - ./nginx/ssl:/etc/nginx/ssl:ro
+  #   networks:
+  #     - minio-net
+  #   restart: unless-stopped
