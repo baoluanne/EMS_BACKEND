@@ -27,9 +27,12 @@ namespace EMS.Domain.Entities.KtxManagement
         public decimal GiaPhong { get; set; }
 
         [ForeignKey("ToaNhaId")]
-        public virtual ToaNhaKtx ToaNha { get; set; }
+        public virtual ToaNhaKtx? ToaNha { get; set; }
 
         public virtual ICollection<GiuongKtx> GiuongKtxs { get; set; } = new List<GiuongKtx>();
         public virtual ICollection<ChiSoDienNuoc> ChiSoDienNuocs { get; set; } = new List<ChiSoDienNuoc>();
+        public virtual ICollection<TaiSanKtx> TaiSanKtxs { get; set; } = new List<TaiSanKtx>();
+        public virtual ICollection<HoaDonKtx> HoaDonKtxs { get; set; } = new List<HoaDonKtx>();
+        public virtual ICollection<YeuCauSuaChua> YeuCauSuaChuas { get; set; } = new List<YeuCauSuaChua>();
     }
 }

@@ -29,10 +29,10 @@ namespace EMS.Application.Services.KtxService
         }
 
         public async Task<Result<PhongKtxPagingResponse>> GetPaginatedAsync(
-    PaginationRequest request,
-    string? maPhong = null,
-    string? toaNhaId = null,
-    string? trangThai = null)
+            PaginationRequest request,
+            string? maPhong = null,
+            string? toaNhaId = null,
+            string? trangThai = null)
         {
             try
             {
@@ -42,6 +42,77 @@ namespace EMS.Application.Services.KtxService
             catch (Exception ex)
             {
                 return new Result<PhongKtxPagingResponse>(ex);
+            }
+        }
+
+        public override async Task<Result<PhongKtx>> UpdateAsync(Guid id, PhongKtx entity)
+        {
+            try
+            {
+                var existingPhong = await _phongRepository.GetByIdAsync(id);
+                if (existingPhong == null)
+                {
+                    return new Result<PhongKtx>(new NotFoundException("Không tìm thấy phòng"));
+                }
+
+                if (entity.SoLuongGiuong < existingPhong.SoLuongDaO)
+                {
+                    return new Result<PhongKtx>(new BadRequestException(
+                        $"Số lượng giường ({entity.SoLuongGiuong}) không thể nhỏ hơn số giường đã ở ({existingPhong.SoLuongDaO})"));
+                }
+
+                if (entity.SoLuongGiuong > existingPhong.SoLuongGiuong)
+                {
+                    int soGiuongCanThem = entity.SoLuongGiuong - existingPhong.SoLuongGiuong;
+                    int soGiuongHienTai = existingPhong.SoLuongGiuong;
+
+                    for (int i = 1; i <= soGiuongCanThem; i++)
+                    {
+                        var giuongMoi = new GiuongKtx
+                        {
+                            Id = Guid.NewGuid(),
+                            MaGiuong = $"{existingPhong.MaPhong}-{(soGiuongHienTai + i):00}",
+                            PhongKtxId = id,
+                            TrangThai = TrangThaiGiuongConstants.TRONG
+                        };
+                        _giuongRepository.Add(giuongMoi);
+                    }
+                }
+
+                if (entity.SoLuongGiuong < existingPhong.SoLuongGiuong)
+                {
+                    int soGiuongCanXoa = existingPhong.SoLuongGiuong - entity.SoLuongGiuong;
+
+                    var giuongTrong = await _giuongRepository.GetListAsync(
+                        g => g.PhongKtxId == id &&
+                             g.TrangThai == TrangThaiGiuongConstants.TRONG &&
+                             !g.IsDeleted);
+
+                    if (giuongTrong.Count < soGiuongCanXoa)
+                    {
+                        return new Result<PhongKtx>(new BadRequestException(
+                            $"Không thể giảm số giường. Chỉ có {giuongTrong.Count} giường trống, cần {soGiuongCanXoa} giường trống để xóa"));
+                    }
+
+                    var giuongCanXoa = giuongTrong.Take(soGiuongCanXoa).ToList();
+                    foreach (var giuong in giuongCanXoa)
+                    {
+                        await _giuongRepository.ListSoftDeletedAsync();
+                    }
+                }
+
+                var updateResult = await base.UpdateAsync(id, entity);
+
+                if (updateResult.IsSuccess)
+                {
+                    await UnitOfWork.CommitAsync();
+                }
+
+                return updateResult;
+            }
+            catch (Exception ex)
+            {
+                return new Result<PhongKtx>(ex);
             }
         }
 

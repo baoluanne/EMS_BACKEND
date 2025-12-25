@@ -32,5 +32,6 @@ namespace EMS.Domain.Entities.KtxManagement
 
         [ForeignKey("PhongKtxId")]
         public virtual PhongKtx? PhongKtx { get; set; }
+        public virtual ICollection<HoaDonKtx> HoaDonKtxs { get; set; } = new List<HoaDonKtx>();
     }
 }

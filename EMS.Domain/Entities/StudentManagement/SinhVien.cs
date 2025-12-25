@@ -262,6 +262,7 @@ namespace EMS.Domain.Entities.StudentManagement
         public virtual ICollection<PhieuChiSinhVien> PhieuChis { get; set; } = new List<PhieuChiSinhVien>();
         public virtual ICollection<BangDiemChiTiet>? BangDiemChiTiets { get; set; }
         public virtual ICollection<CuTruKtx> CuTruKtxs { get; set; } = new List<CuTruKtx>();
+        public virtual ICollection<YeuCauSuaChua> YeuCauSuaChuas { get; set; } = new List<YeuCauSuaChua>();
         [NotMapped]
         public string? FullName
         {
