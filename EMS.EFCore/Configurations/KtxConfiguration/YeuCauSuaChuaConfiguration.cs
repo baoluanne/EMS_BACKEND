@@ -17,36 +17,55 @@ namespace EMS.Infrastructure.Configurations.KtxConfiguration
                 .IsRequired();
 
             builder.Property(x => x.NoiDung)
-                .HasMaxLength(1000);
+                .HasMaxLength(2000);
 
             builder.Property(x => x.TrangThai)
                 .HasMaxLength(50)
-                .HasDefaultValue("MoiGui");
+                .HasDefaultValue("MoiGui")
+                .IsRequired();
 
-            builder.Property(x => x.KetQuaXuLy)
+            builder.Property(x => x.GhiChuXuLy)
                 .HasMaxLength(1000);
 
             builder.Property(x => x.ChiPhiPhatSinh)
                 .HasColumnType("decimal(18,2)")
-                .HasDefaultValue(0);
-
-            builder.Property(x => x.NgayGui)
+                .HasDefaultValue(0)
                 .IsRequired();
 
+            builder.Property(x => x.NgayGui)
+                .HasDefaultValueSql("NOW() AT TIME ZONE 'UTC'")
+                .ValueGeneratedOnAdd()   
+                .IsRequired();      
+
+            builder.Property(x => x.NgayXuLy)
+                .IsRequired(false);
+
+            builder.Property(x => x.NgayHoanThanh)
+                .IsRequired(false);
+
             builder.HasOne(x => x.SinhVien)
-                .WithMany(s => s.YeuCauSuaChuas)
+                .WithMany() 
                 .HasForeignKey(x => x.SinhVienId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(x => x.PhongKtx)
-                .WithMany(s => s.YeuCauSuaChuas)
+                .WithMany(p => p.YeuCauSuaChuas)
                 .HasForeignKey(x => x.PhongKtxId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(x => x.TaiSanKtx)
                 .WithMany(t => t.YeuCauSuaChuas)
                 .HasForeignKey(x => x.TaiSanKtxId)
+                .IsRequired(false)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            builder.HasOne(x => x.HoaDonKtx)
+                .WithMany(h => h.YeuCauSuaChuas)
+                .HasForeignKey(x => x.HoaDonKtxId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            builder.HasQueryFilter(x => !x.IsDeleted);
         }
     }
 }

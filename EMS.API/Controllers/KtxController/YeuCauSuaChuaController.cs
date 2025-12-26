@@ -1,0 +1,62 @@
+﻿using EMS.API.Controllers.Base;
+using EMS.Application.Services.KtxService;
+using EMS.Domain.Entities.KtxManagement;
+using EMS.Domain.Interfaces.Repositories.KtxManagement.Dtos;
+using EMS.Domain.Models;
+using LanguageExt.Common;
+using Microsoft.AspNetCore.Mvc;
+
+namespace EMS.API.Controllers.KtxManagement;
+
+[Route("api/yeu-cau-sua-chua")]
+[ApiController]
+public class YeuCauSuaChuaController : BaseController<YeuCauSuaChua>
+{
+    private readonly IYeuCauSuaChuaService _service;
+
+    public YeuCauSuaChuaController(IYeuCauSuaChuaService service) : base(service)
+    {
+        _service = service;
+    }
+
+    [HttpGet("pagination")]
+    public async Task<IActionResult> GetPaginated(
+        [FromQuery] PaginationRequest request,
+        [FromQuery] Guid? phongKtxId = null,
+        [FromQuery] Guid? sinhVienId = null,
+        [FromQuery] string? trangThai = null,
+        [FromQuery] string? searchTerm = null)
+    {
+        var result = await _service.GetPaginatedAsync(request, phongKtxId, sinhVienId, trangThai, searchTerm);
+        return result.Match<IActionResult>(
+            succ => Ok(succ),
+            err => BadRequest(new { error = err.Message })
+        );
+    }
+
+    [HttpPost("tao-yeu-cau")]
+    public async Task<IActionResult> Create([FromBody] CreateYeuCauSuaChuaDto dto)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var result = await _service.CreateYeuCauAsync(dto);
+        return result.Match<IActionResult>(
+            succ => Ok(new { id = succ }),
+            err => BadRequest(new { error = err.Message })
+        );
+    }
+
+    [HttpPut("update-trang-thai")]
+    public async Task<IActionResult> UpdateTrangThai([FromBody] UpdateYeuCauSuaChuaDto dto)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var result = await _service.UpdateTrangThaiAsync(dto);
+        return result.Match<IActionResult>(
+            succ => Ok(new { success = succ }),
+            err => BadRequest(new { error = err.Message })
+        );
+    }
+}

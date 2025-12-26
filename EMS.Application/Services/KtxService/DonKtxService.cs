@@ -162,12 +162,10 @@ namespace EMS.Application.Services.KtxService
                 if (don.LoaiDon != LoaiDonConstants.CHUYEN_PHONG)
                     return new Result<bool>(new BadRequestException("Loại đơn không phải chuyển phòng"));
 
-                // Kiểm tra hợp đồng hiện tại (bắt buộc có)
                 var hopDongHienTai = await _cuTruRepository.GetHopDongHienTaiAsync(don.IdSinhVien);
                 if (hopDongHienTai == null)
                     return new Result<bool>(new BadRequestException("Sinh viên không có hợp đồng cư trú hiện tại"));
 
-                // Giải phóng giường cũ
                 var giuongCu = await _giuongRepository.GetByIdAsync(hopDongHienTai.GiuongKtxId);
                 if (giuongCu != null)
                 {
@@ -183,7 +181,6 @@ namespace EMS.Application.Services.KtxService
                     }
                 }
 
-                // Kiểm tra giường mới
                 var giuongMoi = await _giuongRepository.GetFirstAsync(
                     g => g.Id == giuongMoiId && g.PhongKtxId == phongMoiId && g.TrangThai == TrangThaiGiuongConstants.TRONG);
                 if (giuongMoi == null)
@@ -193,17 +190,15 @@ namespace EMS.Application.Services.KtxService
                 if (phongMoi == null)
                     return new Result<bool>(new NotFoundException("Phòng mới không tồn tại"));
 
-                // Cập nhật giường mới
                 giuongMoi.TrangThai = TrangThaiGiuongConstants.CO_SV;
                 giuongMoi.SinhVienId = don.IdSinhVien;
                 phongMoi.SoLuongDaO += 1;
 
-                // Kết thúc hợp đồng cũ
                 hopDongHienTai.TrangThai = TrangThaiCuTruConstants.DA_KET_THUC;
                 hopDongHienTai.NgayHetHan = DateTime.UtcNow;
                 hopDongHienTai.GhiChu += $" [Kết thúc do chuyển phòng]";
+                hopDongHienTai.GiuongKtx = null;
 
-                // Tạo hợp đồng mới
                 var hopDongMoi = new CuTruKtx
                 {
                     Id = Guid.NewGuid(),
@@ -216,7 +211,6 @@ namespace EMS.Application.Services.KtxService
                     DonKtxId = don.Id
                 };
 
-                // Cập nhật đơn
                 don.PhongDuocDuyet = phongMoiId;
                 don.GiuongDuocDuyet = giuongMoiId;
                 don.TrangThai = TrangThaiDonConstants.DA_DUYET;
@@ -290,7 +284,6 @@ namespace EMS.Application.Services.KtxService
                 if (don.LoaiDon != LoaiDonConstants.ROI_KTX)
                     return new Result<bool>(new BadRequestException($"Loại đơn không phù hợp."));
 
-                // Giải phóng giường nếu sinh viên đang chiếm giường
                 var giuongHienTai = await _giuongRepository.GetFirstAsync(g => g.SinhVienId == don.IdSinhVien && !g.IsDeleted);
                 if (giuongHienTai != null)
                 {
@@ -306,19 +299,18 @@ namespace EMS.Application.Services.KtxService
                     }
                 }
 
-                // Kết thúc hợp đồng nếu có (không bắt buộc)
                 var hopDongHienTai = await _cuTruRepository.GetHopDongHienTaiAsync(don.IdSinhVien);
                 if (hopDongHienTai != null)
                 {
                     hopDongHienTai.TrangThai = TrangThaiCuTruConstants.DA_KET_THUC;
                     hopDongHienTai.NgayHetHan = DateTime.UtcNow;
+                    hopDongHienTai.GiuongKtx = null;
                     hopDongHienTai.GhiChu = string.IsNullOrEmpty(ghiChuDuyet)
                         ? hopDongHienTai.GhiChu
                         : (hopDongHienTai.GhiChu ?? "") + $" [Rời KTX: {ghiChuDuyet}]";
                     _cuTruRepository.Update(hopDongHienTai);
                 }
 
-                // Cập nhật đơn thành công
                 don.TrangThai = TrangThaiDonConstants.DA_DUYET;
                 don.Ghichu = string.IsNullOrEmpty(ghiChuDuyet)
                     ? (don.Ghichu ?? "") + " [Duyệt rời KTX]"

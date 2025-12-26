@@ -27,5 +27,6 @@ namespace EMS.Domain.Entities.KtxManagement
         public Guid? ChiSoDienNuocId { get; set; }
         [ForeignKey("ChiSoDienNuocId")]
         public virtual ChiSoDienNuoc? ChiSoDienNuoc { get; set; }
+        public virtual ICollection<YeuCauSuaChua> YeuCauSuaChuas { get; set; } = new List<YeuCauSuaChua>();
     }
 }

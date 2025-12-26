@@ -15,7 +15,7 @@ namespace EMS.Infrastructure.Repositories.KtxManagement
         public async Task<CuTruKtx?> GetHopDongHienTaiAsync(Guid sinhVienId)
         {
             return await DbSet
-                .AsNoTracking()
+                .AsNoTracking().Include(i => i.GiuongKtx).ThenInclude(i => i.PhongKtx).Include(i => i.SinhVien)
                 .Where(c => c.SinhVienId == sinhVienId &&
                             c.TrangThai == "DangO" &&
                             c.NgayHetHan >= DateTime.UtcNow.Date)

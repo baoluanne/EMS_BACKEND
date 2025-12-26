@@ -11,9 +11,13 @@ namespace EMS.Domain.Entities.KtxManagement
         public string TieuDe { get; set; } = string.Empty;
         public string NoiDung { get; set; } = string.Empty;
         public string TrangThai { get; set; } = "MoiGui"; // MoiGui, DangXuLy, DaXong, Huy
-        public string? KetQuaXuLy { get; set; }
-        public decimal ChiPhiPhatSinh { get; set; }
-        public DateTime NgayGui { get; set; }
+        public string? GhiChuXuLy { get; set; }
+        public decimal ChiPhiPhatSinh { get; set; } = 0;
+
+        public DateTime NgayGui { get; set; } = DateTime.UtcNow;
+
+        public DateTime? NgayXuLy { get; set; }
+
         public DateTime? NgayHoanThanh { get; set; }
 
         public Guid SinhVienId { get; set; }
@@ -27,5 +31,8 @@ namespace EMS.Domain.Entities.KtxManagement
         public Guid? TaiSanKtxId { get; set; }
         [ForeignKey("TaiSanKtxId")]
         public virtual TaiSanKtx? TaiSanKtx { get; set; }
+        public Guid? HoaDonKtxId { get; set; }
+        [ForeignKey(nameof(HoaDonKtxId))]
+        public virtual HoaDonKtx? HoaDonKtx { get; set; }
     }
 }
