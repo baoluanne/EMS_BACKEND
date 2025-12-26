@@ -131,6 +131,9 @@ public static class DependencyInjection
         services.AddScoped<IChiSoDienNuocService, ChiSoDienNuocService>();
         services.AddScoped<IViPhamNoiQuyKTXService, ViPhamNoiQuyKTXService>();
         services.AddScoped<ICuTruKtxService, CuTruKtxService>();
+        services.AddScoped<ITaiSanKtxService, TaiSanKtxService>();
+        services.AddScoped<IYeuCauSuaChuaService, IYeuCauSuaChuaService>();
+        services.AddScoped<IHoaDonKtxService, HoaDonKtxService>();
         return services;
     }
 }

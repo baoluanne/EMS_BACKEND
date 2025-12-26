@@ -115,6 +115,9 @@ public static class DependencyInjection
         services.AddScoped<IToaNhaKtxRepository, ToaNhaKtxRepository>();
         services.AddScoped<IDonKtxRepository, DonKtxRepository>();
         services.AddScoped<ICuTruKtxRepository, CuTruKtxRepository>();
+        services.AddScoped<ITaiSanKtxRepository, TaiSanKtxRepository>();
+        services.AddScoped<IYeuCauSuaChuaRepository, YeuCauSuaChuaRepository>();
+        services.AddScoped<IHoaDonKtxRepository, HoaDonKtxRepository>();
         return services;
     }
 }
