@@ -39,13 +39,13 @@ public class YeuCauSuaChuaRepository(DbFactory dbFactory)
             query = query.Where(y =>
                 y.TieuDe.ToLower().Contains(term) ||
                 y.NoiDung.ToLower().Contains(term) ||
-                y.GhiChuXuLy != null && y.GhiChuXuLy.ToLower().Contains(term));
+                (y.GhiChuXuLy != null && y.GhiChuXuLy.ToLower().Contains(term)));
         }
 
         var total = await query.CountAsync();
 
         var data = await query
-            .OrderByDescending(y => y.NgayTao)
+            .OrderByDescending(y => y.NgayGui)
             .Select(y => new YeuCauSuaChuaResponseDto
             {
                 Id = y.Id,
@@ -53,14 +53,22 @@ public class YeuCauSuaChuaRepository(DbFactory dbFactory)
                 NoiDung = y.NoiDung,
                 TrangThai = y.TrangThai,
                 GhiChuXuLy = y.GhiChuXuLy,
+                ChiPhiPhatSinh = y.ChiPhiPhatSinh,
+                NgayGui = y.NgayGui,
                 NgayXuLy = y.NgayXuLy,
+                NgayHoanThanh = y.NgayHoanThanh,
+
                 SinhVienId = y.SinhVienId,
-                HoTenSinhVien = y.SinhVien != null ? (y.SinhVien.HoDem + " " + y.SinhVien.Ten ) : "",
+                HoTenSinhVien = y.SinhVien != null ? (y.SinhVien.HoDem + " " + y.SinhVien.Ten) : "",
+
                 PhongKtxId = y.PhongKtxId,
-                MaPhong = y.PhongKtx.MaPhong ?? "",
-                TenToaNha = y.PhongKtx.ToaNha.TenToaNha ?? "",
+                MaPhong = y.PhongKtx != null ? (y.PhongKtx.MaPhong ?? "") : "",
+                TenToaNha = y.PhongKtx != null && y.PhongKtx.ToaNha != null
+                    ? (y.PhongKtx.ToaNha.TenToaNha ?? "")
+                    : "",
                 TaiSanKtxId = y.TaiSanKtxId,
-                TenTaiSan = y.TaiSanKtx.TenTaiSan
+                TenTaiSan = y.TaiSanKtx != null ? (y.TaiSanKtx.TenTaiSan ?? "") : "",
+                MaTaiSan = y.TaiSanKtx != null ? (y.TaiSanKtx.MaTaiSan ?? "") : ""
             })
             .Skip((request.Page - 1) * request.PageSize)
             .Take(request.PageSize)
