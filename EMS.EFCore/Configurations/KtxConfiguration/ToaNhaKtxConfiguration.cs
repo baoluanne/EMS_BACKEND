@@ -1,5 +1,4 @@
-﻿// ToaNhaKtxConfiguration.cs
-using EMS.Domain.Entities.KtxManagement;
+﻿using EMS.Domain.Entities.KtxManagement;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -18,8 +17,7 @@ namespace EMS.Infrastructure.Configurations.KtxConfiguration
                 .IsRequired();
 
             builder.HasIndex(x => x.TenToaNha)
-                .IsUnique()
-                .HasDatabaseName("IX_ToaNhaKtx_TenToaNha_Unique");
+                .IsUnique();
 
             builder.Property(x => x.LoaiToaNha)
                 .HasMaxLength(50);

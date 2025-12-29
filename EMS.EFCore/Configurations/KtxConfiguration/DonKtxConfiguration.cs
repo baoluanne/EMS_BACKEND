@@ -1,5 +1,4 @@
-﻿// DonKtxConfiguration.cs
-using EMS.Domain.Entities.KtxManagement;
+﻿using EMS.Domain.Entities.KtxManagement;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -17,8 +16,7 @@ namespace EMS.Infrastructure.Configurations.KtxConfiguration
                 .HasMaxLength(50);
 
             builder.HasIndex(x => x.MaDon)
-                .IsUnique()
-                .HasDatabaseName("IX_DonKtx_MaDon_Unique");
+                .IsUnique();
 
             builder.Property(x => x.LoaiDon)
                 .HasMaxLength(50);

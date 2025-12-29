@@ -1,5 +1,4 @@
-﻿// CuTruKtxConfiguration.cs
-using EMS.Domain.Entities.KtxManagement;
+﻿using EMS.Domain.Entities.KtxManagement;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

@@ -1,5 +1,4 @@
-﻿// PhongKtxConfiguration.cs
-using EMS.Domain.Entities.KtxManagement;
+﻿using EMS.Domain.Entities.KtxManagement;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -18,8 +17,7 @@ namespace EMS.Infrastructure.Configurations.KtxConfiguration
                 .IsRequired();
 
             builder.HasIndex(x => x.MaPhong)
-                .IsUnique()
-                .HasDatabaseName("IX_PhongKtx_MaPhong_Unique");
+                .IsUnique();
 
             builder.Property(x => x.TrangThai)
                 .HasMaxLength(50)

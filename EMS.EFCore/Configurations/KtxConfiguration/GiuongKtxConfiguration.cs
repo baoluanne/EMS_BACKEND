@@ -1,5 +1,4 @@
-﻿// GiuongKtxConfiguration.cs
-using EMS.Domain.Entities.KtxManagement;
+﻿using EMS.Domain.Entities.KtxManagement;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -22,8 +21,7 @@ namespace EMS.Infrastructure.Configurations.KtxConfiguration
                 .IsRequired();
 
             builder.HasIndex(x => x.MaGiuong)
-                .IsUnique()
-                .HasDatabaseName("IX_GiuongKtx_MaGiuong_Unique");
+                .IsUnique();
 
             builder.HasOne(x => x.PhongKtx)
                 .WithMany(p => p.GiuongKtxs)
