@@ -13,7 +13,7 @@ namespace EMS.Domain.Interfaces.Repositories.KtxManagement.Dtos
         public Guid SinhVienId { get; set; }
         public Guid PhongKtxId { get; set; }
         public Guid? TaiSanKtxId { get; set; }
-        public DateTime? NgayGui { get; set; }
+        public DateTime NgayGui { get; set; }
     }
 
     public class UpdateYeuCauSuaChuaDto
@@ -21,7 +21,8 @@ namespace EMS.Domain.Interfaces.Repositories.KtxManagement.Dtos
         public Guid Id { get; set; }
         public string? TrangThai { get; set; } // MoiGui, DangXuLy, DaXong, Huy
         public string? GhiChuXuLy { get; set; }
-        public DateTime? NgayGui { get; set; }
+        public DateTime? NgayXuLy { get; set; } // Ngày bắt đầu xử lý (khi chuyển sang DangXuLy)
+        public DateTime? NgayHoanThanh { get; set; } // Ngày hoàn thành (khi chuyển sang DaXong)
     }
 
     public class YeuCauSuaChuaResponseDto

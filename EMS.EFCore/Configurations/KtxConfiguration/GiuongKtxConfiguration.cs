@@ -1,4 +1,5 @@
-﻿using EMS.Domain.Entities.KtxManagement;
+﻿// GiuongKtxConfiguration.cs
+using EMS.Domain.Entities.KtxManagement;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -17,16 +18,27 @@ namespace EMS.Infrastructure.Configurations.KtxConfiguration
                 .IsRequired();
 
             builder.Property(x => x.TrangThai)
-                .HasMaxLength(50);
+                .HasMaxLength(50)
+                .IsRequired();
+
+            builder.HasIndex(x => x.MaGiuong)
+                .IsUnique()
+                .HasDatabaseName("IX_GiuongKtx_MaGiuong_Unique");
 
             builder.HasOne(x => x.PhongKtx)
-                .WithMany(x => x.GiuongKtxs)
-                .HasForeignKey(x => x.PhongKtxId);
-            
+                .WithMany(p => p.GiuongKtxs)
+                .HasForeignKey(x => x.PhongKtxId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             builder.HasOne(x => x.SinhVien)
-                .WithMany() 
+                .WithMany()
                 .HasForeignKey(x => x.SinhVienId)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            builder.HasMany(x => x.CuTruKtxs)
+                .WithOne(c => c.GiuongKtx)
+                .HasForeignKey(c => c.GiuongKtxId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

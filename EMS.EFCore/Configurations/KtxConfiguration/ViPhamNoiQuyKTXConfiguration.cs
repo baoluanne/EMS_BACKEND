@@ -1,4 +1,5 @@
-﻿using EMS.Domain.Entities.KtxManagement;
+﻿// ViPhamNoiQuyKTXConfiguration.cs
+using EMS.Domain.Entities.KtxManagement;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

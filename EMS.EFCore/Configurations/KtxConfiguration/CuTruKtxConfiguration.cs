@@ -1,4 +1,5 @@
-﻿using EMS.Domain.Entities.KtxManagement;
+﻿// CuTruKtxConfiguration.cs
+using EMS.Domain.Entities.KtxManagement;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -33,26 +34,22 @@ namespace EMS.Infrastructure.Configurations.KtxConfiguration
             builder.Property(x => x.GhiChu)
                 .HasMaxLength(500);
 
-            // Index để tìm hợp đồng hiện tại nhanh hơn
             builder.HasIndex(x => new { x.SinhVienId, x.TrangThai })
                 .HasFilter("\"TrangThai\" = 'DangO'");
 
             builder.HasIndex(x => new { x.GiuongKtxId, x.TrangThai })
                 .HasFilter("\"TrangThai\" = 'DangO'");
 
-            // Relationship với SinhVien
             builder.HasOne(x => x.SinhVien)
-                .WithMany(s => s.CuTruKtxs) // cần thêm navigation ở SinhVien
+                .WithMany()
                 .HasForeignKey(x => x.SinhVienId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Relationship với GiuongKtx
             builder.HasOne(x => x.GiuongKtx)
-                .WithMany(g => g.CuTruKtxs) // cần thêm navigation ở GiuongKtx
+                .WithMany(g => g.CuTruKtxs)
                 .HasForeignKey(x => x.GiuongKtxId)
-                .OnDelete(DeleteBehavior.Restrict); // không xóa giường khi xóa hợp đồng
+                .OnDelete(DeleteBehavior.Restrict);
 
-            // Relationship với DonKtx (tùy chọn, để truy vết nguồn gốc)
             builder.HasOne(x => x.DonKtx)
                 .WithMany()
                 .HasForeignKey(x => x.DonKtxId)

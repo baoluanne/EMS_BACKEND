@@ -1,4 +1,5 @@
-﻿using EMS.Domain.Entities.KtxManagement;
+﻿// PhongKtxConfiguration.cs
+using EMS.Domain.Entities.KtxManagement;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -16,23 +17,46 @@ namespace EMS.Infrastructure.Configurations.KtxConfiguration
                 .HasMaxLength(20)
                 .IsRequired();
 
+            builder.HasIndex(x => x.MaPhong)
+                .IsUnique()
+                .HasDatabaseName("IX_PhongKtx_MaPhong_Unique");
+
             builder.Property(x => x.TrangThai)
-                .HasMaxLength(50);
+                .HasMaxLength(50)
+                .IsRequired();
 
             builder.Property(x => x.GiaPhong)
                 .HasColumnType("decimal(18,2)");
 
-            // Relationship với ToaNha
             builder.HasOne(x => x.ToaNha)
-                .WithMany(x => x.PhongKtxs)
+                .WithMany(t => t.PhongKtxs)
                 .HasForeignKey(x => x.ToaNhaId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Relationship với GiuongKtx
             builder.HasMany(x => x.GiuongKtxs)
-                .WithOne(x => x.PhongKtx)
-                .HasForeignKey(x => x.PhongKtxId)
+                .WithOne(g => g.PhongKtx)
+                .HasForeignKey(g => g.PhongKtxId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasMany(x => x.ChiSoDienNuocs)
+                .WithOne(c => c.PhongKtx)
+                .HasForeignKey(c => c.PhongKtxId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasMany(x => x.TaiSanKtxs)
+                .WithOne(t => t.PhongKtx)
+                .HasForeignKey(t => t.PhongKtxId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasMany(x => x.HoaDonKtxs)
+                .WithOne(h => h.PhongKtx)
+                .HasForeignKey(h => h.PhongKtxId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasMany(x => x.YeuCauSuaChuas)
+                .WithOne(y => y.PhongKtx)
+                .HasForeignKey(y => y.PhongKtxId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

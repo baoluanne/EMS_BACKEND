@@ -1,4 +1,5 @@
-﻿using EMS.Domain.Entities.KtxManagement;
+﻿// TaiSanKtxConfiguration.cs
+using EMS.Domain.Entities.KtxManagement;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -30,6 +31,7 @@ namespace EMS.Infrastructure.Configurations.KtxConfiguration
 
             builder.Property(x => x.GhiChu)
                 .HasMaxLength(500);
+
             builder.HasOne(x => x.PhongKtx)
                 .WithMany(p => p.TaiSanKtxs)
                 .HasForeignKey(x => x.PhongKtxId)

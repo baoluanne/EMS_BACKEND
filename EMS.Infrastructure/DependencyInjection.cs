@@ -1,6 +1,4 @@
-﻿using EMS.Application.Services.Financial;
-using EMS.Domain.Entities.FinancialModuleManagement;
-using EMS.Domain.Interfaces.DataAccess;
+﻿using EMS.Domain.Interfaces.DataAccess;
 using EMS.Domain.Interfaces.EmailServices;
 using EMS.Domain.Interfaces.Repositories;
 using EMS.Domain.Interfaces.Repositories.Base;
@@ -102,10 +100,6 @@ public static class DependencyInjection
 
         services.AddScoped<IBangDiemChiTietRepository, BangDiemChiTietRepository>();
         services.AddScoped<IChuyenDoiHocPhanRepository, ChuyenDoiHocPhanRepository>();
-
-        // Financial Module Repositories
-        services.AddScoped<IChinhSachMienGiamRepository, ChinhSachMienGiamRepository>();
-        services.AddScoped<IAuditRepository<MienGiamSinhVien>, AuditRepository<MienGiamSinhVien>>();
 
         //KTX
         services.AddScoped<IGiuongKtxRepository, GiuongKtxRepository>();

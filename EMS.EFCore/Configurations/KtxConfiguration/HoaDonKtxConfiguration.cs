@@ -1,4 +1,5 @@
-﻿using EMS.Domain.Entities.KtxManagement;
+﻿// HoaDonKtxConfiguration.cs
+using EMS.Domain.Entities.KtxManagement;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -9,10 +10,15 @@ namespace EMS.Infrastructure.Configurations.KtxConfiguration
         public void Configure(EntityTypeBuilder<HoaDonKtx> builder)
         {
             builder.ToTable("HoaDonKtx");
+
             builder.HasKey(x => x.Id);
 
+            builder.Property(x => x.TongTien)
+                .HasColumnType("decimal(18,2)");
 
-            builder.Property(x => x.TongTien).HasColumnType("decimal(18,2)");
+            builder.Property(x => x.TrangThai)
+                .HasMaxLength(50)
+                .IsRequired();
 
             builder.HasOne(x => x.PhongKtx)
                 .WithMany(p => p.HoaDonKtxs)
@@ -20,12 +26,13 @@ namespace EMS.Infrastructure.Configurations.KtxConfiguration
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(x => x.ChiSoDienNuoc)
-                .WithMany(x => x.HoaDonKtxs)
+                .WithMany(c => c.HoaDonKtxs)
                 .HasForeignKey(x => x.ChiSoDienNuocId)
                 .OnDelete(DeleteBehavior.SetNull);
 
             builder.HasIndex(x => new { x.PhongKtxId, x.Thang, x.Nam })
-                   .IsUnique();
+                .IsUnique()
+                .HasDatabaseName("IX_HoaDonKtx_Phong_Thang_Nam_Unique");
         }
     }
 }

@@ -61,7 +61,7 @@ public class YeuCauSuaChuaService : BaseService<YeuCauSuaChua>, IYeuCauSuaChuaSe
                 SinhVienId = dto.SinhVienId,
                 PhongKtxId = dto.PhongKtxId,
                 TaiSanKtxId = dto.TaiSanKtxId,
-                NgayGui = (DateTime)dto.NgayGui
+                NgayGui = EnsureUtcDateTime(dto.NgayGui)
             };
 
             _yeuCauRepository.Add(entity);
@@ -92,14 +92,26 @@ public class YeuCauSuaChuaService : BaseService<YeuCauSuaChua>, IYeuCauSuaChuaSe
             if (entity == null)
                 return new Result<bool>(new Exception("Không tìm thấy yêu cầu sửa chữa"));
 
+            if (entity.NgayHoanThanh.HasValue)
+                return new Result<bool>(new Exception("Yêu cầu đã hoàn thành, không thể sửa"));
+
             string trangThaiCu = entity.TrangThai;
 
             entity.TrangThai = dto.TrangThai ?? trangThaiCu;
             entity.GhiChuXuLy = dto.GhiChuXuLy;
-            entity.NgayXuLy = dto.NgayGui;
 
-            if (dto.TrangThai == "DaXong")
-                entity.NgayHoanThanh = DateTime.UtcNow;
+            if (dto.TrangThai == "DangXuLy")
+            {
+                entity.NgayXuLy = EnsureUtcDateTime(dto.NgayXuLy);
+            }
+            else if (dto.TrangThai == "DaXong")
+            {
+                entity.NgayHoanThanh = EnsureUtcDateTime(dto.NgayHoanThanh);
+                if (!entity.NgayXuLy.HasValue)
+                {
+                    entity.NgayXuLy = EnsureUtcDateTime(dto.NgayXuLy);
+                }
+            }
 
             _yeuCauRepository.Update(entity);
             await UnitOfWork.CommitAsync();
@@ -125,6 +137,7 @@ public class YeuCauSuaChuaService : BaseService<YeuCauSuaChua>, IYeuCauSuaChuaSe
             return new Result<bool>(ex);
         }
     }
+
     private string GetAssetStatusFromRequestStatus(string trangThai)
     {
         return trangThai switch
@@ -153,6 +166,19 @@ public class YeuCauSuaChuaService : BaseService<YeuCauSuaChua>, IYeuCauSuaChuaSe
             _logger.LogError(ex, $"Lỗi cập nhật trạng thái tài sản {taiSanId}");
         }
     }
+    private DateTime EnsureUtcDateTime(DateTime? dateTime)
+    {
+        if (dateTime == null)
+            return DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
+
+        if (dateTime.Value.Kind == DateTimeKind.Utc)
+            return dateTime.Value;
+
+        if (dateTime.Value.Kind == DateTimeKind.Unspecified)
+            return DateTime.SpecifyKind(dateTime.Value, DateTimeKind.Utc);
+
+        return dateTime.Value.ToUniversalTime();
+    }
 
     protected override Task UpdateEntityProperties(YeuCauSuaChua existing, YeuCauSuaChua newEntity)
     {
@@ -161,6 +187,7 @@ public class YeuCauSuaChuaService : BaseService<YeuCauSuaChua>, IYeuCauSuaChuaSe
         existing.TrangThai = newEntity.TrangThai;
         existing.GhiChuXuLy = newEntity.GhiChuXuLy;
         existing.NgayXuLy = newEntity.NgayXuLy;
+        existing.NgayHoanThanh = newEntity.NgayHoanThanh;
         existing.ChiPhiPhatSinh = newEntity.ChiPhiPhatSinh;
         return Task.CompletedTask;
     }

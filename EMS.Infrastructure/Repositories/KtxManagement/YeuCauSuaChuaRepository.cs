@@ -20,7 +20,7 @@ public class YeuCauSuaChuaRepository(DbFactory dbFactory)
     {
         var query = DbSet.AsNoTracking()
             .Include(y => y.SinhVien)
-            .Include(y => y.PhongKtx).ThenInclude(p => p.ToaNha)
+            .Include(y => y.PhongKtx).ThenInclude(p => p!.ToaNha)
             .Include(y => y.TaiSanKtx)
             .Where(y => !y.IsDeleted);
 
@@ -64,8 +64,8 @@ public class YeuCauSuaChuaRepository(DbFactory dbFactory)
                 PhongKtxId = y.PhongKtxId,
                 MaPhong = y.PhongKtx != null ? (y.PhongKtx.MaPhong ?? "") : "",
                 TenToaNha = y.PhongKtx != null && y.PhongKtx.ToaNha != null
-                    ? (y.PhongKtx.ToaNha.TenToaNha ?? "")
-                    : "",
+                ? (y.PhongKtx.ToaNha.TenToaNha ?? "")
+                : "",
                 TaiSanKtxId = y.TaiSanKtxId,
                 TenTaiSan = y.TaiSanKtx != null ? (y.TaiSanKtx.TenTaiSan ?? "") : "",
                 MaTaiSan = y.TaiSanKtx != null ? (y.TaiSanKtx.MaTaiSan ?? "") : ""

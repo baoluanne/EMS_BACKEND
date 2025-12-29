@@ -2,7 +2,6 @@ using EMS.Domain.Entities;
 using EMS.Domain.Entities.Base;
 using EMS.Domain.Entities.Category;
 using EMS.Domain.Entities.ClassManagement;
-using EMS.Domain.Entities.FinancialModuleManagement;
 using EMS.Domain.Entities.KtxManagement;
 using EMS.Domain.Entities.StudentManagement;
 using EMS.Domain.Entities.TimeTable;
@@ -199,14 +198,6 @@ public class AppDbContext : DbContext
     public DbSet<MonTienQuyet> MonTienQuyet { get; set; } = null!;
     public DbSet<BangDiemChiTiet> BangDiemChiTiet { get; set; } = null!;
     public DbSet<ChuyenDoiHocPhan> ChuyenDoiHocPhan { get; set; } = null!;
-
-    public DbSet<CongNoSinhVien> CongNoSinhViens { get; set; } = null!;
-    public DbSet<PhieuThuSinhVien> PhieuThuSinhViens { get; set; } = null!;
-    public DbSet<PhieuChiSinhVien> PhieuChiSinhViens { get; set; } = null!;
-    public DbSet<CongNoChiTiet> CongNoChiTiets { get; set; } = null!;
-    public DbSet<HoaDonDienTuSinhVien> HoaDonDienTuSinhViens { get; set; } = null!;
-    public DbSet<MienGiamSinhVien> MienGiamSinhViens { get; set; } = null!;
-    public DbSet<ChinhSachMienGiam> ChinhSachMienGiams { get; set; } = null!;
 
     public DbSet<ToaNhaKtx> toaNhaKtxes { get; set; } = null!;
     public DbSet<PhongKtx> phongKtxes { get; set; } = null!;

@@ -8,7 +8,6 @@ using EMS.Application.Services.CurrentUserServices;
 using EMS.Application.Services.DanhMucHocBongServices;
 using EMS.Application.Services.DanhMucPhongBanServices;
 using EMS.Application.Services.DanhSachKhoaSuDungServices;
-using EMS.Application.Services.Financial;
 using EMS.Application.Services.KhenThuongServices;
 using EMS.Application.Services.KhoaHocServices;
 using EMS.Application.Services.KhoaServices;
@@ -43,7 +42,6 @@ using EMS.Application.Services.TrangThaiLopHPServices;
 using EMS.Application.Services.TrangThaiXetQuyUocServices;
 using EMS.Application.Services.XetLLHB_QuyCheTC_Services;
 using EMS.Domain.Entities;
-using EMS.Domain.Entities.FinancialModuleManagement;
 using EMS.Domain.Interfaces.Repositories.Base;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
@@ -118,8 +116,6 @@ public static class DependencyInjection
         services.AddScoped<INguoiDungService, NguoiDungService>();
         services.AddScoped<IAuthService, AuthService>();
         // Financial Module
-        services.AddScoped<CongNoSinhVien, CongNoSinhVien>();
-        services.AddScoped<PhieuThuSinhVien, PhieuThuSinhVien>();
         services.AddScoped<IBangDiemChiTietService, BangDiemChiTietService>();
 
 

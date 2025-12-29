@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EMS.EFCore.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251226014904_QuanliKTX10")]
-    partial class QuanliKTX10
+    [Migration("20251229092540_FinalKtxConfigCleanupWithUniques")]
+    partial class FinalKtxConfigCleanupWithUniques
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -2799,397 +2799,6 @@ namespace EMS.EFCore.Migrations
                     b.ToTable("DiaDiemPhong");
                 });
 
-            modelBuilder.Entity("EMS.Domain.Entities.FinancialModuleManagement.ChinhSachMienGiam", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("ApDungCho")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(30)
-                        .HasColumnType("character varying(30)")
-                        .HasDefaultValue("TatCa");
-
-                    b.Property<Guid?>("DoiTuongId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("GhiChu")
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
-
-                    b.Property<decimal>("GiaTri")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<Guid?>("IdNguoiCapNhat")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("IdNguoiTao")
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("LoaiChinhSach")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
-                        .HasDefaultValue("SoTien");
-
-                    b.Property<Guid?>("NamHocHocKyId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("NgayBatDau")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("NgayCapNhat")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("NgayKetThuc")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("NgayTao")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("TenChinhSach")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<string>("TrangThai")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(30)
-                        .HasColumnType("character varying(30)")
-                        .HasDefaultValue("HoatDong");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IdNguoiCapNhat");
-
-                    b.HasIndex("IdNguoiTao");
-
-                    b.HasIndex("NamHocHocKyId");
-
-                    b.HasIndex("TenChinhSach");
-
-                    b.HasIndex("TrangThai");
-
-                    b.ToTable("ChinhSachMienGiam", (string)null);
-                });
-
-            modelBuilder.Entity("EMS.Domain.Entities.FinancialModuleManagement.CongNoChiTiet", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("CongNoId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("GhiChu")
-                        .HasMaxLength(250)
-                        .HasColumnType("character varying(250)");
-
-                    b.Property<Guid?>("IdNguoiCapNhat")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("IdNguoiTao")
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<Guid>("LoaiKhoanThuId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("NgayCapNhat")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("NgayTao")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<decimal>("SoTien")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CongNoId");
-
-                    b.HasIndex("IdNguoiCapNhat");
-
-                    b.HasIndex("IdNguoiTao");
-
-                    b.ToTable("CongNoChiTiet", (string)null);
-                });
-
-            modelBuilder.Entity("EMS.Domain.Entities.FinancialModuleManagement.CongNoSinhVien", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<decimal>("DaThu")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("decimal(18,2)")
-                        .HasDefaultValue(0m);
-
-                    b.Property<string>("GhiChu")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.Property<DateTime>("HanNop")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("IdNguoiCapNhat")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("IdNguoiTao")
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<Guid>("NamHocHocKyId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("NgayCapNhat")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("NgayTao")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("SinhVienId")
-                        .HasColumnType("uuid");
-
-                    b.Property<decimal>("TongMienGiam")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("decimal(18,2)")
-                        .HasDefaultValue(0m);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IdNguoiCapNhat");
-
-                    b.HasIndex("IdNguoiTao");
-
-                    b.HasIndex("NamHocHocKyId");
-
-                    b.HasIndex("SinhVienId", "NamHocHocKyId")
-                        .IsUnique();
-
-                    b.ToTable("CongNoSinhVien", (string)null);
-                });
-
-            modelBuilder.Entity("EMS.Domain.Entities.FinancialModuleManagement.HoaDonDienTuSinhVien", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("IdNguoiCapNhat")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("IdNguoiTao")
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("LinkPDF")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.Property<string>("LinkXML")
-                        .HasColumnType("text");
-
-                    b.Property<string>("MaHoaDon")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<DateTime>("NgayCapNhat")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("NgayPhatHanh")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("NgayTao")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("NhaCungCap")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<Guid>("PhieuThuId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("TrangThai")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasDefaultValue("ChoPhatHanh");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IdNguoiCapNhat");
-
-                    b.HasIndex("IdNguoiTao");
-
-                    b.HasIndex("MaHoaDon")
-                        .IsUnique();
-
-                    b.HasIndex("PhieuThuId")
-                        .IsUnique();
-
-                    b.ToTable("HoaDonDienTuSinhVien", (string)null);
-                });
-
-            modelBuilder.Entity("EMS.Domain.Entities.FinancialModuleManagement.PhieuChiSinhVien", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("HinhThucChi")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<Guid?>("IdNguoiCapNhat")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("IdNguoiTao")
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("LyDoChi")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.Property<string>("NganHangNhan")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<DateTime>("NgayCapNhat")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("NgayChi")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("NgayTao")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("SinhVienId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("SinhVienId1")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("SoPhieu")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<string>("SoTaiKhoanNhan")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<decimal>("SoTien")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IdNguoiCapNhat");
-
-                    b.HasIndex("IdNguoiTao");
-
-                    b.HasIndex("SinhVienId");
-
-                    b.HasIndex("SinhVienId1");
-
-                    b.HasIndex("SoPhieu")
-                        .IsUnique();
-
-                    b.ToTable("PhieuChiSinhVien", (string)null);
-                });
-
-            modelBuilder.Entity("EMS.Domain.Entities.FinancialModuleManagement.PhieuThuSinhVien", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("CongNoId")
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("DaHuy")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("GhiChu")
-                        .HasColumnType("text");
-
-                    b.Property<string>("HinhThucThanhToan")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<Guid?>("IdNguoiCapNhat")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("IdNguoiTao")
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime>("NgayCapNhat")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("NgayTao")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("NgayThu")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("NguoiThu")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<Guid>("SinhVienId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("SoPhieu")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<decimal>("SoTien")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CongNoId");
-
-                    b.HasIndex("IdNguoiCapNhat");
-
-                    b.HasIndex("IdNguoiTao");
-
-                    b.HasIndex("SinhVienId");
-
-                    b.HasIndex("SoPhieu")
-                        .IsUnique();
-
-                    b.ToTable("PhieuThuSinhVien", (string)null);
-                });
-
             modelBuilder.Entity("EMS.Domain.Entities.GiangVien", b =>
                 {
                     b.Property<Guid>("Id")
@@ -4270,7 +3879,8 @@ namespace EMS.EFCore.Migrations
                     b.HasIndex("IdNguoiTao");
 
                     b.HasIndex("PhongKtxId", "Thang", "Nam")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("IX_ChiSoDienNuoc_Phong_Thang_Nam_Unique");
 
                     b.ToTable("ChiSoDienNuoc", (string)null);
                 });
@@ -4318,6 +3928,9 @@ namespace EMS.EFCore.Migrations
                     b.Property<Guid>("SinhVienId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("SinhVienId1")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("TrangThai")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
@@ -4334,6 +3947,8 @@ namespace EMS.EFCore.Migrations
                     b.HasIndex("IdNguoiCapNhat");
 
                     b.HasIndex("IdNguoiTao");
+
+                    b.HasIndex("SinhVienId1");
 
                     b.HasIndex("GiuongKtxId", "TrangThai")
                         .HasFilter("\"TrangThai\" = 'DangO'");
@@ -4419,6 +4034,10 @@ namespace EMS.EFCore.Migrations
 
                     b.HasIndex("IdSinhVien");
 
+                    b.HasIndex("MaDon")
+                        .IsUnique()
+                        .HasDatabaseName("IX_DonKtx_MaDon_Unique");
+
                     b.HasIndex("PhongDuocDuyet");
 
                     b.HasIndex("PhongHienTai");
@@ -4470,6 +4089,10 @@ namespace EMS.EFCore.Migrations
                     b.HasIndex("IdNguoiCapNhat");
 
                     b.HasIndex("IdNguoiTao");
+
+                    b.HasIndex("MaGiuong")
+                        .IsUnique()
+                        .HasDatabaseName("IX_GiuongKtx_MaGiuong_Unique");
 
                     b.HasIndex("PhongKtxId");
 
@@ -4534,7 +4157,8 @@ namespace EMS.EFCore.Migrations
 
                     b.Property<string>("TrangThai")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.HasKey("Id");
 
@@ -4545,7 +4169,8 @@ namespace EMS.EFCore.Migrations
                     b.HasIndex("IdNguoiTao");
 
                     b.HasIndex("PhongKtxId", "Thang", "Nam")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("IX_HoaDonKtx_Phong_Thang_Nam_Unique");
 
                     b.ToTable("HoaDonKtx", (string)null);
                 });
@@ -4598,6 +4223,10 @@ namespace EMS.EFCore.Migrations
                     b.HasIndex("IdNguoiCapNhat");
 
                     b.HasIndex("IdNguoiTao");
+
+                    b.HasIndex("MaPhong")
+                        .IsUnique()
+                        .HasDatabaseName("IX_PhongKtx_MaPhong_Unique");
 
                     b.HasIndex("ToaNhaId");
 
@@ -4700,6 +4329,10 @@ namespace EMS.EFCore.Migrations
                     b.HasIndex("IdNguoiCapNhat");
 
                     b.HasIndex("IdNguoiTao");
+
+                    b.HasIndex("TenToaNha")
+                        .IsUnique()
+                        .HasDatabaseName("IX_ToaNhaKtx_TenToaNha_Unique");
 
                     b.ToTable("ToaNhaKtx", (string)null);
                 });
@@ -9367,75 +9000,6 @@ namespace EMS.EFCore.Migrations
                     b.ToTable("XetLLHB_QuyCheTC");
                 });
 
-            modelBuilder.Entity("MienGiamSinhVien", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ChinhSachMienGiamId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("CongNoId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("IdNguoiCapNhat")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("IdNguoiTao")
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("LyDo")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.Property<Guid>("NamHocHocKyId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("NgayCapNhat")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("NgayDuyet")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("NgayTao")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("SinhVienId")
-                        .HasColumnType("uuid");
-
-                    b.Property<decimal>("SoTien")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("TrangThai")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasDefaultValue("ChoDuyet");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ChinhSachMienGiamId");
-
-                    b.HasIndex("CongNoId");
-
-                    b.HasIndex("IdNguoiCapNhat");
-
-                    b.HasIndex("IdNguoiTao");
-
-                    b.HasIndex("NamHocHocKyId");
-
-                    b.HasIndex("SinhVienId");
-
-                    b.HasIndex("TrangThai");
-
-                    b.ToTable("MienGiamSinhVien", (string)null);
-                });
-
             modelBuilder.Entity("EMS.Domain.Entities.ApDungQuyCheHocVu", b =>
                 {
                     b.HasOne("EMS.Domain.Entities.BacDaoTao", "BacDaoTao")
@@ -10764,161 +10328,6 @@ namespace EMS.EFCore.Migrations
                     b.Navigation("NguoiTao");
                 });
 
-            modelBuilder.Entity("EMS.Domain.Entities.FinancialModuleManagement.ChinhSachMienGiam", b =>
-                {
-                    b.HasOne("EMS.Domain.Entities.NguoiDung", "NguoiCapNhat")
-                        .WithMany()
-                        .HasForeignKey("IdNguoiCapNhat");
-
-                    b.HasOne("EMS.Domain.Entities.NguoiDung", "NguoiTao")
-                        .WithMany()
-                        .HasForeignKey("IdNguoiTao");
-
-                    b.HasOne("EMS.Domain.Entities.NamHoc_HocKy", "NamHocHocKy")
-                        .WithMany()
-                        .HasForeignKey("NamHocHocKyId");
-
-                    b.Navigation("NamHocHocKy");
-
-                    b.Navigation("NguoiCapNhat");
-
-                    b.Navigation("NguoiTao");
-                });
-
-            modelBuilder.Entity("EMS.Domain.Entities.FinancialModuleManagement.CongNoChiTiet", b =>
-                {
-                    b.HasOne("EMS.Domain.Entities.FinancialModuleManagement.CongNoSinhVien", "CongNo")
-                        .WithMany("ChiTiets")
-                        .HasForeignKey("CongNoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("EMS.Domain.Entities.NguoiDung", "NguoiCapNhat")
-                        .WithMany()
-                        .HasForeignKey("IdNguoiCapNhat");
-
-                    b.HasOne("EMS.Domain.Entities.NguoiDung", "NguoiTao")
-                        .WithMany()
-                        .HasForeignKey("IdNguoiTao");
-
-                    b.Navigation("CongNo");
-
-                    b.Navigation("NguoiCapNhat");
-
-                    b.Navigation("NguoiTao");
-                });
-
-            modelBuilder.Entity("EMS.Domain.Entities.FinancialModuleManagement.CongNoSinhVien", b =>
-                {
-                    b.HasOne("EMS.Domain.Entities.NguoiDung", "NguoiCapNhat")
-                        .WithMany()
-                        .HasForeignKey("IdNguoiCapNhat");
-
-                    b.HasOne("EMS.Domain.Entities.NguoiDung", "NguoiTao")
-                        .WithMany()
-                        .HasForeignKey("IdNguoiTao");
-
-                    b.HasOne("EMS.Domain.Entities.NamHoc_HocKy", "NamHocHocKy")
-                        .WithMany()
-                        .HasForeignKey("NamHocHocKyId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("EMS.Domain.Entities.StudentManagement.SinhVien", "SinhVien")
-                        .WithMany("CongNos")
-                        .HasForeignKey("SinhVienId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("NamHocHocKy");
-
-                    b.Navigation("NguoiCapNhat");
-
-                    b.Navigation("NguoiTao");
-
-                    b.Navigation("SinhVien");
-                });
-
-            modelBuilder.Entity("EMS.Domain.Entities.FinancialModuleManagement.HoaDonDienTuSinhVien", b =>
-                {
-                    b.HasOne("EMS.Domain.Entities.NguoiDung", "NguoiCapNhat")
-                        .WithMany()
-                        .HasForeignKey("IdNguoiCapNhat");
-
-                    b.HasOne("EMS.Domain.Entities.NguoiDung", "NguoiTao")
-                        .WithMany()
-                        .HasForeignKey("IdNguoiTao");
-
-                    b.HasOne("EMS.Domain.Entities.FinancialModuleManagement.PhieuThuSinhVien", "PhieuThu")
-                        .WithOne("HoaDonDienTu")
-                        .HasForeignKey("EMS.Domain.Entities.FinancialModuleManagement.HoaDonDienTuSinhVien", "PhieuThuId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("NguoiCapNhat");
-
-                    b.Navigation("NguoiTao");
-
-                    b.Navigation("PhieuThu");
-                });
-
-            modelBuilder.Entity("EMS.Domain.Entities.FinancialModuleManagement.PhieuChiSinhVien", b =>
-                {
-                    b.HasOne("EMS.Domain.Entities.NguoiDung", "NguoiCapNhat")
-                        .WithMany()
-                        .HasForeignKey("IdNguoiCapNhat");
-
-                    b.HasOne("EMS.Domain.Entities.NguoiDung", "NguoiTao")
-                        .WithMany()
-                        .HasForeignKey("IdNguoiTao");
-
-                    b.HasOne("EMS.Domain.Entities.StudentManagement.SinhVien", "SinhVien")
-                        .WithMany()
-                        .HasForeignKey("SinhVienId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("EMS.Domain.Entities.StudentManagement.SinhVien", null)
-                        .WithMany("PhieuChis")
-                        .HasForeignKey("SinhVienId1");
-
-                    b.Navigation("NguoiCapNhat");
-
-                    b.Navigation("NguoiTao");
-
-                    b.Navigation("SinhVien");
-                });
-
-            modelBuilder.Entity("EMS.Domain.Entities.FinancialModuleManagement.PhieuThuSinhVien", b =>
-                {
-                    b.HasOne("EMS.Domain.Entities.FinancialModuleManagement.CongNoSinhVien", "CongNo")
-                        .WithMany("PhieuThus")
-                        .HasForeignKey("CongNoId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("EMS.Domain.Entities.NguoiDung", "NguoiCapNhat")
-                        .WithMany()
-                        .HasForeignKey("IdNguoiCapNhat");
-
-                    b.HasOne("EMS.Domain.Entities.NguoiDung", "NguoiTao")
-                        .WithMany()
-                        .HasForeignKey("IdNguoiTao");
-
-                    b.HasOne("EMS.Domain.Entities.StudentManagement.SinhVien", "SinhVien")
-                        .WithMany("PhieuThus")
-                        .HasForeignKey("SinhVienId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("CongNo");
-
-                    b.Navigation("NguoiCapNhat");
-
-                    b.Navigation("NguoiTao");
-
-                    b.Navigation("SinhVien");
-                });
-
             modelBuilder.Entity("EMS.Domain.Entities.GiangVien", b =>
                 {
                     b.HasOne("EMS.Domain.Entities.ToBoMon", "ToBoMon")
@@ -11299,7 +10708,8 @@ namespace EMS.EFCore.Migrations
                     b.HasOne("EMS.Domain.Entities.KtxManagement.PhongKtx", "PhongKtx")
                         .WithMany("ChiSoDienNuocs")
                         .HasForeignKey("PhongKtxId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("NguoiCapNhat");
 
@@ -11334,10 +10744,14 @@ namespace EMS.EFCore.Migrations
                         .HasForeignKey("IdNguoiTao");
 
                     b.HasOne("EMS.Domain.Entities.StudentManagement.SinhVien", "SinhVien")
-                        .WithMany("CuTruKtxs")
+                        .WithMany()
                         .HasForeignKey("SinhVienId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("EMS.Domain.Entities.StudentManagement.SinhVien", null)
+                        .WithMany("CuTruKtxs")
+                        .HasForeignKey("SinhVienId1");
 
                     b.Navigation("DonKtx");
 
@@ -13370,51 +12784,6 @@ namespace EMS.EFCore.Migrations
                     b.Navigation("QuyCheHocVu");
                 });
 
-            modelBuilder.Entity("MienGiamSinhVien", b =>
-                {
-                    b.HasOne("EMS.Domain.Entities.FinancialModuleManagement.ChinhSachMienGiam", "ChinhSachMienGiam")
-                        .WithMany("DanhSachApDung")
-                        .HasForeignKey("ChinhSachMienGiamId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("EMS.Domain.Entities.FinancialModuleManagement.CongNoSinhVien", "CongNo")
-                        .WithMany("MienGiams")
-                        .HasForeignKey("CongNoId");
-
-                    b.HasOne("EMS.Domain.Entities.NguoiDung", "NguoiCapNhat")
-                        .WithMany()
-                        .HasForeignKey("IdNguoiCapNhat");
-
-                    b.HasOne("EMS.Domain.Entities.NguoiDung", "NguoiTao")
-                        .WithMany()
-                        .HasForeignKey("IdNguoiTao");
-
-                    b.HasOne("EMS.Domain.Entities.NamHoc_HocKy", "NamHocKy")
-                        .WithMany()
-                        .HasForeignKey("NamHocHocKyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("EMS.Domain.Entities.StudentManagement.SinhVien", "SinhVien")
-                        .WithMany("MienGiams")
-                        .HasForeignKey("SinhVienId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ChinhSachMienGiam");
-
-                    b.Navigation("CongNo");
-
-                    b.Navigation("NamHocKy");
-
-                    b.Navigation("NguoiCapNhat");
-
-                    b.Navigation("NguoiTao");
-
-                    b.Navigation("SinhVien");
-                });
-
             modelBuilder.Entity("EMS.Domain.Entities.ChuongTrinhKhungNienChe", b =>
                 {
                     b.Navigation("ChiTietChuongTrinhKhungNienChes");
@@ -13454,25 +12823,6 @@ namespace EMS.EFCore.Migrations
             modelBuilder.Entity("EMS.Domain.Entities.DiaDiemPhong", b =>
                 {
                     b.Navigation("DayNha");
-                });
-
-            modelBuilder.Entity("EMS.Domain.Entities.FinancialModuleManagement.ChinhSachMienGiam", b =>
-                {
-                    b.Navigation("DanhSachApDung");
-                });
-
-            modelBuilder.Entity("EMS.Domain.Entities.FinancialModuleManagement.CongNoSinhVien", b =>
-                {
-                    b.Navigation("ChiTiets");
-
-                    b.Navigation("MienGiams");
-
-                    b.Navigation("PhieuThus");
-                });
-
-            modelBuilder.Entity("EMS.Domain.Entities.FinancialModuleManagement.PhieuThuSinhVien", b =>
-                {
-                    b.Navigation("HoaDonDienTu");
                 });
 
             modelBuilder.Entity("EMS.Domain.Entities.KtxManagement.ChiSoDienNuoc", b =>
@@ -13548,21 +12898,13 @@ namespace EMS.EFCore.Migrations
                 {
                     b.Navigation("BangDiemChiTiets");
 
-                    b.Navigation("CongNos");
-
                     b.Navigation("CuTruKtxs");
 
                     b.Navigation("DangKyHocPhans");
 
                     b.Navigation("DanhSachSinhVienDuocInThes");
 
-                    b.Navigation("MienGiams");
-
                     b.Navigation("MonHocDuocMiens");
-
-                    b.Navigation("PhieuChis");
-
-                    b.Navigation("PhieuThus");
 
                     b.Navigation("YeuCauSuaChuas");
                 });

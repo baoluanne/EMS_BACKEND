@@ -1,4 +1,5 @@
-﻿using EMS.Domain.Entities.KtxManagement;
+﻿// YeuCauSuaChuaConfiguration.cs
+using EMS.Domain.Entities.KtxManagement;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -34,17 +35,11 @@ namespace EMS.Infrastructure.Configurations.KtxConfiguration
 
             builder.Property(x => x.NgayGui)
                 .HasDefaultValueSql("NOW() AT TIME ZONE 'UTC'")
-                .ValueGeneratedOnAdd()   
-                .IsRequired();      
-
-            builder.Property(x => x.NgayXuLy)
-                .IsRequired(false);
-
-            builder.Property(x => x.NgayHoanThanh)
-                .IsRequired(false);
+                .ValueGeneratedOnAdd()
+                .IsRequired();
 
             builder.HasOne(x => x.SinhVien)
-                .WithMany() 
+                .WithMany()
                 .HasForeignKey(x => x.SinhVienId)
                 .OnDelete(DeleteBehavior.Restrict);
 
@@ -56,13 +51,11 @@ namespace EMS.Infrastructure.Configurations.KtxConfiguration
             builder.HasOne(x => x.TaiSanKtx)
                 .WithMany(t => t.YeuCauSuaChuas)
                 .HasForeignKey(x => x.TaiSanKtxId)
-                .IsRequired(false)
                 .OnDelete(DeleteBehavior.SetNull);
 
             builder.HasOne(x => x.HoaDonKtx)
                 .WithMany(h => h.YeuCauSuaChuas)
                 .HasForeignKey(x => x.HoaDonKtxId)
-                .IsRequired(false)
                 .OnDelete(DeleteBehavior.SetNull);
 
             builder.HasQueryFilter(x => !x.IsDeleted);

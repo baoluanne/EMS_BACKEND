@@ -1,4 +1,5 @@
-﻿using EMS.Domain.Entities.KtxManagement;
+﻿// ToaNhaKtxConfiguration.cs
+using EMS.Domain.Entities.KtxManagement;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -16,13 +17,17 @@ namespace EMS.Infrastructure.Configurations.KtxConfiguration
                 .HasMaxLength(100)
                 .IsRequired();
 
+            builder.HasIndex(x => x.TenToaNha)
+                .IsUnique()
+                .HasDatabaseName("IX_ToaNhaKtx_TenToaNha_Unique");
+
             builder.Property(x => x.LoaiToaNha)
                 .HasMaxLength(50);
 
             builder.HasMany(x => x.PhongKtxs)
-                .WithOne(x => x.ToaNha)
-                .HasForeignKey(x => x.ToaNhaId)
-                .OnDelete(DeleteBehavior.Restrict); 
+                .WithOne(p => p.ToaNha)
+                .HasForeignKey(p => p.ToaNhaId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

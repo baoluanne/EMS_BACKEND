@@ -2,7 +2,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 using EMS.Domain.Entities.Base;
 using EMS.Domain.Entities.Category;
 using EMS.Domain.Entities.ClassManagement;
-using EMS.Domain.Entities.FinancialModuleManagement;
 using EMS.Domain.Entities.KtxManagement;
 using EMS.Domain.Enums;
 
@@ -244,22 +243,22 @@ namespace EMS.Domain.Entities.StudentManagement
         /// <summary>
         /// Danh sách công nợ của sinh viên
         /// </summary>
-        public virtual ICollection<CongNoSinhVien> CongNos { get; set; } = new List<CongNoSinhVien>();
+        //public virtual ICollection<CongNoSinhVien> CongNos { get; set; } = new List<CongNoSinhVien>();
 
-        /// <summary>
-        /// Lịch sử đóng tiền (Phiếu thu)
-        /// </summary>
-        public virtual ICollection<PhieuThuSinhVien> PhieuThus { get; set; } = new List<PhieuThuSinhVien>();
+        ///// <summary>
+        ///// Lịch sử đóng tiền (Phiếu thu)
+        ///// </summary>
+        //public virtual ICollection<PhieuThuSinhVien> PhieuThus { get; set; } = new List<PhieuThuSinhVien>();
 
-        /// <summary>
-        /// Danh sách miễn giảm/học bổng
-        /// </summary>
-        public virtual ICollection<MienGiamSinhVien> MienGiams { get; set; } = new List<MienGiamSinhVien>();
+        ///// <summary>
+        ///// Danh sách miễn giảm/học bổng
+        ///// </summary>
+        //public virtual ICollection<MienGiamSinhVien> MienGiams { get; set; } = new List<MienGiamSinhVien>();
 
-        /// <summary>
-        /// Danh sách phiếu chi/hoàn tiền
-        /// </summary>
-        public virtual ICollection<PhieuChiSinhVien> PhieuChis { get; set; } = new List<PhieuChiSinhVien>();
+        ///// <summary>
+        ///// Danh sách phiếu chi/hoàn tiền
+        ///// </summary>
+        //public virtual ICollection<PhieuChiSinhVien> PhieuChis { get; set; } = new List<PhieuChiSinhVien>();
         public virtual ICollection<BangDiemChiTiet>? BangDiemChiTiets { get; set; }
         public virtual ICollection<CuTruKtx> CuTruKtxs { get; set; } = new List<CuTruKtx>();
         public virtual ICollection<YeuCauSuaChua> YeuCauSuaChuas { get; set; } = new List<YeuCauSuaChua>();
