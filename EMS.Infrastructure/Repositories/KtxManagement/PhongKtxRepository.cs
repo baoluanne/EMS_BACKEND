@@ -12,10 +12,10 @@ namespace EMS.Infrastructure.Repositories.KtxManagement
         : AuditRepository<PhongKtx>(dbFactory), IPhongKtxRepository
     {
         public async Task<(List<PhongKtxResponseDto> Data, int Total)> GetPaginatedWithDetailsAsync(
-    PaginationRequest request,
-    string? maPhong = null,
-    string? toaNhaId = null,
-    string? trangThai = null)
+            PaginationRequest request,
+            string? maPhong = null,
+            string? toaNhaId = null,
+            string? trangThai = null)
         {
             var query = DbSet.AsNoTracking()
                 .Include(i => i.ToaNha)

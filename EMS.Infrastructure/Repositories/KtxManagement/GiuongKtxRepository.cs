@@ -12,11 +12,34 @@ namespace EMS.Infrastructure.Repositories.KtxManagement
     public class GiuongKtxRepository(DbFactory dbFactory)
         : AuditRepository<GiuongKtx>(dbFactory), IGiuongKtxRepository
     {
-        public async Task<(List<GiuongKtxResponseDto> Data, int Total)> GetPaginatedWithDetailsAsync(PaginationRequest request)
+        public async Task<(List<GiuongKtxResponseDto> Data, int Total)> GetPaginatedWithDetailsAsync(
+            PaginationRequest request,
+            string? maGiuong = null,
+            string? phongKtxId = null,
+            string? trangThai = null)
         {
             var query = DbSet
                 .AsNoTracking()
-                .Where(g => !g.IsDeleted && !g.PhongKtx.IsDeleted && !g.PhongKtx.ToaNha.IsDeleted)
+                .Where(g => !g.IsDeleted && !g.PhongKtx.IsDeleted && !g.PhongKtx.ToaNha.IsDeleted);
+
+            if (!string.IsNullOrEmpty(maGiuong))
+            {
+                query = query.Where(g => g.MaGiuong.Contains(maGiuong));
+            }
+
+            if (!string.IsNullOrEmpty(trangThai))
+            {
+                query = query.Where(g => g.TrangThai == trangThai);
+            }
+
+            if (!string.IsNullOrEmpty(phongKtxId) && Guid.TryParse(phongKtxId, out Guid pId))
+            {
+                query = query.Where(g => g.PhongKtxId == pId);
+            }
+
+            var total = await query.CountAsync();
+
+            var data = await query
                 .Include(g => g.PhongKtx)
                     .ThenInclude(p => p.ToaNha)
                 .Include(g => g.SinhVien)
@@ -31,16 +54,11 @@ namespace EMS.Infrastructure.Repositories.KtxManagement
                     TenSinhVien = g.SinhVien != null
                         ? $"{g.SinhVien.HoDem} {g.SinhVien.Ten}".Trim()
                         : null,
-                    TrangThai = g.TrangThai
-                });
-
-            var total = await query.CountAsync();
-
-            var data = await query
+                    TrangThai = g.TrangThai ?? "TRONG"
+                })
                 .OrderBy(g => g.TenToaNha)
                 .ThenBy(g => g.MaPhong)
                 .ThenBy(g => g.MaGiuong)
-                .Skip((request.Page - 1) * request.PageSize)
                 .Take(request.PageSize)
                 .ToListAsync();
 

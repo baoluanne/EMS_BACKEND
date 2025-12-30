@@ -20,13 +20,7 @@ namespace EMS.Domain.Interfaces.Repositories.KtxManagement.Dtos
 
     public class GiuongKtxPagingResponse
     {
-        public List<GiuongKtxResponseDto> Data { get; set; } = new();
-        public int Total { get; set; }
-    }
-    public class UpdateGiuongKtxDto
-    {
-        public string MaGiuong { get; set; }
-        public Guid PhongKtxId { get; set; }
-        public string TrangThai { get; set; }
+        public List<GiuongKtxResponseDto> data { get; set; } = new();
+        public int total { get; set; }
     }
 }

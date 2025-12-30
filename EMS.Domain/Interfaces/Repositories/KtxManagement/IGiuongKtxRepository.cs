@@ -12,6 +12,10 @@ namespace EMS.Domain.Interfaces.Repositories.KtxManagement
 {
     public interface IGiuongKtxRepository : IAuditRepository<GiuongKtx>
     {
-        Task<(List<GiuongKtxResponseDto> Data, int Total)> GetPaginatedWithDetailsAsync(PaginationRequest request);
+        Task<(List<GiuongKtxResponseDto> Data, int Total)> GetPaginatedWithDetailsAsync(
+            PaginationRequest request,
+            string? maGiuong = null,
+            string? phongKtxId = null,
+            string? trangThai = null);
     }
 }

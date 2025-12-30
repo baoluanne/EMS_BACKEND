@@ -1,160 +1,98 @@
 ﻿using EMS.Application.DTOs.KtxManagement;
 using EMS.Application.Services.Base;
 using EMS.Domain.Entities.KtxManagement;
+using EMS.Domain.Exceptions;
 using EMS.Domain.Interfaces.DataAccess;
-using EMS.Domain.Interfaces.Repositories.Base;
 using EMS.Domain.Interfaces.Repositories.KtxManagement;
 using EMS.Domain.Interfaces.Repositories.KtxManagement.Dtos;
 using EMS.Domain.Models;
 using LanguageExt.Common;
+using LinqKit;
+using Microsoft.EntityFrameworkCore;
 
-namespace EMS.Application.Services.KtxService
+namespace EMS.Application.Services.KtxService;
+
+public class GiuongKtxService(
+    IUnitOfWork unitOfWork,
+    IGiuongKtxRepository giuongRepository,
+    IPhongKtxRepository phongRepository)
+    : BaseService<GiuongKtx>(unitOfWork, giuongRepository), IGiuongKtxService
 {
-    public class GiuongKtxService : BaseService<GiuongKtx>, IGiuongKtxService
+    public async Task<Result<GiuongKtxPagingResponse>> GetPaginatedAsync(PaginationRequest request,
+        string? maGiuong = null,
+        string? phongKtxId = null,
+        string? trangThai = null)
     {
-        private readonly IGiuongKtxRepository _giuongRepository;
-         private readonly IPhongKtxRepository _phongRepository;
-
-        public GiuongKtxService(
-           IUnitOfWork unitOfWork,
-           IGiuongKtxRepository giuongRepository,
-           IPhongKtxRepository phongRepository)
-           : base(unitOfWork, giuongRepository)
+        try
         {
-            _giuongRepository = giuongRepository;
-            _phongRepository = phongRepository;
+            var (data, total) = await giuongRepository.GetPaginatedWithDetailsAsync(request, maGiuong, phongKtxId, trangThai);
+            return new Result<GiuongKtxPagingResponse>(new GiuongKtxPagingResponse { data = data, total = total });
         }
-
-        public override async Task<Result<GiuongKtx>> CreateAsync(GiuongKtx entity)
+        catch (Exception ex)
         {
-            try
-            {
-                var createResult = await base.CreateAsync(entity);
-
-                if (createResult.IsFaulted)
-                {
-                    return createResult;
-                }
-                var phong = await _phongRepository.GetByIdAsync(entity.PhongKtxId);
-                if (phong != null)
-                {
-                    phong.SoLuongGiuong += 1;
-
-                    _phongRepository.Update(phong);
-                    await UnitOfWork.CommitAsync();
-                }
-
-                return createResult;
-            }
-            catch (Exception ex)
-            {
-                return new Result<GiuongKtx>(ex);
-            }
+            return new Result<GiuongKtxPagingResponse>(ex);
         }
-
-        public override async Task<Result<bool>> DeleteAsync(Guid id)
+    }
+    public override async Task<Result<GiuongKtx>> CreateAsync(GiuongKtx entity)
+    {
+        try
         {
-            try
+            var exits = await giuongRepository.GetFirstAsync(g => g.MaGiuong == entity.MaGiuong && !g.IsDeleted);
+            if (exits != null)
             {
-                var giuong = await _giuongRepository.GetByIdAsync(id);
-                if (giuong == null)
-                {
-                    return new Result<bool>(new Exception("Không tìm thấy giường"));
-                }
-
-                var phongId = giuong.PhongKtxId;
-
-                var deleteResult = await base.DeleteAsync(id);
-
-                if (deleteResult.IsFaulted)
-                {
-                    return deleteResult;
-                }
-
-                var phong = await _phongRepository.GetByIdAsync(phongId);
-                if (phong != null && phong.SoLuongGiuong > 0)
-                {
-                    phong.SoLuongGiuong -= 1;
-                    _phongRepository.Update(phong);
-                    await UnitOfWork.CommitAsync();
-                }
-
-                return deleteResult;
+                return new Result<GiuongKtx>(new BadRequestException($"Mã Giường '{entity.MaGiuong}' đã tồn tại."));
             }
-            catch (Exception ex)
+            var PhongKtx = await phongRepository.GetFirstAsync(g => g.Id == entity.Id);
+            if (PhongKtx != null)
             {
-                return new Result<bool>(ex);
+                PhongKtx.MaPhong += 1;
+                phongRepository.Update(PhongKtx);
             }
+
+            return await base.CreateAsync(entity);
         }
-
-        public override async Task<Result<GiuongKtx>> UpdateAsync(Guid id, GiuongKtx entity)
+        catch (Exception ex)
         {
-            try
-            {
-                var existingGiuong = await _giuongRepository.GetByIdAsync(id);
-                if (existingGiuong == null)
-                {
-                    return new Result<GiuongKtx>(new Exception("Không tìm thấy giường"));
-                }
-
-                var oldPhongId = existingGiuong.PhongKtxId;
-                var newPhongId = entity.PhongKtxId;
-
-                var updateResult = await base.UpdateAsync(id, entity);
-
-                if (updateResult.IsFaulted)
-                {
-                    return updateResult;
-                }
-
-                if (oldPhongId != newPhongId)
-                {
-                    var oldPhong = await _phongRepository.GetByIdAsync(oldPhongId);
-                    if (oldPhong != null && oldPhong.SoLuongGiuong > 0)
-                    {
-                        oldPhong.SoLuongGiuong -= 1;
-                        _phongRepository.Update(oldPhong);
-                    }
-
-                    var newPhong = await _phongRepository.GetByIdAsync(newPhongId);
-                    if (newPhong != null)
-                    {
-                        newPhong.SoLuongGiuong += 1;
-                        _phongRepository.Update(newPhong);
-                    }
-
-                    await UnitOfWork.CommitAsync();
-                }
-
-                return updateResult;
-            }
-            catch (Exception ex)
-            {
-                return new Result<GiuongKtx>(ex);
-            }
+            return new Result<GiuongKtx>(ex);
         }
+    }
 
-        public async Task<Result<GiuongKtxPagingResponse>> GetPaginatedAsync(PaginationRequest request)
+    public override async Task<Result<GiuongKtx>> UpdateAsync(Guid id, GiuongKtx entity)
+    {
+        try
         {
-            try
+            var existingGiuong = await giuongRepository.GetByIdAsync(id);
+            if (existingGiuong == null)
             {
-                var (data, total) = await _giuongRepository.GetPaginatedWithDetailsAsync(request);
-                return new Result<GiuongKtxPagingResponse>(new GiuongKtxPagingResponse { Data = data, Total = total });
+                return new Result<GiuongKtx>(new NotFoundException("Không tìm thấy giường cần cập nhật."));
             }
-            catch (Exception ex)
+            if (existingGiuong.MaGiuong != entity.MaGiuong)
             {
-                return new Result<GiuongKtxPagingResponse>(ex);
+                var duplicate = await giuongRepository.GetFirstAsync(g => g.MaGiuong == entity.MaGiuong && g.Id != id && !g.IsDeleted);
+                if (duplicate != null)
+                {
+                    return new Result<GiuongKtx>(new BadRequestException($"Mã giường '{entity.MaGiuong}' đã tồn tại ở một giường khác."));
+                }
             }
+            var result = await base.UpdateAsync(id, entity);
+
+            if (result.IsSuccess)
+            {
+                await UnitOfWork.CommitAsync();
+            }
+
+            return result;
         }
-
-
-        protected override Task UpdateEntityProperties(GiuongKtx existingEntity, GiuongKtx newEntity)
+        catch (Exception ex)
         {
-            existingEntity.MaGiuong = newEntity.MaGiuong;
-            existingEntity.PhongKtxId = newEntity.PhongKtxId;
-            existingEntity.TrangThai = newEntity.TrangThai;
-            existingEntity.SinhVienId = newEntity.SinhVienId;
-            return Task.CompletedTask;
+            return new Result<GiuongKtx>(ex);
         }
+    }
+
+    protected override Task UpdateEntityProperties(GiuongKtx existingEntity, GiuongKtx newEntity)
+    {
+        existingEntity.MaGiuong = newEntity.MaGiuong;
+        existingEntity.TrangThai = newEntity.TrangThai;
+        return Task.CompletedTask;
     }
 }

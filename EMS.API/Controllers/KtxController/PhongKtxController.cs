@@ -1,51 +1,34 @@
 ﻿using EMS.API.Controllers.Base;
-using EMS.Application.DTOs.KtxManagement;
 using EMS.Application.Services.KtxService;
 using EMS.Domain.Entities.KtxManagement;
+using EMS.Domain.Extensions;
 using EMS.Domain.Models;
-using LanguageExt.Common;
 using Microsoft.AspNetCore.Mvc;
 
-namespace EMS.API.Controllers.KtxManagement
+namespace EMS.API.Controllers.KtxManagement;
+
+[ApiController]
+[Route("api/[controller]")]
+public class PhongKtxController(IPhongKtxService service) : BaseController<PhongKtx>(service)
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    [Route("api/phong-ktx")]
-    public class PhongKtxController : BaseController<PhongKtx>
+    public override async Task<IActionResult> GetAll()
     {
-        private readonly IPhongKtxService _service;
-
-        public PhongKtxController(IPhongKtxService service) : base(service)
-        {
-            _service = service;
-        }
-
-        [HttpPost("tao-phong-moi")]
-        public async Task<IActionResult> TaoPhongMoi([FromBody] CreatePhongKtxRequestDto request)
-        {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
-
-            var result = await _service.TaoPhongMoiAsync(request);
-
-            return result.Match<IActionResult>(
-                Succ: dto => Ok(dto),
-                Fail: err => BadRequest(new { error = err.Message })
-            );
-        }
-
-        [HttpGet("pagination")]
-        public async Task<IActionResult> GetPaginated(
-    [FromQuery] PaginationRequest request,
-    [FromQuery] string? maPhong = null,
-    [FromQuery] string? toaNhaId = null,
-    [FromQuery] string? trangThai = null)
-        {
-            var result = await _service.GetPaginatedAsync(request, maPhong, toaNhaId, trangThai);
-
-            return result.Match<IActionResult>(
-                success => Ok(success),
-                fail => BadRequest(new { error = fail.Message })
-            );
-        }
+        var result = await Service.GetAllAsync();
+        return result.ToResult();
     }
+    [HttpGet("pagination")]
+    public async Task<IActionResult> GetPagination(
+        [FromQuery] PaginationRequest request,
+        [FromQuery] string? maPhong,
+        [FromQuery] string? toaNhaId,
+        [FromQuery] string? trangThai)
+    {
+        var result = await service.GetPaginatedAsync(request, maPhong, toaNhaId, trangThai);
+
+        return result.Match<IActionResult>(
+            Succ: Ok,
+            Fail: err => BadRequest(new { error = err.Message })
+        );
+    }
+
 }

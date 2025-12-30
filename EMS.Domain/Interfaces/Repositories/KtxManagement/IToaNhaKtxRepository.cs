@@ -12,6 +12,5 @@ namespace EMS.Domain.Interfaces.Repositories.KtxManagement
 {
     public interface IToaNhaKtxRepository : IAuditRepository<ToaNhaKtx>
     {
-        Task<(List<ToaNhaKtxResponseDto> Data, int Total)> GetPaginatedWithDetailsAsync(PaginationRequest request);
     }
 }
