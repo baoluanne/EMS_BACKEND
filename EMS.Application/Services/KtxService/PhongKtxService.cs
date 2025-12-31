@@ -35,7 +35,7 @@ public class PhongKtxService(
                         Id = Guid.NewGuid(),
                         MaGiuong = $"{entity.MaPhong}-{i:00}",
                         PhongKtxId = entity.Id,
-                        TrangThai = "TRONG",
+                        TrangThai = "Trong",
                         IsDeleted = false
                     };
                     giuongRepository.Add(giuong);
