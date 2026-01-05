@@ -1,99 +1,50 @@
-﻿using EMS.Application.Services.Base;
+﻿using EMS.Application.DTOs.KtxManagement;
+using EMS.Application.Services.Base;
 using EMS.Domain.Entities.KtxManagement;
 using EMS.Domain.Interfaces.DataAccess;
 using EMS.Domain.Interfaces.Repositories.KtxManagement;
-using EMS.Domain.Interfaces.Repositories.KtxManagement.Dtos;
 using EMS.Domain.Models;
 using LanguageExt.Common;
-using Microsoft.Extensions.Logging;
+using LinqKit;
+using Microsoft.EntityFrameworkCore;
 
-namespace EMS.Application.Services.KtxService
+namespace EMS.Application.Services.KtxService;
+
+public class ChiSoDienNuocService : BaseService<ChiSoDienNuoc>, IChiSoDienNuocService
 {
-    public class ChiSoDienNuocService : BaseService<ChiSoDienNuoc>, IChiSoDienNuocService
+    private readonly IChiSoDienNuocRepository _repository;
+
+    public ChiSoDienNuocService(IUnitOfWork unitOfWork, IChiSoDienNuocRepository repository)
+        : base(unitOfWork, repository)
     {
-        private readonly IChiSoDienNuocRepository _repository;
-        private readonly ILogger<ChiSoDienNuocService> _logger;
+        _repository = repository;
+    }
 
-        public ChiSoDienNuocService(
-            IUnitOfWork unitOfWork,
-            IChiSoDienNuocRepository repository,
-            ILogger<ChiSoDienNuocService> logger)
-            : base(unitOfWork, repository)
-        {
-            _repository = repository;
-            _logger = logger;
-        }
+    protected override Task UpdateEntityProperties(ChiSoDienNuoc existingEntity, ChiSoDienNuoc newEntity)
+    {
+        existingEntity.PhongKtxId = newEntity.PhongKtxId;
+        existingEntity.Thang = newEntity.Thang;
+        existingEntity.Nam = newEntity.Nam;
+        existingEntity.DienCu = newEntity.DienCu;
+        existingEntity.DienMoi = newEntity.DienMoi;
+        existingEntity.NuocCu = newEntity.NuocCu;
+        existingEntity.NuocMoi = newEntity.NuocMoi;
+        existingEntity.DaChot = newEntity.DaChot;
+        return Task.CompletedTask;
+    }
 
-        public async Task<Result<ChiSoDienNuocPagingResponse>> GetPaginatedAsync(
-            PaginationRequest request,
-            Guid? toaNhaId = null,
-            Guid? phongId = null,
-            int? thang = null,
-            int? nam = null,
-            bool? daChot = null)
-        {
-            try
-            {
-                var (data, total) = await _repository.GetPaginatedWithDetailsAsync(
-                    request, toaNhaId, phongId, thang, nam, daChot);
+    public async Task<Result<ChiSoDienNuocPagingResponse>> GetPaginatedAsync(PaginationRequest request, ChiSoDienNuocFilter filter)
+    {
+        var predicate = PredicateBuilder.New<ChiSoDienNuoc>(true);
 
-                return new Result<ChiSoDienNuocPagingResponse>(
-                    new ChiSoDienNuocPagingResponse { Data = data, Total = total });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Lỗi lấy danh sách chỉ số điện nước");
-                return new Result<ChiSoDienNuocPagingResponse>(ex);
-            }
-        }
+        if (filter.Thang.HasValue) predicate = predicate.And(q => q.Thang == filter.Thang.Value);
+        if (filter.Nam.HasValue) predicate = predicate.And(q => q.Nam == filter.Nam.Value);
+        if (filter.ToaNhaId.HasValue) predicate = predicate.And(q => q.PhongKtx!.ToaNhaId == filter.ToaNhaId.Value);
+        if (filter.PhongId.HasValue) predicate = predicate.And(q => q.PhongKtxId == filter.PhongId.Value);
+        if (filter.DaChot.HasValue) predicate = predicate.And(q => q.DaChot == filter.DaChot.Value);
 
-        public ChiSoDienNuocCalculationResponse CalculateConsumption(
-            double dienCu,
-            double dienMoi,
-            double nuocCu,
-            double nuocMoi)
-        {
-            return new ChiSoDienNuocCalculationResponse
-            {
-                TieuThuDien = dienMoi - dienCu,
-                TieuThuNuoc = nuocMoi - nuocCu
-            };
-        }
+        var (data, total) = await _repository.GetPaginatedWithDetailsAsync(request, predicate);
 
-        protected override Task UpdateEntityProperties(ChiSoDienNuoc existingEntity, ChiSoDienNuoc newEntity)
-        {
-            // Không cho phép sửa nếu đã chốt
-            if (existingEntity.DaChot)
-                throw new InvalidOperationException("Không thể sửa bản ghi đã chốt");
-
-            existingEntity.PhongKtxId = newEntity.PhongKtxId;
-            existingEntity.Thang = newEntity.Thang;
-            existingEntity.Nam = newEntity.Nam;
-            existingEntity.DienCu = newEntity.DienCu;
-            existingEntity.DienMoi = newEntity.DienMoi;
-            existingEntity.NuocCu = newEntity.NuocCu;
-            existingEntity.NuocMoi = newEntity.NuocMoi;
-            existingEntity.DaChot = newEntity.DaChot;
-
-            return Task.CompletedTask;
-        }
-
- /*       public override async Task<Result<ChiSoDienNuoc>> DeleteAsync(Guid id)
-        {
-            try
-            {
-                var entity = await _repository.GetByIdAsync(id);
-                if (entity?.DaChot == true)
-                    return new Result<ChiSoDienNuoc>(
-                        new InvalidOperationException("Không thể xóa bản ghi đã chốt"));
-
-                return await base.DeleteAsync(id);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Lỗi xóa chỉ số điện nước");
-                return new Result<ChiSoDienNuoc>(ex);
-            }
-        }*/
+        return new Result<ChiSoDienNuocPagingResponse>(new ChiSoDienNuocPagingResponse { Data = data, Total = total });
     }
 }
