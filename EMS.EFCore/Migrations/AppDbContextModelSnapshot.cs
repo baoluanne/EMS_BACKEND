@@ -2796,62 +2796,7 @@ namespace EMS.EFCore.Migrations
                     b.ToTable("DiaDiemPhong");
                 });
 
-            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.BaoCaoThietBi", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("DuLieuBaoCao")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid?>("IdNguoiCapNhat")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("IdNguoiTao")
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("LoaiBaoCao")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<DateTime>("NgayCapNhat")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("NgayKetThucKyBaoCao")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("NgayTao")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("NgayTaoBaoCao")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("NguoiTaoBaoCaoId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("TenBaoCao")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IdNguoiCapNhat");
-
-                    b.HasIndex("IdNguoiTao");
-
-                    b.HasIndex("NguoiTaoBaoCaoId");
-
-                    b.ToTable("BaoCaoThietBi");
-                });
-
-            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.ChiTietKiemKe", b =>
+            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.TSTBChiTietKiemKe", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -2909,10 +2854,10 @@ namespace EMS.EFCore.Migrations
 
                     b.HasIndex("ThietBiId");
 
-                    b.ToTable("ChiTietKiemKe");
+                    b.ToTable("TSTBChiTietKiemKes");
                 });
 
-            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.ChiTietPhieuMuon", b =>
+            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.TSTBChiTietPhieuMuon", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -2964,10 +2909,10 @@ namespace EMS.EFCore.Migrations
 
                     b.HasIndex("ThietBiId");
 
-                    b.ToTable("ChiTietPhieuMuon");
+                    b.ToTable("TSTBChiTietPhieuMuons");
                 });
 
-            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.ChiTietThanhLy", b =>
+            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.TSTBChiTietThanhLy", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -3015,10 +2960,10 @@ namespace EMS.EFCore.Migrations
 
                     b.HasIndex("ThietBiId");
 
-                    b.ToTable("ChiTietThanhLy");
+                    b.ToTable("TSTBChiTietThanhLys");
                 });
 
-            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.DotKiemKe", b =>
+            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.TSTBDotKiemKe", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -3071,10 +3016,10 @@ namespace EMS.EFCore.Migrations
 
                     b.HasIndex("NguoiBatDauId");
 
-                    b.ToTable("DotKiemKe");
+                    b.ToTable("TSTBDotKiemKes");
                 });
 
-            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.LoaiThietBi", b =>
+            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.TSTBLoaiThietBi", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -3124,19 +3069,14 @@ namespace EMS.EFCore.Migrations
                     b.HasIndex("MaLoai")
                         .IsUnique();
 
-                    b.ToTable("LoaiThietBi");
+                    b.ToTable("TSTBLoaiThietBis");
                 });
 
-            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.NhaCungCap", b =>
+            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.TSTBNhaCungCap", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
-
-                    b.Property<string>("ChucVuNguoiLienHe")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("DiaChi")
                         .IsRequired()
@@ -3178,11 +3118,6 @@ namespace EMS.EFCore.Migrations
                     b.Property<DateTime>("NgayTao")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("NguoiLienHe")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
                     b.Property<string>("TenNhaCungCap")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -3194,63 +3129,10 @@ namespace EMS.EFCore.Migrations
 
                     b.HasIndex("IdNguoiTao");
 
-                    b.ToTable("NhaCungCap");
+                    b.ToTable("TSTBNhaCungCaps");
                 });
 
-            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.NhatKyThietBi", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("HanhDong")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<Guid?>("IdNguoiCapNhat")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("IdNguoiTao")
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("MoTaChiTiet")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.Property<DateTime>("NgayCapNhat")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("NgayTao")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("NguoiThucHienId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ThietBiId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("ThoiGian")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IdNguoiCapNhat");
-
-                    b.HasIndex("IdNguoiTao");
-
-                    b.HasIndex("NguoiThucHienId");
-
-                    b.HasIndex("ThietBiId");
-
-                    b.ToTable("NhatKyThietBi");
-                });
-
-            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.PhieuBaoTri", b =>
+            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.TSTBPhieuBaoTri", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -3337,10 +3219,10 @@ namespace EMS.EFCore.Migrations
 
                     b.HasIndex("ThietBiId");
 
-                    b.ToTable("PhieuBaoTri");
+                    b.ToTable("TSTBPhieuBaoTris");
                 });
 
-            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.PhieuMuonTra", b =>
+            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.TSTBPhieuMuonTra", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -3420,19 +3302,14 @@ namespace EMS.EFCore.Migrations
 
                     b.HasIndex("SinhVienId");
 
-                    b.ToTable("PhieuMuonTra");
+                    b.ToTable("TSTBPhieuMuonTras");
                 });
 
-            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.PhieuThanhLy", b =>
+            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.TSTBPhieuThanhLy", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
-
-                    b.Property<string>("HoiDongThanhLy")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
 
                     b.Property<Guid?>("IdNguoiCapNhat")
                         .HasColumnType("uuid");
@@ -3479,10 +3356,10 @@ namespace EMS.EFCore.Migrations
                     b.HasIndex("SoQuyetDinh")
                         .IsUnique();
 
-                    b.ToTable("PhieuThanhLy");
+                    b.ToTable("TSTBPhieuThanhLys");
                 });
 
-            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.ThietBi", b =>
+            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.TSTBThietBi", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -3580,7 +3457,7 @@ namespace EMS.EFCore.Migrations
 
                     b.HasIndex("PhongHocId");
 
-                    b.ToTable("ThietBi");
+                    b.ToTable("TSTBThietBis");
                 });
 
             modelBuilder.Entity("EMS.Domain.Entities.GiangVien", b =>
@@ -11107,32 +10984,9 @@ namespace EMS.EFCore.Migrations
                     b.Navigation("NguoiTao");
                 });
 
-            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.BaoCaoThietBi", b =>
+            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.TSTBChiTietKiemKe", b =>
                 {
-                    b.HasOne("EMS.Domain.Entities.NguoiDung", "NguoiCapNhat")
-                        .WithMany()
-                        .HasForeignKey("IdNguoiCapNhat");
-
-                    b.HasOne("EMS.Domain.Entities.NguoiDung", "NguoiTao")
-                        .WithMany()
-                        .HasForeignKey("IdNguoiTao");
-
-                    b.HasOne("EMS.Domain.Entities.NguoiDung", "NguoiTaoBaoCao")
-                        .WithMany()
-                        .HasForeignKey("NguoiTaoBaoCaoId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("NguoiCapNhat");
-
-                    b.Navigation("NguoiTao");
-
-                    b.Navigation("NguoiTaoBaoCao");
-                });
-
-            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.ChiTietKiemKe", b =>
-                {
-                    b.HasOne("EMS.Domain.Entities.EquipmentManagement.DotKiemKe", "DotKiemKe")
+                    b.HasOne("EMS.Domain.Entities.EquipmentManagement.TSTBDotKiemKe", "DotKiemKe")
                         .WithMany("ChiTietKiemKes")
                         .HasForeignKey("DotKiemKeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -11151,7 +11005,7 @@ namespace EMS.EFCore.Migrations
                         .HasForeignKey("NguoiKiemKeId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("EMS.Domain.Entities.EquipmentManagement.ThietBi", "ThietBi")
+                    b.HasOne("EMS.Domain.Entities.EquipmentManagement.TSTBThietBi", "ThietBi")
                         .WithMany("ChiTietKiemKes")
                         .HasForeignKey("ThietBiId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -11168,7 +11022,7 @@ namespace EMS.EFCore.Migrations
                     b.Navigation("ThietBi");
                 });
 
-            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.ChiTietPhieuMuon", b =>
+            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.TSTBChiTietPhieuMuon", b =>
                 {
                     b.HasOne("EMS.Domain.Entities.NguoiDung", "NguoiCapNhat")
                         .WithMany()
@@ -11178,13 +11032,13 @@ namespace EMS.EFCore.Migrations
                         .WithMany()
                         .HasForeignKey("IdNguoiTao");
 
-                    b.HasOne("EMS.Domain.Entities.EquipmentManagement.PhieuMuonTra", "PhieuMuonTra")
+                    b.HasOne("EMS.Domain.Entities.EquipmentManagement.TSTBPhieuMuonTra", "PhieuMuonTra")
                         .WithMany("ChiTietPhieuMuons")
                         .HasForeignKey("PhieuMuonTraId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("EMS.Domain.Entities.EquipmentManagement.ThietBi", "ThietBi")
+                    b.HasOne("EMS.Domain.Entities.EquipmentManagement.TSTBThietBi", "ThietBi")
                         .WithMany("ChiTietPhieuMuons")
                         .HasForeignKey("ThietBiId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -11199,7 +11053,7 @@ namespace EMS.EFCore.Migrations
                     b.Navigation("ThietBi");
                 });
 
-            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.ChiTietThanhLy", b =>
+            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.TSTBChiTietThanhLy", b =>
                 {
                     b.HasOne("EMS.Domain.Entities.NguoiDung", "NguoiCapNhat")
                         .WithMany()
@@ -11209,13 +11063,13 @@ namespace EMS.EFCore.Migrations
                         .WithMany()
                         .HasForeignKey("IdNguoiTao");
 
-                    b.HasOne("EMS.Domain.Entities.EquipmentManagement.PhieuThanhLy", "PhieuThanhLy")
+                    b.HasOne("EMS.Domain.Entities.EquipmentManagement.TSTBPhieuThanhLy", "PhieuThanhLy")
                         .WithMany("ChiTietThanhLys")
                         .HasForeignKey("PhieuThanhLyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("EMS.Domain.Entities.EquipmentManagement.ThietBi", "ThietBi")
+                    b.HasOne("EMS.Domain.Entities.EquipmentManagement.TSTBThietBi", "ThietBi")
                         .WithMany("ChiTietThanhLys")
                         .HasForeignKey("ThietBiId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -11230,7 +11084,7 @@ namespace EMS.EFCore.Migrations
                     b.Navigation("ThietBi");
                 });
 
-            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.DotKiemKe", b =>
+            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.TSTBDotKiemKe", b =>
                 {
                     b.HasOne("EMS.Domain.Entities.NguoiDung", "NguoiCapNhat")
                         .WithMany()
@@ -11252,7 +11106,7 @@ namespace EMS.EFCore.Migrations
                     b.Navigation("NguoiTao");
                 });
 
-            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.LoaiThietBi", b =>
+            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.TSTBLoaiThietBi", b =>
                 {
                     b.HasOne("EMS.Domain.Entities.NguoiDung", "NguoiCapNhat")
                         .WithMany()
@@ -11267,7 +11121,7 @@ namespace EMS.EFCore.Migrations
                     b.Navigation("NguoiTao");
                 });
 
-            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.NhaCungCap", b =>
+            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.TSTBNhaCungCap", b =>
                 {
                     b.HasOne("EMS.Domain.Entities.NguoiDung", "NguoiCapNhat")
                         .WithMany()
@@ -11282,37 +11136,7 @@ namespace EMS.EFCore.Migrations
                     b.Navigation("NguoiTao");
                 });
 
-            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.NhatKyThietBi", b =>
-                {
-                    b.HasOne("EMS.Domain.Entities.NguoiDung", "NguoiCapNhat")
-                        .WithMany()
-                        .HasForeignKey("IdNguoiCapNhat");
-
-                    b.HasOne("EMS.Domain.Entities.NguoiDung", "NguoiTao")
-                        .WithMany()
-                        .HasForeignKey("IdNguoiTao");
-
-                    b.HasOne("EMS.Domain.Entities.NguoiDung", "NguoiThucHien")
-                        .WithMany()
-                        .HasForeignKey("NguoiThucHienId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("EMS.Domain.Entities.EquipmentManagement.ThietBi", "ThietBi")
-                        .WithMany("NhatKyThietBis")
-                        .HasForeignKey("ThietBiId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("NguoiCapNhat");
-
-                    b.Navigation("NguoiTao");
-
-                    b.Navigation("NguoiThucHien");
-
-                    b.Navigation("ThietBi");
-                });
-
-            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.PhieuBaoTri", b =>
+            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.TSTBPhieuBaoTri", b =>
                 {
                     b.HasOne("EMS.Domain.Entities.NguoiDung", "NguoiCapNhat")
                         .WithMany()
@@ -11333,12 +11157,12 @@ namespace EMS.EFCore.Migrations
                         .HasForeignKey("NguoiXuLyId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("EMS.Domain.Entities.EquipmentManagement.NhaCungCap", "NhaCungCap")
+                    b.HasOne("EMS.Domain.Entities.EquipmentManagement.TSTBNhaCungCap", "NhaCungCap")
                         .WithMany("PhieuBaoTris")
                         .HasForeignKey("NhaCungCapId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("EMS.Domain.Entities.EquipmentManagement.ThietBi", "ThietBi")
+                    b.HasOne("EMS.Domain.Entities.EquipmentManagement.TSTBThietBi", "ThietBi")
                         .WithMany("PhieuBaoTris")
                         .HasForeignKey("ThietBiId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -11357,7 +11181,7 @@ namespace EMS.EFCore.Migrations
                     b.Navigation("ThietBi");
                 });
 
-            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.PhieuMuonTra", b =>
+            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.TSTBPhieuMuonTra", b =>
                 {
                     b.HasOne("EMS.Domain.Entities.GiangVien", "GiangVien")
                         .WithMany()
@@ -11400,7 +11224,7 @@ namespace EMS.EFCore.Migrations
                     b.Navigation("SinhVien");
                 });
 
-            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.PhieuThanhLy", b =>
+            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.TSTBPhieuThanhLy", b =>
                 {
                     b.HasOne("EMS.Domain.Entities.NguoiDung", "NguoiCapNhat")
                         .WithMany()
@@ -11423,7 +11247,7 @@ namespace EMS.EFCore.Migrations
                     b.Navigation("NguoiTao");
                 });
 
-            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.ThietBi", b =>
+            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.TSTBThietBi", b =>
                 {
                     b.HasOne("EMS.Domain.Entities.NguoiDung", "NguoiCapNhat")
                         .WithMany()
@@ -11433,13 +11257,13 @@ namespace EMS.EFCore.Migrations
                         .WithMany()
                         .HasForeignKey("IdNguoiTao");
 
-                    b.HasOne("EMS.Domain.Entities.EquipmentManagement.LoaiThietBi", "LoaiThietBi")
+                    b.HasOne("EMS.Domain.Entities.EquipmentManagement.TSTBLoaiThietBi", "LoaiThietBi")
                         .WithMany("ThietBis")
                         .HasForeignKey("LoaiThietBiId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("EMS.Domain.Entities.EquipmentManagement.NhaCungCap", "NhaCungCap")
+                    b.HasOne("EMS.Domain.Entities.EquipmentManagement.TSTBNhaCungCap", "NhaCungCap")
                         .WithMany("ThietBis")
                         .HasForeignKey("NhaCungCapId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -13957,42 +13781,40 @@ namespace EMS.EFCore.Migrations
                     b.Navigation("DayNha");
                 });
 
-            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.DotKiemKe", b =>
+            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.TSTBDotKiemKe", b =>
                 {
                     b.Navigation("ChiTietKiemKes");
                 });
 
-            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.LoaiThietBi", b =>
+            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.TSTBLoaiThietBi", b =>
                 {
                     b.Navigation("ThietBis");
                 });
 
-            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.NhaCungCap", b =>
+            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.TSTBNhaCungCap", b =>
                 {
                     b.Navigation("PhieuBaoTris");
 
                     b.Navigation("ThietBis");
                 });
 
-            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.PhieuMuonTra", b =>
+            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.TSTBPhieuMuonTra", b =>
                 {
                     b.Navigation("ChiTietPhieuMuons");
                 });
 
-            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.PhieuThanhLy", b =>
+            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.TSTBPhieuThanhLy", b =>
                 {
                     b.Navigation("ChiTietThanhLys");
                 });
 
-            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.ThietBi", b =>
+            modelBuilder.Entity("EMS.Domain.Entities.EquipmentManagement.TSTBThietBi", b =>
                 {
                     b.Navigation("ChiTietKiemKes");
 
                     b.Navigation("ChiTietPhieuMuons");
 
                     b.Navigation("ChiTietThanhLys");
-
-                    b.Navigation("NhatKyThietBis");
 
                     b.Navigation("PhieuBaoTris");
                 });

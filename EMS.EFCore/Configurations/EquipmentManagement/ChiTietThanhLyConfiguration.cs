@@ -9,9 +9,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace EMS.EFCore.Configurations.EquipmentManagement
 {
-    public class ChiTietThanhLyConfiguration : IEntityTypeConfiguration<ChiTietThanhLy>
+    public class ChiTietThanhLyConfiguration : IEntityTypeConfiguration<TSTBChiTietThanhLy>
     {
-        public void Configure(EntityTypeBuilder<ChiTietThanhLy> builder)
+        public void Configure(EntityTypeBuilder<TSTBChiTietThanhLy> builder)
         {
             builder.HasKey(x => x.Id);
             builder.Property(x => x.GiaTriConLai).HasColumnType("decimal(18,2)");

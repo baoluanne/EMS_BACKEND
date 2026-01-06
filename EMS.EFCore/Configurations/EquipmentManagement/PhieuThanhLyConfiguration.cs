@@ -9,13 +9,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace EMS.EFCore.Configurations.EquipmentManagement
 {
-    public class PhieuThanhLyConfiguration : IEntityTypeConfiguration<PhieuThanhLy>
+    public class PhieuThanhLyConfiguration : IEntityTypeConfiguration<TSTBPhieuThanhLy>
     {
-        public void Configure(EntityTypeBuilder<PhieuThanhLy> builder)
+        public void Configure(EntityTypeBuilder<TSTBPhieuThanhLy> builder)
         {
             builder.HasKey(x => x.Id);
             builder.Property(x => x.SoQuyetDinh).IsRequired().HasMaxLength(50);
-            builder.Property(x => x.HoiDongThanhLy).HasMaxLength(500);
             builder.Property(x => x.LyDo).HasMaxLength(500);
             builder.Property(x => x.TongTienThuHoi).HasColumnType("decimal(18,2)");
 

@@ -8,6 +8,8 @@ using EMS.Application.Services.CurrentUserServices;
 using EMS.Application.Services.DanhMucHocBongServices;
 using EMS.Application.Services.DanhMucPhongBanServices;
 using EMS.Application.Services.DanhSachKhoaSuDungServices;
+using EMS.Application.Services.EquipService;
+using EMS.Application.Services.EquipService.Service;
 using EMS.Application.Services.KhenThuongServices;
 using EMS.Application.Services.KhoaHocServices;
 using EMS.Application.Services.KhoaServices;
@@ -130,6 +132,19 @@ public static class DependencyInjection
         services.AddScoped<ITaiSanKtxService, TaiSanKtxService>();
         services.AddScoped<IYeuCauSuaChuaService, IYeuCauSuaChuaService>();
         services.AddScoped<IHoaDonKtxService, HoaDonKtxService>();
+
+
+        //EquipManagement
+        services.AddScoped<IChiTietKiemKeService, ChiTietKiemKeService>();
+        services.AddScoped<IChiTietPhieuMuonService, ChiTietPhieuMuonService>();
+        services.AddScoped<IChiTietThanhLyService, ChiTietThanhLyService>();
+        services.AddScoped<IDotKiemKeService, DotKiemKeService>();
+        services.AddScoped<ILoaiThietBiService, LoaiThietBiService>();
+        services.AddScoped<INhaCungCapService, NhaCungCapService>();
+        services.AddScoped<IPhieuBaoTriService, PhieuBaoTriService>();
+        services.AddScoped<IPhieuMuonTraService, PhieuMuonTraService>();
+        services.AddScoped<IPhieuThanhLyService, PhieuThanhLyService>();
+        services.AddScoped<IThietBiService, ThietBiService>();
         return services;
     }
 }

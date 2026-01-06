@@ -9,9 +9,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace EMS.EFCore.Configurations.EquipmentManagement
 {
-    public class DotKiemKeConfiguration : IEntityTypeConfiguration<DotKiemKe>
+    public class DotKiemKeConfiguration : IEntityTypeConfiguration<TSTBDotKiemKe>
     {
-        public void Configure(EntityTypeBuilder<DotKiemKe> builder)
+        public void Configure(EntityTypeBuilder<TSTBDotKiemKe> builder)
         {
             builder.HasKey(x => x.Id);
             builder.Property(x => x.TenDotKiemKe).IsRequired().HasMaxLength(200);

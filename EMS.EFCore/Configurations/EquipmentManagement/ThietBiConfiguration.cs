@@ -9,9 +9,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace EMS.EFCore.Configurations.EquipmentManagement
 {
-    public class ThietBiConfiguration : IEntityTypeConfiguration<ThietBi>
+    public class ThietBiConfiguration : IEntityTypeConfiguration<TSTBThietBi>
     {
-        public void Configure(EntityTypeBuilder<ThietBi> builder)
+        public void Configure(EntityTypeBuilder<TSTBThietBi> builder)
         {
             builder.HasKey(x => x.Id);
             builder.Property(x => x.MaThietBi).IsRequired().HasMaxLength(50);
@@ -27,7 +27,6 @@ namespace EMS.EFCore.Configurations.EquipmentManagement
             builder.HasIndex(x => x.MaThietBi).IsUnique();
             builder.HasQueryFilter(x => !x.IsDeleted);
 
-            // Foreign Keys to Master
             builder.HasOne(x => x.LoaiThietBi)
                 .WithMany(x => x.ThietBis)
                 .HasForeignKey(x => x.LoaiThietBiId)
@@ -43,7 +42,6 @@ namespace EMS.EFCore.Configurations.EquipmentManagement
                 .HasForeignKey(x => x.PhongHocId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Collections (1:N relationships)
             builder.HasMany(x => x.ChiTietPhieuMuons)
                 .WithOne(x => x.ThietBi)
                 .HasForeignKey(x => x.ThietBiId)
@@ -53,11 +51,6 @@ namespace EMS.EFCore.Configurations.EquipmentManagement
                 .WithOne(x => x.ThietBi)
                 .HasForeignKey(x => x.ThietBiId)
                 .OnDelete(DeleteBehavior.Restrict);
-
-            builder.HasMany(x => x.NhatKyThietBis)
-                .WithOne(x => x.ThietBi)
-                .HasForeignKey(x => x.ThietBiId)
-                .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasMany(x => x.ChiTietKiemKes)
                 .WithOne(x => x.ThietBi)

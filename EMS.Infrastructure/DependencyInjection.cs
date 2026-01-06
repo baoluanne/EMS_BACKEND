@@ -2,6 +2,7 @@
 using EMS.Domain.Interfaces.EmailServices;
 using EMS.Domain.Interfaces.Repositories;
 using EMS.Domain.Interfaces.Repositories.Base;
+using EMS.Domain.Interfaces.Repositories.EquipManagement;
 using EMS.Domain.Interfaces.Repositories.KtxManagement;
 using EMS.Domain.Interfaces.Storages;
 using EMS.Domain.Models;
@@ -9,6 +10,7 @@ using EMS.Infrastructure.DataAccess;
 using EMS.Infrastructure.EmailServices;
 using EMS.Infrastructure.Repositories;
 using EMS.Infrastructure.Repositories.Base;
+using EMS.Infrastructure.Repositories.EquipmentManagement;
 using EMS.Infrastructure.Repositories.KtxManagement;
 using EMS.Infrastructure.StorageServices;
 using Hangfire;
@@ -112,6 +114,19 @@ public static class DependencyInjection
         services.AddScoped<ITaiSanKtxRepository, TaiSanKtxRepository>();
         services.AddScoped<IYeuCauSuaChuaRepository, YeuCauSuaChuaRepository>();
         services.AddScoped<IHoaDonKtxRepository, HoaDonKtxRepository>();
+        
+        services.AddScoped<IChiTietKiemKeRepository, ChiTietKiemKeRepository>();
+        services.AddScoped<IChiTietPhieuMuonRepository, ChiTietPhieuMuonRepository>();
+        services.AddScoped<IChiTietThanhLyRepository, ChiTietThanhLyRepository>();
+        services.AddScoped<IDotKiemKeRepository, DotKiemKeRepository>();
+        services.AddScoped<ILoaiThietBiRepository, LoaiThietBiRepository>();
+        services.AddScoped<INhaCungCapRepository, NhaCungCapRepository>();
+        services.AddScoped<IPhieuBaoTriRepository, PhieuBaoTriRepository>();
+        services.AddScoped<IPhieuMuonTraRepository, PhieuMuonTraRepository>();
+        services.AddScoped<IPhieuThanhLyRepository, PhieuThanhLyRepository>();
+        services.AddScoped<IThietBiRepository, ThietBiRepository>();
+        
+        
         return services;
     }
 }

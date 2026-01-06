@@ -9,9 +9,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace EMS.EFCore.Configurations.EquipmentManagement
 {
-    public class LoaiThietBiConfiguration : IEntityTypeConfiguration<LoaiThietBi>
+    public class LoaiThietBiConfiguration : IEntityTypeConfiguration<TSTBLoaiThietBi>
     {
-        public void Configure(EntityTypeBuilder<LoaiThietBi> builder)
+        public void Configure(EntityTypeBuilder<TSTBLoaiThietBi> builder)
         {
             builder.HasKey(x => x.Id);
             builder.Property(x => x.MaLoai).IsRequired().HasMaxLength(50);

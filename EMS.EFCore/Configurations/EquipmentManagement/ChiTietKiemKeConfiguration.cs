@@ -9,9 +9,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace EMS.EFCore.Configurations.EquipmentManagement
 {
-    public class ChiTietKiemKeConfiguration : IEntityTypeConfiguration<ChiTietKiemKe>
+    public class ChiTietKiemKeConfiguration : IEntityTypeConfiguration<TSTBChiTietKiemKe>
     {
-        public void Configure(EntityTypeBuilder<ChiTietKiemKe> builder)
+        public void Configure(EntityTypeBuilder<TSTBChiTietKiemKe> builder)
         {
             builder.HasKey(x => x.Id);
             builder.Property(x => x.GhiChu).HasMaxLength(500);

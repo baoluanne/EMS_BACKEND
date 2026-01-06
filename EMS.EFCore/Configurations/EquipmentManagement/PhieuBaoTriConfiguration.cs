@@ -9,9 +9,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace EMS.EFCore.Configurations.EquipmentManagement
 {
-    public class PhieuBaoTriConfiguration : IEntityTypeConfiguration<PhieuBaoTri>
+    public class PhieuBaoTriConfiguration : IEntityTypeConfiguration<TSTBPhieuBaoTri>
     {
-        public void Configure(EntityTypeBuilder<PhieuBaoTri> builder)
+        public void Configure(EntityTypeBuilder<TSTBPhieuBaoTri> builder)
         {
             builder.HasKey(x => x.Id);
             builder.Property(x => x.MaPhieu).IsRequired().HasMaxLength(20);

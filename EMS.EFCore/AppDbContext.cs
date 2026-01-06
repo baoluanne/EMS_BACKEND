@@ -2,6 +2,7 @@ using EMS.Domain.Entities;
 using EMS.Domain.Entities.Base;
 using EMS.Domain.Entities.Category;
 using EMS.Domain.Entities.ClassManagement;
+using EMS.Domain.Entities.EquipmentManagement;
 using EMS.Domain.Entities.KtxManagement;
 using EMS.Domain.Entities.StudentManagement;
 using EMS.Domain.Entities.TimeTable;
@@ -205,6 +206,17 @@ public class AppDbContext : DbContext
     public DbSet<DonKtx> DonKtxes { get; set; } = null!;
     public DbSet<ViPhamNoiQuyKTX> ViPhamNoiQuyKTXes { get; set; } = null!;
     public DbSet<ChiSoDienNuoc> ChiSoDienNuocs { get; set; } = null!;
+
+    public DbSet<TSTBChiTietKiemKe> TSTBChiTietKiemKes { get; set; } = null!;
+    public DbSet<TSTBChiTietPhieuMuon> TSTBChiTietPhieuMuons { get; set; } = null!;
+    public DbSet<TSTBChiTietThanhLy> TSTBChiTietThanhLys { get; set; } = null!;
+    public DbSet<TSTBDotKiemKe> TSTBDotKiemKes { get; set; } = null!;
+    public DbSet<TSTBLoaiThietBi> TSTBLoaiThietBis { get; set; } = null!;
+    public DbSet<TSTBNhaCungCap> TSTBNhaCungCaps { get; set; } = null!;
+    public DbSet<TSTBPhieuBaoTri> TSTBPhieuBaoTris { get; set; } = null!;
+    public DbSet<TSTBPhieuMuonTra> TSTBPhieuMuonTras { get; set; } = null!;
+    public DbSet<TSTBPhieuThanhLy> TSTBPhieuThanhLys { get; set; } = null!;
+    public DbSet<TSTBThietBi> TSTBThietBis { get; set; } = null!;
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
