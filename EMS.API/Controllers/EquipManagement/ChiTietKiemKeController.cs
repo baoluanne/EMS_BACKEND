@@ -9,5 +9,6 @@ namespace EMS.API.Controllers.EquipManagement
     public class ChiTietKiemKeController : BaseController<TSTBChiTietKiemKe>
     {
         public ChiTietKiemKeController(IChiTietKiemKeService service) : base(service) { }
+
     }
 }
