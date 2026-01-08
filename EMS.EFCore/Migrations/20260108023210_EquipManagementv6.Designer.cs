@@ -3,6 +3,7 @@ using System;
 using EMS.EFCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EMS.EFCore.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260108023210_EquipManagementv6")]
+    partial class EquipManagementv6
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3366,10 +3369,11 @@ namespace EMS.EFCore.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("GhiChu")
+                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
-                    b.Property<decimal?>("GiaTriKhauHao")
+                    b.Property<decimal>("GiaTriKhauHao")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("HinhAnhUrl")
@@ -3385,7 +3389,7 @@ namespace EMS.EFCore.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<Guid?>("LoaiThietBiId")
+                    b.Property<Guid>("LoaiThietBiId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("MaThietBi")
@@ -3394,10 +3398,11 @@ namespace EMS.EFCore.Migrations
                         .HasColumnType("character varying(50)");
 
                     b.Property<string>("Model")
+                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<int?>("NamSanXuat")
+                    b.Property<int>("NamSanXuat")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("NgayCapNhat")
@@ -3406,13 +3411,13 @@ namespace EMS.EFCore.Migrations
                     b.Property<DateTime?>("NgayHetHanBaoHanh")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime?>("NgayMua")
+                    b.Property<DateTime>("NgayMua")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("NgayTao")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<decimal?>("NguyenGia")
+                    b.Property<decimal>("NguyenGia")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<Guid?>("NhaCungCapId")
@@ -3422,6 +3427,7 @@ namespace EMS.EFCore.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("SerialNumber")
+                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
@@ -3431,10 +3437,11 @@ namespace EMS.EFCore.Migrations
                         .HasColumnType("character varying(200)");
 
                     b.Property<string>("ThongSoKyThuat")
+                        .IsRequired()
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)");
 
-                    b.Property<int?>("TrangThai")
+                    b.Property<int>("TrangThai")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -11255,7 +11262,8 @@ namespace EMS.EFCore.Migrations
                     b.HasOne("EMS.Domain.Entities.EquipmentManagement.TSTBLoaiThietBi", "LoaiThietBi")
                         .WithMany("ThietBis")
                         .HasForeignKey("LoaiThietBiId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("EMS.Domain.Entities.EquipmentManagement.TSTBNhaCungCap", "NhaCungCap")
                         .WithMany("ThietBis")
