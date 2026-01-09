@@ -1,5 +1,6 @@
 ﻿using EMS.API.Controllers.Base;
 using EMS.Application.Services.EquipService;
+using EMS.Application.Services.EquipService.Dtos;
 using EMS.Domain.Entities.EquipmentManagement;
 using EMS.Domain.Enums.EquipmentManagement;
 using EMS.Domain.Extensions;
@@ -11,8 +12,11 @@ namespace EMS.API.Controllers.EquipManagement
 {
     public class ThietBiController : BaseController<TSTBThietBi>
     {
+        private readonly IThietBiService _thietBiService;
+
         public ThietBiController(IThietBiService service) : base(service)
         {
+            _thietBiService = service;
         }
 
         public override async Task<IActionResult> GetAll()
@@ -50,6 +54,19 @@ namespace EMS.API.Controllers.EquipManagement
                 .Include(x => x.PhongHoc)
             );
             return result.ToResult();
+        }
+
+        [HttpPost("nhap-hang-loat")]
+        public async Task<IActionResult> NhapHangLoat([FromBody] NhapHangLoatDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = await _thietBiService.NhapHangLoatAsync(dto);
+            return result.Match(
+                succ => Ok(succ),
+                err => StatusCode(500, new { message = "Lỗi tạo hàng loạt", error = err.Message })
+            );
         }
 
         public class ThietBiFilter

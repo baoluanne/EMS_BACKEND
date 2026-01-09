@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using EMS.Application.Services.Base;
+using EMS.Application.Services.EquipService.Dtos;
 using EMS.Domain.Entities.EquipmentManagement;
 using EMS.Domain.Interfaces.DataAccess;
 using EMS.Domain.Interfaces.Repositories.EquipManagement;
+using EMS.Domain.Models;
+using LanguageExt.Common;
 
 namespace EMS.Application.Services.EquipService.Service
 {
@@ -14,13 +15,17 @@ namespace EMS.Application.Services.EquipService.Service
     {
         public ThietBiService(
             IUnitOfWork unitOfWork,
-            IThietBiRepository repository) 
+            IThietBiRepository repository)
             : base(unitOfWork, repository)
         {
         }
+
         protected override Task UpdateEntityProperties(TSTBThietBi existingEntity, TSTBThietBi newEntity)
         {
+            existingEntity.MaThietBi = newEntity.MaThietBi;
             existingEntity.TenThietBi = newEntity.TenThietBi;
+            existingEntity.LoaiThietBiId = newEntity.LoaiThietBiId;
+            existingEntity.NhaCungCapId = newEntity.NhaCungCapId;
             existingEntity.Model = newEntity.Model;
             existingEntity.SerialNumber = newEntity.SerialNumber;
             existingEntity.ThongSoKyThuat = newEntity.ThongSoKyThuat;
@@ -33,6 +38,43 @@ namespace EMS.Application.Services.EquipService.Service
             existingEntity.GhiChu = newEntity.GhiChu;
             existingEntity.HinhAnhUrl = newEntity.HinhAnhUrl;
             return Task.CompletedTask;
+        }
+
+        public async Task<Result<List<TSTBThietBi>>> NhapHangLoatAsync(NhapHangLoatDto dto)
+        {
+            var list = new List<TSTBThietBi>();
+
+            for (int i = 1; i <= dto.SoLuong; i++)
+            {
+                var maThietBi = string.IsNullOrEmpty(dto.PrefixMaThietBi)
+                    ? $"TB-{DateTime.Now:yyyyMM}-{i:D4}"
+                    : $"{dto.PrefixMaThietBi}{i:D4}";
+
+                var tb = new TSTBThietBi
+                {
+                    MaThietBi = maThietBi,
+                    TenThietBi = dto.TenThietBi,
+                    LoaiThietBiId = dto.LoaiThietBiId,
+                    NhaCungCapId = dto.NhaCungCapId,
+                    Model = dto.Model,
+                    ThongSoKyThuat = dto.ThongSoKyThuat,
+                    NamSanXuat = dto.NamSanXuat,
+                    NgayMua = dto.NgayMua,
+                    NgayHetHanBaoHanh = dto.NgayHetHanBaoHanh,
+                    NguyenGia = dto.NguyenGia,
+                    GiaTriKhauHao = dto.GiaTriKhauHao,
+                    TrangThai = dto.TrangThai,
+                    GhiChu = dto.GhiChu,
+                    PhongHocId = dto.PhongHocId
+                };
+
+                list.Add(tb);
+            }
+
+            Repository.AddRange(list);
+            await UnitOfWork.CommitAsync();
+
+            return new Result<List<TSTBThietBi>>(list);
         }
     }
 }
