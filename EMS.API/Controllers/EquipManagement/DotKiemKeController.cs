@@ -36,6 +36,12 @@ namespace EMS.API.Controllers.EquipManagement
             return result.ToResult();
         }
 
+        [HttpPost("{id}/add-from-room/{phongHocId}")]
+        public async Task<IActionResult> AddFromRoom(Guid id, Guid phongHocId)
+        {
+            var result = await ((IDotKiemKeService)Service).AddDevicesFromRoomAsync(id, phongHocId);
+            return result.ToResult();
+        }
         public class DotKiemKeFilter
         {
             public string? TenDotKiemKe { get; set; }

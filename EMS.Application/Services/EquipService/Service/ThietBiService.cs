@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using EMS.Application.Services.Base;
 using EMS.Application.Services.EquipService.Dtos;
 using EMS.Domain.Entities.EquipmentManagement;
+using EMS.Domain.Enums.EquipmentManagement;
 using EMS.Domain.Interfaces.DataAccess;
 using EMS.Domain.Interfaces.Repositories.EquipManagement;
 using EMS.Domain.Models;
@@ -75,6 +76,27 @@ namespace EMS.Application.Services.EquipService.Service
             await UnitOfWork.CommitAsync();
 
             return new Result<List<TSTBThietBi>>(list);
+        }
+        public async Task<Result<bool>> PhanVaoPhongAsync(Guid phongHocId, List<Guid> thietBiIds)
+        {
+            try
+            {
+                var thietBis = await Repository.ListAsync(filter: x => thietBiIds.Contains(x.Id));
+
+                foreach (var tb in thietBis)
+                {
+                    tb.PhongHocId = phongHocId;
+                    tb.TrangThai = TrangThaiThietBiEnum.DangSuDung;
+                    Repository.Update(tb);
+                }
+
+                await UnitOfWork.CommitAsync();
+                return new Result<bool>(true);
+            }
+            catch (Exception ex)
+            {
+                return new Result<bool>(ex);
+            }
         }
     }
 }

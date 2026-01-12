@@ -69,6 +69,16 @@ namespace EMS.API.Controllers.EquipManagement
             );
         }
 
+        [HttpPost("phan-vao-phong/{phongHocId}")]
+        public async Task<IActionResult> PhanVaoPhong(Guid phongHocId, [FromBody] List<Guid> thietBiIds)
+        {
+            var result = await _thietBiService.PhanVaoPhongAsync(phongHocId, thietBiIds);
+            return result.Match(
+                succ => Ok(succ),
+                err => StatusCode(500, new { message = "Lỗi phân vào phòng ", error = err.Message })
+            );
+        }
+
         public class ThietBiFilter
         {
             public string? MaThietBi { get; set; }
