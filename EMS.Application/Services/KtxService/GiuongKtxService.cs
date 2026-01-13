@@ -42,10 +42,10 @@ public class GiuongKtxService(
             {
                 return new Result<GiuongKtx>(new BadRequestException($"Mã Giường '{entity.MaGiuong}' đã tồn tại."));
             }
-            var PhongKtx = await phongRepository.GetFirstAsync(g => g.Id == entity.Id);
+            var PhongKtx = await phongRepository.GetFirstAsync(g => g.Id == entity.PhongKtxId);
             if (PhongKtx != null)
             {
-                PhongKtx.MaPhong += 1;
+                PhongKtx.SoLuongGiuong += 1;
                 phongRepository.Update(PhongKtx);
             }
 
@@ -73,7 +73,7 @@ public class GiuongKtxService(
                 {
                     return new Result<GiuongKtx>(new BadRequestException($"Mã giường '{entity.MaGiuong}' đã tồn tại ở một giường khác."));
                 }
-            }
+            })
             var result = await base.UpdateAsync(id, entity);
 
             if (result.IsSuccess)

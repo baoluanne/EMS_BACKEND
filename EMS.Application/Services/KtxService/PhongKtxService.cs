@@ -109,14 +109,17 @@ public class PhongKtxService(
                 if (giuongTrong.Count < soGiuongCanXoa)
                     return new Result<PhongKtx>(new BadRequestException(
                         $"Không thể giảm số giường. Chỉ có {giuongTrong.Count} giường trống, cần {soGiuongCanXoa} để xóa"));
-
+                
                 var giuongCanXoa = giuongTrong.Take(soGiuongCanXoa).ToList();
                 foreach (var giuong in giuongCanXoa)
                 {
                     giuongRepository.Delete(giuong);
                 }
             }
-
+            //if(existingPhong.TrangThai == TrangThaiPhongConstants.HOAT_DONG))
+            //{
+            //    if (existingPhong.GiuongKtxs.Where(i => i.TrangThai == TrangThaiGiuongConstants.CO_SV))
+            //}
             var updateResult = await base.UpdateAsync(id, entity);
             if (updateResult.IsSuccess)
             {
