@@ -10,7 +10,7 @@ using EMS.Domain.Models;
 
 namespace EMS.Domain.Interfaces.Repositories.KtxManagement
 {
-    public interface IGiuongKtxRepository : IAuditRepository<GiuongKtx>
+    public interface IGiuongKtxRepository : IAuditRepository<KtxGiuong>
     {
         Task<(List<GiuongKtxResponseDto> Data, int Total)> GetPaginatedWithDetailsAsync(
             PaginationRequest request,

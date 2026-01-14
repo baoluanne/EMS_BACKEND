@@ -11,7 +11,7 @@ namespace EMS.API.Controllers.KtxController
 {
     [Route("api/don-ktx")]
     [ApiController]
-    public class DonKtxController : BaseController<DonKtx>
+    public class DonKtxController : BaseController<KtxDon>
     {
         private readonly IDonKtxService _service;
 

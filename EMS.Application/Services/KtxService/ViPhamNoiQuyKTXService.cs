@@ -9,7 +9,7 @@ using LanguageExt.Common;
 
 namespace EMS.Application.Services.KtxService
 {
-    public class ViPhamNoiQuyKTXService : BaseService<ViPhamNoiQuyKTX>, IViPhamNoiQuyKTXService
+    public class ViPhamNoiQuyKTXService : BaseService<KtxViPhamNoiQuy>, IViPhamNoiQuyKTXService
     {
         private readonly IViPhamNoiQuyKTXRepository _viPhamRepository;
         private readonly IGiuongKtxRepository _giuongRepository;
@@ -31,7 +31,7 @@ namespace EMS.Application.Services.KtxService
                 var giuong = await _giuongRepository.GetFirstAsync(g => g.SinhVienId == dto.SinhVienId && !g.IsDeleted);
                 if (giuong == null) return new Result<Guid>(new BadRequestException("Sinh viên hiện không cư trú tại KTX."));
 
-                var entity = new ViPhamNoiQuyKTX
+                var entity = new KtxViPhamNoiQuy
                 {
                     Id = Guid.NewGuid(),
                     SinhVienId = dto.SinhVienId,
@@ -82,7 +82,7 @@ namespace EMS.Application.Services.KtxService
             catch (Exception ex) { return new Result<bool>(ex); }
         }
 
-        protected override Task UpdateEntityProperties(ViPhamNoiQuyKTX existing, ViPhamNoiQuyKTX newEntity)
+        protected override Task UpdateEntityProperties(KtxViPhamNoiQuy existing, KtxViPhamNoiQuy newEntity)
         {
             existing.NoiDungViPham = newEntity.NoiDungViPham;
             existing.HinhThucXuLy = newEntity.HinhThucXuLy;

@@ -8,7 +8,7 @@ namespace EMS.API.Controllers.KtxManagement
 {
     [Route("api/vi-pham-noiquy-ktx")]
     [ApiController]
-    public class ViPhamNoiQuyKTXController(IViPhamNoiQuyKTXService service) : BaseController<ViPhamNoiQuyKTX>(service)
+    public class ViPhamNoiQuyKTXController(IViPhamNoiQuyKTXService service) : BaseController<KtxViPhamNoiQuy>(service)
     {
         [HttpGet("pagination")]
         public async Task<IActionResult> GetPaginated([FromQuery] ViPhamFilterRequest request)

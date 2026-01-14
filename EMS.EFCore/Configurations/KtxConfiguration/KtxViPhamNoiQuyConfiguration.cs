@@ -4,13 +4,16 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace EMS.Infrastructure.Configurations.KtxConfiguration
 {
-    public class ViPhamNoiQuyKTXConfiguration : IEntityTypeConfiguration<ViPhamNoiQuyKTX>
+    public class KtxViPhamNoiQuyConfiguration : IEntityTypeConfiguration<KtxViPhamNoiQuy>
     {
-        public void Configure(EntityTypeBuilder<ViPhamNoiQuyKTX> builder)
+        public void Configure(EntityTypeBuilder<KtxViPhamNoiQuy> builder)
         {
-            builder.ToTable("ViPhamNoiQuyKTX");
+            builder.ToTable("KtxViPhamNoiQuy");
 
             builder.HasKey(x => x.Id);
+
+            builder.Property(x => x.SinhVienId)
+                .IsRequired();
 
             builder.Property(x => x.NoiDungViPham)
                 .IsRequired()

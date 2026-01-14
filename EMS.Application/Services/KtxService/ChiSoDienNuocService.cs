@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EMS.Application.Services.KtxService;
 
-public class ChiSoDienNuocService : BaseService<ChiSoDienNuoc>, IChiSoDienNuocService
+public class ChiSoDienNuocService : BaseService<KtxChiSoDienNuoc>, IChiSoDienNuocService
 {
     private readonly IChiSoDienNuocRepository _repository;
 
@@ -20,7 +20,7 @@ public class ChiSoDienNuocService : BaseService<ChiSoDienNuoc>, IChiSoDienNuocSe
         _repository = repository;
     }
 
-    protected override Task UpdateEntityProperties(ChiSoDienNuoc existingEntity, ChiSoDienNuoc newEntity)
+    protected override Task UpdateEntityProperties(KtxChiSoDienNuoc existingEntity, KtxChiSoDienNuoc newEntity)
     {
         existingEntity.PhongKtxId = newEntity.PhongKtxId;
         existingEntity.Thang = newEntity.Thang;
@@ -35,7 +35,7 @@ public class ChiSoDienNuocService : BaseService<ChiSoDienNuoc>, IChiSoDienNuocSe
 
     public async Task<Result<ChiSoDienNuocPagingResponse>> GetPaginatedAsync(PaginationRequest request, ChiSoDienNuocFilter filter)
     {
-        var predicate = PredicateBuilder.New<ChiSoDienNuoc>(true);
+        var predicate = PredicateBuilder.New<KtxChiSoDienNuoc>(true);
 
         if (filter.Thang.HasValue) predicate = predicate.And(q => q.Thang == filter.Thang.Value);
         if (filter.Nam.HasValue) predicate = predicate.And(q => q.Nam == filter.Nam.Value);

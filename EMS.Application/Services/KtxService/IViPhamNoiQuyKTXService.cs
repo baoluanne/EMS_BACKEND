@@ -5,7 +5,7 @@ using LanguageExt.Common;
 
 namespace EMS.Application.Services.KtxService
 {
-    public interface IViPhamNoiQuyKTXService : IBaseService<ViPhamNoiQuyKTX>
+    public interface IViPhamNoiQuyKTXService : IBaseService<KtxViPhamNoiQuy>
     {
         Task<Result<Guid>> CreateViPhamAsync(CreateViPhamNoiQuyKtxDto dto);
         Task<Result<ViPhamNoiQuyKtxPagingResponse>> GetPaginatedAsync(ViPhamFilterRequest request);

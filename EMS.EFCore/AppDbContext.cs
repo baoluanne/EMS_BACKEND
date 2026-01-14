@@ -201,11 +201,11 @@ public class AppDbContext : DbContext
     public DbSet<ChuyenDoiHocPhan> ChuyenDoiHocPhan { get; set; } = null!;
 
     public DbSet<ToaNhaKtx> toaNhaKtxes { get; set; } = null!;
-    public DbSet<PhongKtx> phongKtxes { get; set; } = null!;
-    public DbSet<GiuongKtx> giuongKtxes { get; set; } = null!;
-    public DbSet<DonKtx> DonKtxes { get; set; } = null!;
-    public DbSet<ViPhamNoiQuyKTX> ViPhamNoiQuyKTXes { get; set; } = null!;
-    public DbSet<ChiSoDienNuoc> ChiSoDienNuocs { get; set; } = null!;
+    public DbSet<KtxPhong> phongKtxes { get; set; } = null!;
+    public DbSet<KtxGiuong> giuongKtxes { get; set; } = null!;
+    public DbSet<KtxDon> DonKtxes { get; set; } = null!;
+    public DbSet<KtxViPhamNoiQuy> ViPhamNoiQuyKTXes { get; set; } = null!;
+    public DbSet<KtxChiSoDienNuoc> ChiSoDienNuocs { get; set; } = null!;
 
     public DbSet<TSTBChiTietKiemKe> TSTBChiTietKiemKes { get; set; } = null!;
     public DbSet<TSTBChiTietPhieuMuon> TSTBChiTietPhieuMuons { get; set; } = null!;

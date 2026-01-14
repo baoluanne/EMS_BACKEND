@@ -6,7 +6,7 @@ using LanguageExt.Common;
 
 namespace EMS.Application.Services.KtxService;
 
-public interface IChiSoDienNuocService : IBaseService<ChiSoDienNuoc>
+public interface IChiSoDienNuocService : IBaseService<KtxChiSoDienNuoc>
 {
     Task<Result<ChiSoDienNuocPagingResponse>> GetPaginatedAsync(PaginationRequest request, ChiSoDienNuocFilter filter);
 }

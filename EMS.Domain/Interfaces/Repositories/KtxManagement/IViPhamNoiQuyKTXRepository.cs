@@ -4,7 +4,7 @@ using EMS.Domain.Interfaces.Repositories.KtxManagement.Dtos;
 
 namespace EMS.Domain.Interfaces.Repositories.KtxManagement
 {
-    public interface IViPhamNoiQuyKTXRepository : IAuditRepository<ViPhamNoiQuyKTX>
+    public interface IViPhamNoiQuyKTXRepository : IAuditRepository<KtxViPhamNoiQuy>
     {
         Task<(List<ViPhamNoiQuyKtxResponseDto> Data, int Total)> GetPaginatedWithDetailsAsync(ViPhamFilterRequest request);
     }

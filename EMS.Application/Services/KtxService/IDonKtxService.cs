@@ -12,7 +12,7 @@ using LanguageExt.Common;
 
 namespace EMS.Application.Services.KtxService
 {
-    public interface IDonKtxService : IBaseService<DonKtx>
+    public interface IDonKtxService : IBaseService<KtxDon>
     {
 
         Task<Result<Guid>> AddDonAsync(DonKtxCreateDto dto);

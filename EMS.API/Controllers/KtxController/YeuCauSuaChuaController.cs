@@ -9,7 +9,7 @@ namespace EMS.API.Controllers.KtxManagement;
 
 [Route("api/yeu-cau-sua-chua")]
 [ApiController]
-public class YeuCauSuaChuaController : BaseController<YeuCauSuaChua>
+public class YeuCauSuaChuaController : BaseController<KtxYeuCauSuaChua>
 {
     private readonly IYeuCauSuaChuaService _service;
 

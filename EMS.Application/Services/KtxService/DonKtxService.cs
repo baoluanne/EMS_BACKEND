@@ -10,7 +10,7 @@ using LanguageExt.Common;
 
 namespace EMS.Application.Services.KtxService
 {
-    public class DonKtxService : BaseService<DonKtx>, IDonKtxService
+    public class DonKtxService : BaseService<KtxDon>, IDonKtxService
     {
         private readonly IDonKtxRepository _donRepository;
         private readonly IGiuongKtxRepository _giuongRepository;
@@ -38,7 +38,7 @@ namespace EMS.Application.Services.KtxService
                 if (string.IsNullOrWhiteSpace(dto.LoaiDon))
                     return new Result<Guid>(new BadRequestException("Loại đơn là bắt buộc"));
 
-                var entity = new DonKtx
+                var entity = new KtxDon
                 {
                     MaDon = "KTX" + dto.LoaiDon + DateTime.Now.ToString("yyyyMMddHHmmss"),
                     Id = Guid.NewGuid(),
@@ -119,7 +119,7 @@ namespace EMS.Application.Services.KtxService
 
                 phong.SoLuongDaO += 1;
 
-                var cuTru = new CuTruKtx
+                var cuTru = new KtxCutru
                 {
                     Id = Guid.NewGuid(),
                     SinhVienId = don.IdSinhVien,
@@ -199,7 +199,7 @@ namespace EMS.Application.Services.KtxService
                 hopDongHienTai.GhiChu += $" [Kết thúc do chuyển phòng]";
                 hopDongHienTai.GiuongKtx = null;
 
-                var hopDongMoi = new CuTruKtx
+                var hopDongMoi = new KtxCutru
                 {
                     Id = Guid.NewGuid(),
                     SinhVienId = don.IdSinhVien,
@@ -355,7 +355,7 @@ namespace EMS.Application.Services.KtxService
             }
         }
 
-        protected override Task UpdateEntityProperties(DonKtx existingEntity, DonKtx newEntity)
+        protected override Task UpdateEntityProperties(KtxDon existingEntity, KtxDon newEntity)
         {
             existingEntity.TrangThai = newEntity.TrangThai;
             existingEntity.Ghichu = newEntity.Ghichu;

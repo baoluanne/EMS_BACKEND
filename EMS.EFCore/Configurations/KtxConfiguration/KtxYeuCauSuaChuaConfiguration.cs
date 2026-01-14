@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace EMS.Infrastructure.Configurations.KtxConfiguration
 {
-    public class YeuCauSuaChuaConfiguration : IEntityTypeConfiguration<YeuCauSuaChua>
+    public class KtxYeuCauSuaChuaConfiguration : IEntityTypeConfiguration<KtxYeuCauSuaChua>
     {
-        public void Configure(EntityTypeBuilder<YeuCauSuaChua> builder)
+        public void Configure(EntityTypeBuilder<KtxYeuCauSuaChua> builder)
         {
-            builder.ToTable("YeuCauSuaChua");
+            builder.ToTable("KtxYeuCauSuaChua");
 
             builder.HasKey(x => x.Id);
 
@@ -37,25 +37,21 @@ namespace EMS.Infrastructure.Configurations.KtxConfiguration
                 .ValueGeneratedOnAdd()
                 .IsRequired();
 
+            builder.Property(x => x.SinhVienId)
+                .IsRequired();
+
+            builder.Property(x => x.PhongKtxId)
+                .IsRequired();
+
             builder.HasOne(x => x.SinhVien)
                 .WithMany()
                 .HasForeignKey(x => x.SinhVienId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne(x => x.PhongKtx)
+            builder.HasOne(x => x.Phong)
                 .WithMany(p => p.YeuCauSuaChuas)
                 .HasForeignKey(x => x.PhongKtxId)
                 .OnDelete(DeleteBehavior.Restrict);
-
-            builder.HasOne(x => x.TaiSanKtx)
-                .WithMany(t => t.YeuCauSuaChuas)
-                .HasForeignKey(x => x.TaiSanKtxId)
-                .OnDelete(DeleteBehavior.SetNull);
-
-            builder.HasOne(x => x.HoaDonKtx)
-                .WithMany(h => h.YeuCauSuaChuas)
-                .HasForeignKey(x => x.HoaDonKtxId)
-                .OnDelete(DeleteBehavior.SetNull);
 
             builder.HasQueryFilter(x => !x.IsDeleted);
         }

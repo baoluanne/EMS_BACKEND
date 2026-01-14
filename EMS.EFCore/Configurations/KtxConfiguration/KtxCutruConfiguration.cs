@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace EMS.Infrastructure.Configurations.KtxConfiguration
 {
-    public class CuTruKtxConfiguration : IEntityTypeConfiguration<CuTruKtx>
+    public class KtxCutruConfiguration : IEntityTypeConfiguration<KtxCutru>
     {
-        public void Configure(EntityTypeBuilder<CuTruKtx> builder)
+        public void Configure(EntityTypeBuilder<KtxCutru> builder)
         {
-            builder.ToTable("CuTruKtx");
+            builder.ToTable("KtxCutru");
 
             builder.HasKey(x => x.Id);
 
@@ -16,6 +16,9 @@ namespace EMS.Infrastructure.Configurations.KtxConfiguration
                 .IsRequired();
 
             builder.Property(x => x.GiuongKtxId)
+                .IsRequired();
+
+            builder.Property(x => x.DonKtxId)
                 .IsRequired();
 
             builder.Property(x => x.NgayBatDau)
@@ -50,9 +53,9 @@ namespace EMS.Infrastructure.Configurations.KtxConfiguration
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(x => x.DonKtx)
-                .WithMany()
+                .WithMany(d => d.CuTruKtxs)
                 .HasForeignKey(x => x.DonKtxId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

@@ -6,12 +6,7 @@ using LanguageExt.Common;
 
 namespace EMS.Application.Services.KtxService
 {
-    public interface IPhongKtxService : IBaseService<PhongKtx>
+    public interface IPhongKtxService : IBaseService<KtxPhong>
     {
-        Task<Result<PhongKtxPagingResponse>> GetPaginatedAsync(
-        PaginationRequest request,
-        string? maPhong = null,
-        string? toaNhaId = null,
-        string? trangThai = null);
     }
 }

@@ -10,9 +10,9 @@ using Microsoft.EntityFrameworkCore;
 namespace EMS.Infrastructure.Repositories.KtxManagement
 {
     public class CuTruKtxRepository(DbFactory dbFactory)
-        : AuditRepository<CuTruKtx>(dbFactory), ICuTruKtxRepository
+        : AuditRepository<KtxCutru>(dbFactory), ICuTruKtxRepository
     {
-        public async Task<CuTruKtx?> GetHopDongHienTaiAsync(Guid sinhVienId)
+        public async Task<KtxCutru?> GetHopDongHienTaiAsync(Guid sinhVienId)
         {
             return await DbSet
                 .AsNoTracking().Include(i => i.GiuongKtx).ThenInclude(i => i.PhongKtx).Include(i => i.SinhVien)
@@ -23,7 +23,7 @@ namespace EMS.Infrastructure.Repositories.KtxManagement
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<CuTruKtx?> GetHopDongHienTaiByGiuongAsync(Guid giuongId)
+        public async Task<KtxCutru?> GetHopDongHienTaiByGiuongAsync(Guid giuongId)
         {
             return await DbSet
                 .AsNoTracking()
@@ -43,8 +43,8 @@ namespace EMS.Infrastructure.Repositories.KtxManagement
             var query = from cuTru in DbSet.AsNoTracking()
                         where cuTru.TrangThai == TrangThaiCuTruConstants.DANG_O && cuTru.NgayHetHan >= today
                         join sv in dbFactory.DbContext.Set<SinhVien>().AsNoTracking() on cuTru.SinhVienId equals sv.Id
-                        join giuong in dbFactory.DbContext.Set<GiuongKtx>().AsNoTracking() on cuTru.GiuongKtxId equals giuong.Id
-                        join phong in dbFactory.DbContext.Set<PhongKtx>().AsNoTracking() on giuong.PhongKtxId equals phong.Id
+                        join giuong in dbFactory.DbContext.Set<KtxGiuong>().AsNoTracking() on cuTru.GiuongKtxId equals giuong.Id
+                        join phong in dbFactory.DbContext.Set<KtxPhong>().AsNoTracking() on giuong.PhongKtxId equals phong.Id
                         join toa in dbFactory.DbContext.Set<ToaNhaKtx>().AsNoTracking() on phong.ToaNhaId equals toa.Id
                         select new ThongTinSinhVienKtxResponseDto
                         {

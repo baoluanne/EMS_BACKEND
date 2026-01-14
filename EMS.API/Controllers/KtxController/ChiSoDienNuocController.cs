@@ -10,7 +10,7 @@ namespace EMS.API.Controllers.KtxManagement;
 
 [Route("api/[Controller]")]
 [ApiController]
-public class ChiSoDienNuocController : BaseController<ChiSoDienNuoc>
+public class ChiSoDienNuocController : BaseController<KtxChiSoDienNuoc>
 {
     private readonly IChiSoDienNuocService _service;
 

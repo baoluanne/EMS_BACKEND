@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace EMS.Infrastructure.Configurations.KtxConfiguration
 {
-    public class GiuongKtxConfiguration : IEntityTypeConfiguration<GiuongKtx>
+    public class KtxGiuongConfiguration : IEntityTypeConfiguration<KtxGiuong>
     {
-        public void Configure(EntityTypeBuilder<GiuongKtx> builder)
+        public void Configure(EntityTypeBuilder<KtxGiuong> builder)
         {
-            builder.ToTable("GiuongKtx");
+            builder.ToTable("KtxGiuong");
 
             builder.HasKey(x => x.Id);
 
@@ -16,15 +16,11 @@ namespace EMS.Infrastructure.Configurations.KtxConfiguration
                 .HasMaxLength(20)
                 .IsRequired();
 
-            builder.Property(x => x.TrangThai)
-                .HasMaxLength(50)
-                .IsRequired();
-
             builder.HasIndex(x => x.MaGiuong)
                 .IsUnique();
 
-            builder.HasOne(x => x.PhongKtx)
-                .WithMany(p => p.GiuongKtxs)
+            builder.HasOne(x => x.Phong)
+                .WithMany(p => p.KtxGiuongs)
                 .HasForeignKey(x => x.PhongKtxId)
                 .OnDelete(DeleteBehavior.Cascade);
 

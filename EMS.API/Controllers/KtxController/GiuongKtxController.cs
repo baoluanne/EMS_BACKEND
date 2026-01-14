@@ -11,7 +11,7 @@ namespace EMS.API.Controllers.KtxController
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class GiuongKtxController : BaseController<GiuongKtx>
+    public class GiuongKtxController : BaseController<KtxGiuong>
     {
         private readonly IGiuongKtxService _service;
 

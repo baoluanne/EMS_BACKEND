@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 [Route("api/cu-tru-ktx")]
 [ApiController]
-public class CuTruKtxController : BaseController<CuTruKtx>
+public class CuTruKtxController : BaseController<KtxCutru>
 {
     private readonly ICuTruKtxService _service;
     public CuTruKtxController(ICuTruKtxService service) : base(service)

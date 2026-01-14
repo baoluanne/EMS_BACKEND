@@ -9,7 +9,7 @@ namespace EMS.API.Controllers.KtxManagement;
 
 [ApiController]
 [Route("api/[controller]")]
-public class PhongKtxController(IPhongKtxService service) : BaseController<PhongKtx>(service)
+public class PhongKtxController(IPhongKtxService service) : BaseController<KtxPhong>(service)
 {
     public override async Task<IActionResult> GetAll()
     {

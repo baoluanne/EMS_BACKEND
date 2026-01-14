@@ -16,7 +16,7 @@ public class GiuongKtxService(
     IUnitOfWork unitOfWork,
     IGiuongKtxRepository giuongRepository,
     IPhongKtxRepository phongRepository)
-    : BaseService<GiuongKtx>(unitOfWork, giuongRepository), IGiuongKtxService
+    : BaseService<KtxGiuong>(unitOfWork, giuongRepository), IGiuongKtxService
 {
     public async Task<Result<GiuongKtxPagingResponse>> GetPaginatedAsync(PaginationRequest request,
         string? maGiuong = null,
@@ -33,14 +33,14 @@ public class GiuongKtxService(
             return new Result<GiuongKtxPagingResponse>(ex);
         }
     }
-    public override async Task<Result<GiuongKtx>> CreateAsync(GiuongKtx entity)
+    public override async Task<Result<KtxGiuong>> CreateAsync(KtxGiuong entity)
     {
         try
         {
             var exits = await giuongRepository.GetFirstAsync(g => g.MaGiuong == entity.MaGiuong && !g.IsDeleted);
             if (exits != null)
             {
-                return new Result<GiuongKtx>(new BadRequestException($"Mã Giường '{entity.MaGiuong}' đã tồn tại."));
+                return new Result<KtxGiuong>(new BadRequestException($"Mã Giường '{entity.MaGiuong}' đã tồn tại."));
             }
             var PhongKtx = await phongRepository.GetFirstAsync(g => g.Id == entity.PhongKtxId);
             if (PhongKtx != null)
@@ -53,25 +53,25 @@ public class GiuongKtxService(
         }
         catch (Exception ex)
         {
-            return new Result<GiuongKtx>(ex);
+            return new Result<KtxGiuong>(ex);
         }
     }
 
-    public override async Task<Result<GiuongKtx>> UpdateAsync(Guid id, GiuongKtx entity)
+    public override async Task<Result<KtxGiuong>> UpdateAsync(Guid id, KtxGiuong entity)
     {
         try
         {
             var existingGiuong = await giuongRepository.GetByIdAsync(id);
             if (existingGiuong == null)
             {
-                return new Result<GiuongKtx>(new NotFoundException("Không tìm thấy giường cần cập nhật."));
+                return new Result<KtxGiuong>(new NotFoundException("Không tìm thấy giường cần cập nhật."));
             }
             if (existingGiuong.MaGiuong != entity.MaGiuong)
             {
                 var duplicate = await giuongRepository.GetFirstAsync(g => g.MaGiuong == entity.MaGiuong && g.Id != id && !g.IsDeleted);
                 if (duplicate != null)
                 {
-                    return new Result<GiuongKtx>(new BadRequestException($"Mã giường '{entity.MaGiuong}' đã tồn tại ở một giường khác."));
+                    return new Result<KtxGiuong>(new BadRequestException($"Mã giường '{entity.MaGiuong}' đã tồn tại ở một giường khác."));
                 }
             })
             var result = await base.UpdateAsync(id, entity);
@@ -85,11 +85,11 @@ public class GiuongKtxService(
         }
         catch (Exception ex)
         {
-            return new Result<GiuongKtx>(ex);
+            return new Result<KtxGiuong>(ex);
         }
     }
 
-    protected override Task UpdateEntityProperties(GiuongKtx existingEntity, GiuongKtx newEntity)
+    protected override Task UpdateEntityProperties(KtxGiuong existingEntity, KtxGiuong newEntity)
     {
         existingEntity.MaGiuong = newEntity.MaGiuong;
         existingEntity.TrangThai = newEntity.TrangThai;

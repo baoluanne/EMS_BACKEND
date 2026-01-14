@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace EMS.Infrastructure.Repositories.KtxManagement;
 
 public class YeuCauSuaChuaRepository(DbFactory dbFactory)
-    : AuditRepository<YeuCauSuaChua>(dbFactory), IYeuCauSuaChuaRepository
+    : AuditRepository<KtxYeuCauSuaChua>(dbFactory), IYeuCauSuaChuaRepository
 {
     public async Task<(List<YeuCauSuaChuaResponseDto> Data, int Total)> GetPaginatedWithDetailsAsync(
         PaginationRequest request,

@@ -7,7 +7,7 @@ using LanguageExt.Common;
 
 namespace EMS.Application.Services.KtxService;
 
-public interface IGiuongKtxService : IBaseService<GiuongKtx>
+public interface IGiuongKtxService : IBaseService<KtxGiuong>
 {
     Task<Result<GiuongKtxPagingResponse>> GetPaginatedAsync(
         PaginationRequest request,

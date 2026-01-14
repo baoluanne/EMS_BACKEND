@@ -260,8 +260,8 @@ namespace EMS.Domain.Entities.StudentManagement
         ///// </summary>
         //public virtual ICollection<PhieuChiSinhVien> PhieuChis { get; set; } = new List<PhieuChiSinhVien>();
         public virtual ICollection<BangDiemChiTiet>? BangDiemChiTiets { get; set; }
-        public virtual ICollection<CuTruKtx> CuTruKtxs { get; set; } = new List<CuTruKtx>();
-        public virtual ICollection<YeuCauSuaChua> YeuCauSuaChuas { get; set; } = new List<YeuCauSuaChua>();
+        public virtual ICollection<KtxCutru> CuTruKtxs { get; set; } = new List<KtxCutru>();
+        public virtual ICollection<KtxYeuCauSuaChua> YeuCauSuaChuas { get; set; } = new List<KtxYeuCauSuaChua>();
         [NotMapped]
         public string? FullName
         {

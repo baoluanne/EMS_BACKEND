@@ -8,15 +8,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EMS.Infrastructure.Repositories.KtxManagement
 {
-    public class ViPhamNoiQuyKTXRepository(DbFactory dbFactory) : AuditRepository<ViPhamNoiQuyKTX>(dbFactory), IViPhamNoiQuyKTXRepository
+    public class ViPhamNoiQuyKTXRepository(DbFactory dbFactory) : AuditRepository<KtxViPhamNoiQuy>(dbFactory), IViPhamNoiQuyKTXRepository
     {
         public async Task<(List<ViPhamNoiQuyKtxResponseDto> Data, int Total)> GetPaginatedWithDetailsAsync(ViPhamFilterRequest request)
         {
             var query = from vp in DbSet.AsNoTracking().Where(x => !x.IsDeleted)
                         join sv in dbFactory.DbContext.Set<SinhVien>().AsNoTracking() on vp.SinhVienId equals sv.Id
-                        join giuong in dbFactory.DbContext.Set<GiuongKtx>().AsNoTracking() on sv.Id equals giuong.SinhVienId into gj
+                        join giuong in dbFactory.DbContext.Set<KtxGiuong>().AsNoTracking() on sv.Id equals giuong.SinhVienId into gj
                         from giuong in gj.DefaultIfEmpty()
-                        join phong in dbFactory.DbContext.Set<PhongKtx>().AsNoTracking() on giuong.PhongKtxId equals phong.Id into pj
+                        join phong in dbFactory.DbContext.Set<KtxPhong>().AsNoTracking() on giuong.PhongKtxId equals phong.Id into pj
                         from phong in pj.DefaultIfEmpty()
                         join toa in dbFactory.DbContext.Set<ToaNhaKtx>().AsNoTracking() on phong.ToaNhaId equals toa.Id into tj
                         from toa in tj.DefaultIfEmpty()

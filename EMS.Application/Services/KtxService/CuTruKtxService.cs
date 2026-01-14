@@ -10,7 +10,7 @@ using LanguageExt.Common;
 
 namespace EMS.Application.Services.KtxService
 {
-    public class CuTruKtxService : BaseService<CuTruKtx>, ICuTruKtxService
+    public class CuTruKtxService : BaseService<KtxCutru>, ICuTruKtxService
     {
         private readonly ICuTruKtxRepository _cuTruRepository;
         private readonly IGiuongKtxRepository _giuongRepository;
@@ -25,7 +25,7 @@ namespace EMS.Application.Services.KtxService
             _giuongRepository = giuongRepository;
         }
 
-        public async Task<Result<CuTruKtx>> TaoHopDongMoiAsync(
+        public async Task<Result<KtxCutru>> TaoHopDongMoiAsync(
             Guid sinhVienId, Guid giuongId, DateTime ngayBatDau, DateTime ngayHetHan,
             Guid? donKtxId = null, string? ghiChu = null)
         {
@@ -33,13 +33,13 @@ namespace EMS.Application.Services.KtxService
             {
                 var giuong = await _giuongRepository.GetByIdAsync(giuongId);
                 if (giuong == null || giuong.TrangThai != TrangThaiGiuongConstants.TRONG)
-                    return new Result<CuTruKtx>(new BadRequestException("Giường không khả dụng"));
+                    return new Result<KtxCutru>(new BadRequestException("Giường không khả dụng"));
 
                 var hopDongHienTai = await _cuTruRepository.GetHopDongHienTaiAsync(sinhVienId);
                 if (hopDongHienTai != null)
-                    return new Result<CuTruKtx>(new BadRequestException("Sinh viên đang có hợp đồng cư trú"));
+                    return new Result<KtxCutru>(new BadRequestException("Sinh viên đang có hợp đồng cư trú"));
 
-                var hopDong = new CuTruKtx
+                var hopDong = new KtxCutru
                 {
                     Id = Guid.NewGuid(),
                     SinhVienId = sinhVienId,
@@ -53,11 +53,11 @@ namespace EMS.Application.Services.KtxService
 
                 Repository.Add(hopDong);
                 await UnitOfWork.CommitAsync();
-                return new Result<CuTruKtx>(hopDong);
+                return new Result<KtxCutru>(hopDong);
             }
             catch (Exception ex)
             {
-                return new Result<CuTruKtx>(ex);
+                return new Result<KtxCutru>(ex);
             }
         }
 
@@ -111,20 +111,20 @@ namespace EMS.Application.Services.KtxService
             }
         }
 
-        public async Task<Result<CuTruKtx?>> GetHopDongHienTaiAsync(Guid sinhVienId)
+        public async Task<Result<KtxCutru?>> GetHopDongHienTaiAsync(Guid sinhVienId)
         {
             try
             {
                 var hopDong = await _cuTruRepository.GetHopDongHienTaiAsync(sinhVienId);
-                return new Result<CuTruKtx?>(hopDong);
+                return new Result<KtxCutru?>(hopDong);
             }
             catch (Exception ex)
             {
-                return new Result<CuTruKtx?>(ex);
+                return new Result<KtxCutru?>(ex);
             }
         }
 
-        protected override Task UpdateEntityProperties(CuTruKtx existingEntity, CuTruKtx newEntity)
+        protected override Task UpdateEntityProperties(KtxCutru existingEntity, KtxCutru newEntity)
         {
             existingEntity.NgayBatDau = newEntity.NgayBatDau;
             existingEntity.NgayHetHan = newEntity.NgayHetHan;

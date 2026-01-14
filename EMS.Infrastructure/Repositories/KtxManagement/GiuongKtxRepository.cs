@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace EMS.Infrastructure.Repositories.KtxManagement
 {
     public class GiuongKtxRepository(DbFactory dbFactory)
-        : AuditRepository<GiuongKtx>(dbFactory), IGiuongKtxRepository
+        : AuditRepository<KtxGiuong>(dbFactory), IGiuongKtxRepository
     {
         public async Task<(List<GiuongKtxResponseDto> Data, int Total)> GetPaginatedWithDetailsAsync(
             PaginationRequest request,

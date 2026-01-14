@@ -5,10 +5,10 @@ using EMS.Domain.Models;
 
 namespace EMS.Domain.Interfaces.Repositories.KtxManagement
 {
-    public interface ICuTruKtxRepository : IAuditRepository<CuTruKtx>
+    public interface ICuTruKtxRepository : IAuditRepository<KtxCutru>
     {
-        Task<CuTruKtx?> GetHopDongHienTaiAsync(Guid sinhVienId);
-        Task<CuTruKtx?> GetHopDongHienTaiByGiuongAsync(Guid giuongId);
+        Task<KtxCutru?> GetHopDongHienTaiAsync(Guid sinhVienId);
+        Task<KtxCutru?> GetHopDongHienTaiByGiuongAsync(Guid giuongId);
         Task<(List<ThongTinSinhVienKtxResponseDto> Data, int Total)> GetPaginatedSinhVienDangOAsync(
              PaginationRequest request,
              string? maSinhVien = null,

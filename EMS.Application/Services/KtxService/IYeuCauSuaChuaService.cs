@@ -6,7 +6,7 @@ using LanguageExt.Common;
 
 namespace EMS.Application.Services.KtxService;
 
-public interface IYeuCauSuaChuaService : IBaseService<YeuCauSuaChua>
+public interface IYeuCauSuaChuaService : IBaseService<KtxYeuCauSuaChua>
 {
     Task<Result<YeuCauSuaChuaPagingResponse>> GetPaginatedAsync(
         PaginationRequest request,

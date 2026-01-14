@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore;
 
 
 public class ChiSoDienNuocRepository(DbFactory dbFactory)
-    : AuditRepository<ChiSoDienNuoc>(dbFactory), IChiSoDienNuocRepository
+    : AuditRepository<KtxChiSoDienNuoc>(dbFactory), IChiSoDienNuocRepository
 {
     public async Task<(List<ChiSoDienNuocResponseDto> Data, int Total)> GetPaginatedWithDetailsAsync(
         PaginationRequest request,
-        Expression<Func<ChiSoDienNuoc, bool>> predicate)
+        Expression<Func<KtxChiSoDienNuoc, bool>> predicate)
     {
         var query = DbSet
             .AsNoTracking()

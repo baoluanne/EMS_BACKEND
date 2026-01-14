@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace EMS.Application.Services.KtxService;
 
-public class YeuCauSuaChuaService : BaseService<YeuCauSuaChua>, IYeuCauSuaChuaService
+public class YeuCauSuaChuaService : BaseService<KtxYeuCauSuaChua>, IYeuCauSuaChuaService
 {
     private readonly IYeuCauSuaChuaRepository _yeuCauRepository;
     private readonly ITaiSanKtxRepository _taiSanRepository;
@@ -53,7 +53,7 @@ public class YeuCauSuaChuaService : BaseService<YeuCauSuaChua>, IYeuCauSuaChuaSe
     {
         try
         {
-            var entity = new YeuCauSuaChua
+            var entity = new KtxYeuCauSuaChua
             {
                 TieuDe = dto.TieuDe,
                 NoiDung = dto.NoiDung,
@@ -180,7 +180,7 @@ public class YeuCauSuaChuaService : BaseService<YeuCauSuaChua>, IYeuCauSuaChuaSe
         return dateTime.Value.ToUniversalTime();
     }
 
-    protected override Task UpdateEntityProperties(YeuCauSuaChua existing, YeuCauSuaChua newEntity)
+    protected override Task UpdateEntityProperties(KtxYeuCauSuaChua existing, KtxYeuCauSuaChua newEntity)
     {
         existing.TieuDe = newEntity.TieuDe;
         existing.NoiDung = newEntity.NoiDung;
