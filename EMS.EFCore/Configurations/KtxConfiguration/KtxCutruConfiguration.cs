@@ -53,7 +53,7 @@ namespace EMS.Infrastructure.Configurations.KtxConfiguration
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(x => x.DonKtx)
-                .WithMany(d => d.CuTruKtxs)
+                .WithMany()
                 .HasForeignKey(x => x.DonKtxId)
                 .OnDelete(DeleteBehavior.Restrict);
         }

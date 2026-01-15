@@ -18,17 +18,32 @@ namespace EMS.Domain.Entities.KtxManagement
         public virtual HocKy HocKy { get; set; } = null!;
 
         public string? MaDon { get; set; }
-        public string? LoaiDon { get; set; }
-        public string? TrangThai { get; set; }
+        public string LoaiDon { get; set; } = "DangKyMoi";
+        public string TrangThai { get; set; } = "ChoDuyet";
 
         public DateTime NgayGuiDon { get; set; }
+        public DateTime NgayDuyet { get; set; }
         public DateTime NgayBatDau { get; set; }
         public DateTime NgayHetHan { get; set; }
-        public DateTime? NgayOThucTe { get; set; }
+
+        public Guid? IdGoiDichVu { get; set; }
+        [ForeignKey("IdGoiDichVu")]
+        public virtual DanhMucKhoanThuNgoaiHocPhi? GoiDichVu { get; set; }
+
+        public Guid? PhongDuocDuyetId { get; set; }
+        [ForeignKey("PhongDuocDuyetId")]
+        public virtual KtxPhong? PhongDuocDuyet { get; set; }
+
+        public Guid? GiuongDuocDuyetId { get; set; }
+        [ForeignKey("GiuongDuocDuyetId")]
+        public virtual KtxGiuong? GiuongDuocDuyet { get; set; }
+
         public string? GhiChu { get; set; }
 
         public virtual ICollection<KtxDonChiTiet> DonKtxChiTiets { get; set; } = new List<KtxDonChiTiet>();
-        public virtual ICollection<KtxDonPhongGiuong> DonKtxPhongGiuongs { get; set; } = new List<KtxDonPhongGiuong>();
-        public virtual ICollection<KtxCutru> CuTruKtxs { get; set; } = new List<KtxCutru>();
+        public virtual KtxDonDangKyMoi? DangKyMoi { get; set; }
+        public virtual KtxDonGiaHan? GiaHan { get; set; }
+        public virtual KtxDonChuyenPhong? ChuyenPhong { get; set; }
+        public virtual KtxDonRoiKtx? RoiKtx { get; set; }
     }
 }

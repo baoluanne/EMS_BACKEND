@@ -17,7 +17,7 @@ namespace EMS.Domain.Entities.KtxManagement
 
         public Guid IdDanhMucKhoanThu { get; set; }
         [ForeignKey("IdDanhMucKhoanThu")]
-        public virtual DanhMucKhoanThuNgoaiHocPhi DanhMucKhoanThu { get; set; } = null!;
+        public virtual DanhMucKhoanThuNgoaiHocPhi? DanhMucKhoanThu { get; set; } = null!;
 
         public int SoLuong { get; set; }
         public decimal DonGia { get; set; }

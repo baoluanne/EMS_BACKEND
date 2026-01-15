@@ -1,5 +1,4 @@
-﻿using EMS.Application.DTOs.KtxManagement;
-using EMS.Domain.Entities.KtxManagement;
+﻿using EMS.Domain.Entities.KtxManagement;
 using EMS.Domain.Interfaces.Repositories.KtxManagement;
 using EMS.Domain.Models;
 using EMS.Infrastructure.DataAccess;
@@ -9,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace EMS.Infrastructure.Repositories.KtxManagement
 {
     public class ToaNhaKtxRepository(DbFactory dbFactory)
-        : AuditRepository<ToaNhaKtx>(dbFactory), IToaNhaKtxRepository
+        : AuditRepository<KTXToaNha>(dbFactory), IToaNhaKtxRepository
     {
     }
 }

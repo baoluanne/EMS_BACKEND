@@ -18,6 +18,7 @@ using EMS.Application.Services.KhoiNganhServices;
 using EMS.Application.Services.KieuLamTronServices;
 using EMS.Application.Services.KieuMonHocServices;
 using EMS.Application.Services.KtxService;
+using EMS.Application.Services.KtxService.Service;
 using EMS.Application.Services.LoaiChungChiServices;
 using EMS.Application.Services.LoaiMonHocServices;
 using EMS.Application.Services.LoaiPhongServices;
@@ -123,15 +124,19 @@ public static class DependencyInjection
 
         //KTX
         services.AddScoped<IToaNhaKtxService, ToaNhaKtxService>();
+        services.AddScoped<ITangService, TangKtxService>();
         services.AddScoped<IPhongKtxService, PhongKtxService>();
         services.AddScoped<IGiuongKtxService, GiuongKtxService>();
+        services.AddScoped<IDonChiTietKtxService, DonChiTietKtxService>();
         services.AddScoped<IDonKtxService, DonKtxService>();
+        services.AddScoped<IDonKtxChuyenPhongService, DonKtxChuyenPhongService>();
+        services.AddScoped<IDonKtxGiaHanService, DonKtxGiaHanService>();
+        services.AddScoped<IDonKtxDangKyMoiService, DonKtxDangKyMoiService>();
+        services.AddScoped<IDonRoiKtxService, DonRoiKtxService>();
         services.AddScoped<IChiSoDienNuocService, ChiSoDienNuocService>();
-        services.AddScoped<IViPhamNoiQuyKTXService, ViPhamNoiQuyKTXService>();
+        services.AddScoped<IViPhamNoiQuyKTXService, ViPhamNoiQuyService>();
         services.AddScoped<ICuTruKtxService, CuTruKtxService>();
-        services.AddScoped<ITaiSanKtxService, TaiSanKtxService>();
-        services.AddScoped<IYeuCauSuaChuaService, IYeuCauSuaChuaService>();
-        services.AddScoped<IHoaDonKtxService, HoaDonKtxService>();
+        services.AddScoped<IYeuCauSuaChuaService, YeuCauSuaChuaService>();
 
 
         //EquipManagement

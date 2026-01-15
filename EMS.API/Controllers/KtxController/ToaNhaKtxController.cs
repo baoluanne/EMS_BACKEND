@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EMS.API.Controllers.KtxManagement
 {
-    public class ToaNhaKtxController : BaseController<ToaNhaKtx>
+    public class ToaNhaKtxController : BaseController<KTXToaNha>
     {
         public ToaNhaKtxController(IToaNhaKtxService service) : base(service)
         {
@@ -31,7 +31,7 @@ namespace EMS.API.Controllers.KtxManagement
                 request,
                 filter: q =>
                 (string.IsNullOrEmpty(filter.TenToaNha) || q.TenToaNha!.ToLower().Contains(filter.TenToaNha.ToLower()))
-                && (string.IsNullOrEmpty(filter.LoaiToaNha) || q.LoaiToaNha!.ToLower().Contains(filter.LoaiToaNha.ToLower()))
+                && (filter.LoaiToaNha == null || q.LoaiToaNha == filter.LoaiToaNha)
             );
 
             return result.ToResult();
@@ -40,7 +40,7 @@ namespace EMS.API.Controllers.KtxManagement
 
     public class ToaNhaFilter
     {
-        public string? LoaiToaNha { get; set; }
+        public int? LoaiToaNha { get; set; }
         public string? TenToaNha { get; set; }
     }
 }

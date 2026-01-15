@@ -16,10 +16,10 @@ namespace EMS.EFCore;
 public class AppDbContext : DbContext
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
-    public AppDbContext(IHttpContextAccessor httpContextAccessor)
-    {
-        _httpContextAccessor = httpContextAccessor;
-    }
+    //public AppDbContext(IHttpContextAccessor httpContextAccessor)
+    //{
+    //    _httpContextAccessor = httpContextAccessor;
+    //}
 
     public AppDbContext(DbContextOptions<AppDbContext> options, IHttpContextAccessor httpContextAccessor) : base(options)
     {
@@ -200,12 +200,20 @@ public class AppDbContext : DbContext
     public DbSet<BangDiemChiTiet> BangDiemChiTiet { get; set; } = null!;
     public DbSet<ChuyenDoiHocPhan> ChuyenDoiHocPhan { get; set; } = null!;
 
-    public DbSet<ToaNhaKtx> toaNhaKtxes { get; set; } = null!;
-    public DbSet<KtxPhong> phongKtxes { get; set; } = null!;
-    public DbSet<KtxGiuong> giuongKtxes { get; set; } = null!;
-    public DbSet<KtxDon> DonKtxes { get; set; } = null!;
-    public DbSet<KtxViPhamNoiQuy> ViPhamNoiQuyKTXes { get; set; } = null!;
-    public DbSet<KtxChiSoDienNuoc> ChiSoDienNuocs { get; set; } = null!;
+    public DbSet<KTXToaNha> KtxToaNhas { get; set; } = null!;
+    public DbSet<KtxTang> KtxTangs { get; set; } = null!;
+    public DbSet<KtxPhong> KtxPhongs { get; set; } = null!;
+    public DbSet<KtxGiuong> KtxGiuong { get; set; } = null!;
+    public DbSet<KtxDon> KtxDons { get; set; } = null!;
+    public DbSet<KtxDonChiTiet> KtxDonChiTiets { get; set; } = null!;
+    public DbSet<KtxDonChuyenPhong> KtxDonChuyenPhongs { get; set; } = null!;
+    public DbSet<KtxDonDangKyMoi> KtxDonDangKyMois { get; set; } = null!;
+    public DbSet<KtxDonGiaHan> KtxDonGiaHans { get; set; } = null!;
+    public DbSet<KtxDonRoiKtx> KtxDonRoiKtxes { get; set; } = null!;
+    public DbSet<KtxViPhamNoiQuy> KtxViPhamNoiQuys { get; set; } = null!;
+    public DbSet<KtxChiSoDienNuoc> KtxChiSoDienNuocs { get; set; } = null!;
+    public DbSet<KtxCutru> KtxCuTrus { get; set; } = null!;
+    public DbSet<KtxYeuCauSuaChua> KtxYeuCauSuaChuas { get; set; } = null!;
 
     public DbSet<TSTBChiTietKiemKe> TSTBChiTietKiemKes { get; set; } = null!;
     public DbSet<TSTBChiTietPhieuMuon> TSTBChiTietPhieuMuons { get; set; } = null!;

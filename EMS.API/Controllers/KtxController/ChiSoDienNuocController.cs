@@ -1,5 +1,4 @@
 ﻿using EMS.API.Controllers.Base;
-using EMS.Application.DTOs.KtxManagement;
 using EMS.Application.Services.KtxService;
 using EMS.Domain.Entities.KtxManagement;
 using EMS.Domain.Extensions;
@@ -19,10 +18,4 @@ public class ChiSoDienNuocController : BaseController<KtxChiSoDienNuoc>
         _service = service;
     }
 
-    [HttpGet("pagination")]
-    public async Task<IActionResult> GetPagination([FromQuery] PaginationRequest request, [FromQuery] ChiSoDienNuocFilter filter)
-    {
-        var result = await _service.GetPaginatedAsync(request, filter);
-        return result.ToResult();
-    }
 }

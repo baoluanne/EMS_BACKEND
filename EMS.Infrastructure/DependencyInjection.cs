@@ -109,11 +109,15 @@ public static class DependencyInjection
         services.AddScoped<IChiSoDienNuocRepository, ChiSoDienNuocRepository>();
         services.AddScoped<IViPhamNoiQuyKTXRepository, ViPhamNoiQuyKTXRepository>();
         services.AddScoped<IToaNhaKtxRepository, ToaNhaKtxRepository>();
+        services.AddScoped<ITangRepository, TangRepository>();
         services.AddScoped<IDonKtxRepository, DonKtxRepository>();
+        services.AddScoped<IDonChiTietKtxRepository, DonChiTietKtxRepository>();
+        services.AddScoped<IDonChuyenPhongRepository, DonChuyenPhongRepository>();
+        services.AddScoped<IDonDangKyMoiRepository, DonDangKyMoiRepository>();
+        services.AddScoped<IDonGiaHanRepository, DonGiaHanRepository>();
+        services.AddScoped<IDonRoiKtxRepository, DonRoiKtxRepository>();
         services.AddScoped<ICuTruKtxRepository, CuTruKtxRepository>();
-        services.AddScoped<ITaiSanKtxRepository, TaiSanKtxRepository>();
         services.AddScoped<IYeuCauSuaChuaRepository, YeuCauSuaChuaRepository>();
-        services.AddScoped<IHoaDonKtxRepository, HoaDonKtxRepository>();
         
         services.AddScoped<IChiTietKiemKeRepository, ChiTietKiemKeRepository>();
         services.AddScoped<IChiTietPhieuMuonRepository, ChiTietPhieuMuonRepository>();
