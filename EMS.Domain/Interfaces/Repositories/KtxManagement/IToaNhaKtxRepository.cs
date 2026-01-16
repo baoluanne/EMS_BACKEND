@@ -11,5 +11,6 @@ namespace EMS.Domain.Interfaces.Repositories.KtxManagement
 {
     public interface IToaNhaKtxRepository : IAuditRepository<KTXToaNha>
     {
+        Task<KTXToaNha?> GetStructureAsync(Guid id);
     }
 }

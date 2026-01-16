@@ -18,6 +18,7 @@ namespace EMS.Domain.Entities.KtxManagement
         public Guid PhongKtxId { get; set; }
         [ForeignKey("PhongKtxId")]
         public virtual KtxPhong Phong { get; set; } = null!;
+        public int? TrangThai {  get; set; }
 
         public virtual ICollection<KtxCutru> CuTruKtxs { get; set; } = new List<KtxCutru>();
 

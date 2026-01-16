@@ -124,7 +124,7 @@ public static class DependencyInjection
 
         //KTX
         services.AddScoped<IToaNhaKtxService, ToaNhaKtxService>();
-        services.AddScoped<ITangService, TangKtxService>();
+        services.AddScoped<ITangService, TangService>();
         services.AddScoped<IPhongKtxService, PhongKtxService>();
         services.AddScoped<IGiuongKtxService, GiuongKtxService>();
         services.AddScoped<IDonChiTietKtxService, DonChiTietKtxService>();

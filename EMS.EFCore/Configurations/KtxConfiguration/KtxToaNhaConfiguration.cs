@@ -25,10 +25,14 @@ namespace EMS.Infrastructure.Configurations.KtxConfiguration
             builder.Property(x => x.GhiChu)
                 .HasMaxLength(500);
 
+            builder.Property(x => x.SoTang)
+                .HasDefaultValue(0);
+
+            // Relationship: One ToaNha -> Many Tangs
             builder.HasMany(x => x.KtxTangs)
                 .WithOne(t => t.ToaNha)
                 .HasForeignKey(t => t.ToaNhaId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

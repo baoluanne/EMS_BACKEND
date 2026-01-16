@@ -16,13 +16,18 @@ namespace EMS.Infrastructure.Configurations.KtxConfiguration
                 .HasMaxLength(50);
 
             builder.Property(x => x.LoaiTang)
-                .HasMaxLength(50);
+                .HasDefaultValue(0);
 
+            builder.Property(x => x.SoLuongPhong)
+                .HasDefaultValue(0);
+
+            // Foreign Key to ToaNha
             builder.HasOne(x => x.ToaNha)
                 .WithMany(t => t.KtxTangs)
                 .HasForeignKey(x => x.ToaNhaId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
+            // Relationship: One Tang -> Many Phongs
             builder.HasMany(x => x.KtxPhongs)
                 .WithOne(p => p.Tang)
                 .HasForeignKey(p => p.TangKtxId)

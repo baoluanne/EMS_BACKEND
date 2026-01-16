@@ -16,5 +16,15 @@ public class PhongKtxController(IPhongKtxService service) : BaseController<KtxPh
         var result = await Service.GetAllAsync();
         return result.ToResult();
     }
-
+    [HttpGet("pagination")]
+    public virtual async Task<IActionResult> GetPagination(
+    [FromQuery] PaginationRequest request,
+    [FromQuery] Guid? TangKtxId) 
+    {
+        var result = await Service.GetPaginatedAsync(
+            request,
+            filter: q => !TangKtxId.HasValue || q.TangKtxId == TangKtxId.Value
+        );
+        return result.ToResult();
+    }
 }

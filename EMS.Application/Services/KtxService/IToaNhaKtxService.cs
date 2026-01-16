@@ -7,4 +7,5 @@ namespace EMS.Application.Services.KtxService;
 
 public interface IToaNhaKtxService : IBaseService<KTXToaNha>
 {
+    Task<Result<KTXToaNha>> GetToaNhaStructureAsync(Guid id);
 }

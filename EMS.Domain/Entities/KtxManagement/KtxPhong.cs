@@ -15,6 +15,7 @@ namespace EMS.Domain.Entities.KtxManagement
         public string? MaPhong { get; set; }
         public int? SoLuongGiuong { get; set; }
         public string? LoaiPhong { get; set; }
+        public int? TrangThai { get; set; }
 
         public virtual ICollection<KtxGiuong> KtxGiuongs { get; set; } = new List<KtxGiuong>();
         public virtual ICollection<KtxChiSoDienNuoc> ChiSoDienNuocs { get; set; } = new List<KtxChiSoDienNuoc>();

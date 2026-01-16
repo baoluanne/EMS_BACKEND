@@ -5,11 +5,11 @@ using EMS.Domain.Interfaces.Repositories.KtxManagement;
 
 namespace EMS.Application.Services.KtxService.Service
 {
-    public class TangKtxService : BaseService<KtxTang>, ITangService
+    public class TangService : BaseService<KtxTang>, ITangService
     {
         private readonly ITangRepository _repository;
 
-        public TangKtxService(IUnitOfWork unitOfWork, ITangRepository repository)
+        public TangService(IUnitOfWork unitOfWork, ITangRepository repository)
             : base(unitOfWork, repository)
         {
             _repository = repository;

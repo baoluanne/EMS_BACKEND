@@ -11,8 +11,10 @@ namespace EMS.API.Controllers.KtxManagement
 {
     public class ToaNhaKtxController : BaseController<KTXToaNha>
     {
+        private readonly IToaNhaKtxService _toaNhaService;
         public ToaNhaKtxController(IToaNhaKtxService service) : base(service)
         {
+            _toaNhaService = service;
         }
 
         public override async Task<IActionResult> GetAll()
@@ -20,7 +22,12 @@ namespace EMS.API.Controllers.KtxManagement
             var result = await Service.GetAllAsync();
             return result.ToResult();
         }
-
+        [HttpGet("structure/{id}")]
+        public async Task<IActionResult> GetStructure(Guid id)
+        {
+            var result = await _toaNhaService.GetToaNhaStructureAsync(id);
+            return result.ToResult();
+        }
         [HttpGet("pagination")]
         public virtual async Task<IActionResult> GetPagination(
             [FromQuery] PaginationRequest request,
