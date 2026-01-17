@@ -5,21 +5,22 @@ using EMS.Domain.Interfaces.Repositories.KtxManagement;
 
 namespace EMS.Application.Services.KtxService.Service
 {
-    public class DonKtxGiaHanService : BaseService<KtxDonGiaHan>, IDonKtxGiaHanService
+    public class DonRoiService : BaseService<KtxDonRoiKtx>, IDonRoiService
     {
-        private readonly IDonGiaHanRepository _repository;
+        private readonly IDonRoiKtxRepository _repository;
 
-        public DonKtxGiaHanService(IUnitOfWork unitOfWork, IDonGiaHanRepository repository)
+        public DonRoiService(IUnitOfWork unitOfWork, IDonRoiKtxRepository repository)
             : base(unitOfWork, repository)
         {
             _repository = repository;
         }
 
-        protected override Task UpdateEntityProperties(KtxDonGiaHan existingEntity, KtxDonGiaHan newEntity)
+        protected override Task UpdateEntityProperties(KtxDonRoiKtx existingEntity, KtxDonRoiKtx newEntity)
         {
             existingEntity.PhongHienTaiId = newEntity.PhongHienTaiId;
             existingEntity.GiuongHienTaiId = newEntity.GiuongHienTaiId;
-            existingEntity.LyDo = newEntity.LyDo;
+            existingEntity.LyDoRoi = newEntity.LyDoRoi;
+            existingEntity.NgayRoiThucTe = newEntity.NgayRoiThucTe;
             return Task.CompletedTask;
         }
     }

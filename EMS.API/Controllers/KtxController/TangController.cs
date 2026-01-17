@@ -19,9 +19,9 @@ namespace EMS.API.Controllers.KtxController
             [FromQuery] Guid? ToaNhaId)
         {
             var result = await Service.GetPaginatedAsync(
-        request,
-        filter: q => ToaNhaId == null || q.ToaNhaId == ToaNhaId
-    );
+            request,
+            filter: q => ToaNhaId == null || q.ToaNhaId == ToaNhaId
+            );
             return result.ToResult();
         }
     }

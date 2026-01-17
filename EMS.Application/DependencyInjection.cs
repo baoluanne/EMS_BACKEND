@@ -129,10 +129,10 @@ public static class DependencyInjection
         services.AddScoped<IGiuongKtxService, GiuongKtxService>();
         services.AddScoped<IDonChiTietKtxService, DonChiTietKtxService>();
         services.AddScoped<IDonKtxService, DonKtxService>();
-        services.AddScoped<IDonKtxChuyenPhongService, DonKtxChuyenPhongService>();
-        services.AddScoped<IDonKtxGiaHanService, DonKtxGiaHanService>();
-        services.AddScoped<IDonKtxDangKyMoiService, DonKtxDangKyMoiService>();
-        services.AddScoped<IDonRoiKtxService, DonRoiKtxService>();
+        services.AddScoped<IDonChuyenPhongService, DonChuyenPhongService>();
+        services.AddScoped<IDonGiaHanService, DonGiaHanService>();
+        services.AddScoped<IDonDangKyMoiService, DonDangKyMoiService>();
+        services.AddScoped<IDonRoiService, DonRoiService>();
         services.AddScoped<IChiSoDienNuocService, ChiSoDienNuocService>();
         services.AddScoped<IViPhamNoiQuyKTXService, ViPhamNoiQuyService>();
         services.AddScoped<ICuTruKtxService, CuTruKtxService>();

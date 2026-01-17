@@ -31,33 +31,26 @@ namespace EMS.API.Controllers.KtxController
             [FromQuery] PaginationRequest request,
             [FromQuery] GiuongFilter filter)
         {
-            try
-            {
-                var result = await Service.GetPaginatedAsync(
-                    request,
-                    filter: q =>
-                    (string.IsNullOrEmpty(filter.MaGiuong) || q.MaGiuong!.ToLower().Contains(filter.MaGiuong.ToLower()))
-                    && (string.IsNullOrEmpty(filter.SinhVienId) || q.SinhVienId.ToString() == filter.SinhVienId)
-                    && (string.IsNullOrEmpty(filter.PhongId) || q.PhongKtxId.ToString() == filter.PhongId)
-                    && (filter.TrangThai == null || q.TrangThai == int.Parse(filter.TrangThai)),
-                    include: q => q.Include(x => x.Phong)
-                          .Include(x => x.SinhVien)
-                          .Include(x => x.Phong.Tang)
-                          .Include(x => x.Phong.Tang.ToaNha)
-                );
-                return result.ToResult();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = ex.Message });
-            }
+            var result = await Service.GetPaginatedAsync(
+                request,
+                filter: q =>
+                (string.IsNullOrEmpty(filter.MaGiuong) || q.MaGiuong!.ToLower().Contains(filter.MaGiuong.ToLower()))
+                && (string.IsNullOrEmpty(filter.SinhVienId) || q.SinhVienId.ToString() == filter.SinhVienId)
+                && (string.IsNullOrEmpty(filter.PhongId) || q.PhongKtxId.ToString() == filter.PhongId)
+                && (filter.TrangThai == null || q.TrangThai == int.Parse(filter.TrangThai)),
+                include: q => q.Include(x => x.Phong)
+                      .Include(x => x.SinhVien)
+                      .Include(x => x.Phong!.Tang)
+                      .Include(x => x.Phong!.Tang.ToaNha)
+            );
+            return result.ToResult();
         }
     }
-    public class GiuongFilter
-    {
-        public string? MaGiuong { get; set; }
-        public string? SinhVienId { get; set; }
-        public string? PhongId { get; set; }
-        public string? TrangThai { get; set; }
-    }
+}
+public class GiuongFilter
+{
+    public string? MaGiuong { get; set; }
+    public string? SinhVienId { get; set; }
+    public string? PhongId { get; set; }
+    public string? TrangThai { get; set; }
 }

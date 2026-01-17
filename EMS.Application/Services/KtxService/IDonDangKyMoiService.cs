@@ -8,7 +8,7 @@ using EMS.Domain.Entities.KtxManagement;
 
 namespace EMS.Application.Services.KtxService
 {
-    public interface IDonKtxDangKyMoiService : IBaseService<KtxDonDangKyMoi>
+    public interface IDonDangKyMoiService : IBaseService<KtxDonDangKyMoi>
     {
     }
 

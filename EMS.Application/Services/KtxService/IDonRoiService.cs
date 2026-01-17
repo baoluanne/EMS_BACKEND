@@ -3,7 +3,7 @@ using EMS.Domain.Entities.KtxManagement;
 
 namespace EMS.Application.Services.KtxService
 {
-    public interface IDonRoiKtxService : IBaseService<KtxDonRoiKtx>
+    public interface IDonRoiService : IBaseService<KtxDonRoiKtx>
     {
     }
 }

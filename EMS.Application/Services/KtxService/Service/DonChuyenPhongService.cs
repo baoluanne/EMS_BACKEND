@@ -5,11 +5,11 @@ using EMS.Domain.Interfaces.Repositories.KtxManagement;
 
 namespace EMS.Application.Services.KtxService.Service
 {
-    public class DonKtxChuyenPhongService : BaseService<KtxDonChuyenPhong>, IDonKtxChuyenPhongService
+    public class DonChuyenPhongService : BaseService<KtxDonChuyenPhong>, IDonChuyenPhongService
     {
         private readonly IDonChuyenPhongRepository _repository;
 
-        public DonKtxChuyenPhongService(IUnitOfWork unitOfWork, IDonChuyenPhongRepository repository)
+        public DonChuyenPhongService(IUnitOfWork unitOfWork, IDonChuyenPhongRepository repository)
             : base(unitOfWork, repository)
         {
             _repository = repository;

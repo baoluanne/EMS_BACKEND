@@ -1,17 +1,15 @@
 ﻿using EMS.API.Controllers.Base;
 using EMS.Application.Services.KtxService;
 using EMS.Domain.Entities.KtxManagement;
-using EMS.Domain.Models;
-using LanguageExt.Common;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EMS.API.Controllers.KtxController
 {
-    public class DonKtxController : BaseController<KtxDon>
+    public class DonChuyenPhongController : BaseController<KtxDonChuyenPhong>
     {
-        private readonly IDonKtxService _service;
-
-        public DonKtxController(IDonKtxService service) : base(service)
+        private readonly IDonChuyenPhongService _service;
+        public DonChuyenPhongController
+            (IDonChuyenPhongService service) : base(service)
         {
             _service = service;
         }
