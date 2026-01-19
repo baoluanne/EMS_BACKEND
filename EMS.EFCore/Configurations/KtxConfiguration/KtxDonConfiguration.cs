@@ -1,4 +1,5 @@
 ﻿using EMS.Domain.Entities.KtxManagement;
+using EMS.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -19,14 +20,16 @@ namespace EMS.Infrastructure.Configurations.KtxConfiguration
                 .IsUnique();
 
             builder.Property(x => x.LoaiDon)
+                .HasConversion<string>()
                 .HasMaxLength(50)
                 .IsRequired()
-                .HasDefaultValue("DangKyMoi");
+                .HasDefaultValue(KtxLoaiDon.DangKyMoi);
 
             builder.Property(x => x.TrangThai)
+                .HasConversion<string>()
                 .HasMaxLength(50)
                 .IsRequired()
-                .HasDefaultValue("ChoDuyet");
+                .HasDefaultValue(KtxDonTrangThai.ChoDuyet);
 
             builder.Property(x => x.NgayGuiDon)
                 .IsRequired()
@@ -46,7 +49,6 @@ namespace EMS.Infrastructure.Configurations.KtxConfiguration
             builder.Property(x => x.GhiChu)
                 .HasMaxLength(500);
 
-            // Foreign Keys
             builder.HasOne(x => x.SinhVien)
                 .WithMany()
                 .HasForeignKey(x => x.IdSinhVien)
@@ -72,7 +74,6 @@ namespace EMS.Infrastructure.Configurations.KtxConfiguration
                 .HasForeignKey(x => x.GiuongDuocDuyetId)
                 .OnDelete(DeleteBehavior.SetNull);
 
-            // Navigation properties
             builder.HasMany(x => x.DonKtxChiTiets)
                 .WithOne(d => d.DonKtx)
                 .HasForeignKey(d => d.DonKtxId)
@@ -98,7 +99,6 @@ namespace EMS.Infrastructure.Configurations.KtxConfiguration
                 .HasForeignKey<KtxDonRoiKtx>(r => r.DonKtxId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Indices
             builder.HasIndex(x => new { x.IdSinhVien, x.IdHocKy })
                 .HasDatabaseName("IX_KtxDon_SinhVien_HocKy");
 

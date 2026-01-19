@@ -13,5 +13,7 @@ namespace EMS.Application.Services.KtxService
 {
     public interface IDonKtxService : IBaseService<KtxDon>
     {
+        Task<Result<bool>> ApproveRequestAsync(Guid id, Guid? phongDuyetId, Guid? giuongDuyetId);
+        Task<Result<bool>> RejectRequestAsync(Guid id, string ghiChu);
     }
 }

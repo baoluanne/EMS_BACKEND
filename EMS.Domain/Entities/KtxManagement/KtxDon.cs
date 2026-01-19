@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using EMS.Domain.Entities.Base;
 using EMS.Domain.Entities.StudentManagement;
+using EMS.Domain.Enums;
 
 namespace EMS.Domain.Entities.KtxManagement
 {
@@ -11,15 +12,15 @@ namespace EMS.Domain.Entities.KtxManagement
     {
         public Guid IdSinhVien { get; set; }
         [ForeignKey("IdSinhVien")]
-        public virtual SinhVien SinhVien { get; set; } = null!;
+        public virtual SinhVien? SinhVien { get; set; } = null!;
 
         public Guid IdHocKy { get; set; }
         [ForeignKey("IdHocKy")]
-        public virtual HocKy HocKy { get; set; } = null!;
+        public virtual HocKy? HocKy { get; set; } = null!;
 
         public string? MaDon { get; set; }
-        public string LoaiDon { get; set; } = "DangKyMoi";
-        public string TrangThai { get; set; } = "ChoDuyet";
+        public KtxLoaiDon LoaiDon { get; set; } = KtxLoaiDon.DangKyMoi;
+        public KtxDonTrangThai TrangThai { get; set; } = KtxDonTrangThai.ChoDuyet;
 
         public DateTime NgayGuiDon { get; set; }
         public DateTime NgayDuyet { get; set; }
