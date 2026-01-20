@@ -49,4 +49,8 @@ namespace EMS.Application.Services.KtxService
         public Guid GiuongHienTaiId { get; set; }
         public string LyDoRoi { get; set; } = string.Empty;
     }
+    public class RejectRequestDto
+    {
+        public string GhiChu { get; set; } = string.Empty;
+    }
 }

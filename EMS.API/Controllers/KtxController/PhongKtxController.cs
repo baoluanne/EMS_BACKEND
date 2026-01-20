@@ -34,7 +34,7 @@ public class PhongKtxController(IPhongKtxService service) : BaseController<KtxPh
                     || q.Id!.ToString().ToLower().Contains(filter.PhongKtxId.ToLower()))
                 && (filter.Gender == null
                     || (filter.Gender == 0 ? q.LoaiPhong!.ToLower().Contains("nam") : q.LoaiPhong!.ToLower().Contains("nữ"))),
-            include: q => q.Include(x => x.Tang).Include(x => x.Tang.ToaNha));
+            include: q => q.Include(x => x.Tang).Include(x => x.Tang.ToaNha).Include(x => x.Giuongs));
 
         return result.ToResult();
     }

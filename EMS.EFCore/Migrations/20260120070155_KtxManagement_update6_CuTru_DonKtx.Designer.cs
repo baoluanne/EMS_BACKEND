@@ -3,6 +3,7 @@ using System;
 using EMS.EFCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EMS.EFCore.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260120070155_KtxManagement_update6_CuTru_DonKtx")]
+    partial class KtxManagement_update6_CuTru_DonKtx
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -4609,9 +4612,6 @@ namespace EMS.EFCore.Migrations
                     b.Property<Guid>("GiuongKtxId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("IdHocKy")
-                        .HasColumnType("uuid");
-
                     b.Property<Guid?>("IdNguoiCapNhat")
                         .HasColumnType("uuid");
 
@@ -4627,7 +4627,7 @@ namespace EMS.EFCore.Migrations
                     b.Property<DateTime>("NgayCapNhat")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("NgayRoiKtx")
+                    b.Property<DateTime>("NgayHetHan")
                         .HasColumnType("date");
 
                     b.Property<DateTime>("NgayTao")
@@ -4652,8 +4652,6 @@ namespace EMS.EFCore.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("DonKtxId");
-
-                    b.HasIndex("IdHocKy");
 
                     b.HasIndex("IdNguoiCapNhat");
 
@@ -11892,11 +11890,6 @@ namespace EMS.EFCore.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("EMS.Domain.Entities.HocKy", "HocKy")
-                        .WithMany()
-                        .HasForeignKey("IdHocKy")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("EMS.Domain.Entities.NguoiDung", "NguoiCapNhat")
                         .WithMany()
                         .HasForeignKey("IdNguoiCapNhat");
@@ -11924,8 +11917,6 @@ namespace EMS.EFCore.Migrations
                     b.Navigation("DonKtx");
 
                     b.Navigation("GiuongKtx");
-
-                    b.Navigation("HocKy");
 
                     b.Navigation("NguoiCapNhat");
 

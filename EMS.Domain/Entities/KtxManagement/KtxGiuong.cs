@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using EMS.Domain.Entities.Base;
 using EMS.Domain.Entities.StudentManagement;
+using EMS.Domain.Enums;
 
 namespace EMS.Domain.Entities.KtxManagement
 {
@@ -18,12 +19,26 @@ namespace EMS.Domain.Entities.KtxManagement
         public Guid PhongKtxId { get; set; }
         [ForeignKey("PhongKtxId")]
         public virtual KtxPhong? Phong { get; set; } = null!;
-        public int? TrangThai {  get; set; }
+
+        public KtxGiuongTrangThai TrangThai { get; set; } = KtxGiuongTrangThai.Trong;
 
         public virtual ICollection<KtxCutru> CuTruKtxs { get; set; } = new List<KtxCutru>();
 
         [NotMapped]
         public KtxCutru? HopDongHienTai => CuTruKtxs
-            .FirstOrDefault(c => c.TrangThai == "DangO" && c.NgayHetHan >= DateTime.UtcNow);
+            .FirstOrDefault(c => c.TrangThai == KtxCutruTrangThai.DangO && c.NgayRoiKtx >= DateTime.Now);
+
+        [NotMapped]
+        public string TrangThaiDisplay => TrangThai switch
+        {
+            KtxGiuongTrangThai.Trong => "Trống",
+            KtxGiuongTrangThai.DaCoNguoi => "Đã có người",
+            _ => "Không xác định"
+        };
+
+        [NotMapped]
+        public string ThongTinHopDongHienTai => HopDongHienTai != null
+            ? $"{HopDongHienTai.SinhVien?.HoDem +" " +HopDongHienTai.SinhVien?.Ten} - Từ {HopDongHienTai.NgayBatDau:dd/MM/yyyy} đến {HopDongHienTai.NgayRoiKtx:dd/MM/yyyy}"
+            : "Không có hợp đồng";
     }
 }

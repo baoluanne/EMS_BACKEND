@@ -26,13 +26,15 @@ namespace EMS.API.Controllers.KtxController
             var result = await Service.GetPaginatedAsync(
                 request,
                 filter: q =>
-                    (string.IsNullOrEmpty(filter.MaDon) || q.MaDon!.ToLower().Contains(filter.MaDon.ToLower()))
+                    (string.IsNullOrEmpty(filter.Id) || q.Id!.ToString().ToLower().Contains(filter.Id.ToLower()))
+                    &&(string.IsNullOrEmpty(filter.MaDon) || q.MaDon!.ToLower().Contains(filter.MaDon.ToLower()))
                     && (string.IsNullOrEmpty(filter.LoaiDon) || q.LoaiDon.ToString() == filter.LoaiDon)
                     && (string.IsNullOrEmpty(filter.TrangThai) || q.TrangThai.ToString() == filter.TrangThai)
                     && (filter.IdSinhVien == null || q.IdSinhVien == filter.IdSinhVien)
                     && (filter.IdHocKy == null || q.IdHocKy == filter.IdHocKy)
                     && (filter.TuNgay == null || q.NgayGuiDon >= filter.TuNgay)
-                    && (filter.DenNgay == null || q.NgayGuiDon <= filter.DenNgay),
+                    && (filter.DenNgay == null || q.NgayGuiDon <= filter.DenNgay)
+                    && (filter.NgayBatDau == null || q.NgayBatDau <= filter.NgayBatDau),
                 include: i => i
                     .Include(x => x.SinhVien)
                     .Include(x => x.HocKy)
@@ -42,6 +44,10 @@ namespace EMS.API.Controllers.KtxController
                     .Include(x => x.DangKyMoi)
                     .Include(x => x.ChuyenPhong)
                     .Include(x => x.GiaHan)
+                    .Include(x => x.DangKyMoi)
+            .ThenInclude(dk => dk.PhongYeuCau).ThenInclude(p => p.Giuongs)
+            .Include(x => x.ChuyenPhong)
+            .ThenInclude(cp => cp.PhongYeuCau).ThenInclude(p => p.Giuongs)
                     .Include(x => x.RoiKtx),
                 orderBy: x => x.NgayGuiDon,
                 isDescending: true
@@ -49,7 +55,6 @@ namespace EMS.API.Controllers.KtxController
 
             return result.ToResult();
         }
-
 
         [HttpPost("{id:guid}/approve")]
         public async Task<IActionResult> Approve(Guid id, [FromQuery] Guid? phongDuyetId, [FromQuery] Guid? giuongDuyetId)
@@ -59,14 +64,15 @@ namespace EMS.API.Controllers.KtxController
         }
 
         [HttpPost("{id:guid}/reject")]
-        public async Task<IActionResult> Reject(Guid id, [FromBody] string ghiChu)
+        public async Task<IActionResult> Reject(Guid id, [FromBody] RejectRequestDto request)
         {
-            var result = await _donKtxService.RejectRequestAsync(id, ghiChu);
+            var result = await _donKtxService.RejectRequestAsync(id, request.GhiChu);
             return result.ToResult();
         }
     }
     public class DonKtxFilter
     {
+        public string? Id { get; set; }
         public string? MaDon { get; set; }
         public string? LoaiDon { get; set; }
         public string? TrangThai { get; set; }
@@ -74,5 +80,6 @@ namespace EMS.API.Controllers.KtxController
         public Guid? IdHocKy { get; set; }
         public DateTime? TuNgay { get; set; }
         public DateTime? DenNgay { get; set; }
+        public DateTime? NgayBatDau { get; set; }
     }
 }

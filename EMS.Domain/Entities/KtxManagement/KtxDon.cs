@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using EMS.Domain.Entities.Base;
 using EMS.Domain.Entities.StudentManagement;
@@ -26,6 +25,21 @@ namespace EMS.Domain.Entities.KtxManagement
         public DateTime NgayDuyet { get; set; }
         public DateTime NgayBatDau { get; set; }
         public DateTime NgayHetHan { get; set; }
+
+        [NotMapped]
+        public Guid? PhongYeuCauId { get; set; }
+        [NotMapped]
+        public Guid? PhongHienTaiId { get; set; }
+        [NotMapped]
+        public virtual KtxPhong? PhongYeuCau
+        {
+            get
+            {
+                if (LoaiDon == KtxLoaiDon.DangKyMoi) return DangKyMoi?.PhongYeuCau;
+                if (LoaiDon == KtxLoaiDon.ChuyenPhong) return ChuyenPhong?.PhongYeuCau;
+                return null;
+            }
+        }
 
         public Guid? IdGoiDichVu { get; set; }
         [ForeignKey("IdGoiDichVu")]

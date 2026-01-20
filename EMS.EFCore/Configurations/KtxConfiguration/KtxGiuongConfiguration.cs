@@ -1,4 +1,5 @@
 ﻿using EMS.Domain.Entities.KtxManagement;
+using EMS.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -13,32 +14,24 @@ namespace EMS.Infrastructure.Configurations.KtxConfiguration
             builder.HasKey(x => x.Id);
 
             builder.Property(x => x.MaGiuong)
-                .HasMaxLength(20)
-                .IsRequired();
-
-            builder.HasIndex(x => x.MaGiuong)
-                .IsUnique();
+                .IsRequired()
+                .HasMaxLength(50);
 
             builder.Property(x => x.TrangThai)
-                .HasDefaultValue(0);
+        .HasConversion<string>()
+        .HasMaxLength(50)
+        .IsRequired()
+        .HasDefaultValue(KtxGiuongTrangThai.Trong);
 
-            // Foreign Key to Phong
             builder.HasOne(x => x.Phong)
-                .WithMany(p => p.KtxGiuongs)
+                .WithMany(p => p.Giuongs)
                 .HasForeignKey(x => x.PhongKtxId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Foreign Key to SinhVien (Optional)
             builder.HasOne(x => x.SinhVien)
                 .WithMany()
                 .HasForeignKey(x => x.SinhVienId)
                 .OnDelete(DeleteBehavior.SetNull);
-
-            // Relationship: One Giuong -> Many CuTruKtxs
-            builder.HasMany(x => x.CuTruKtxs)
-                .WithOne(c => c.GiuongKtx)
-                .HasForeignKey(c => c.GiuongKtxId)
-                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

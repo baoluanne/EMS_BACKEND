@@ -1,4 +1,5 @@
 ﻿using EMS.Domain.Entities.KtxManagement;
+using EMS.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,26 +13,26 @@ namespace EMS.Infrastructure.Configurations.KtxConfiguration
 
             builder.HasKey(x => x.Id);
 
-            builder.Property(x => x.SinhVienId)
-                .IsRequired();
+            builder.Property(x => x.SinhVienId).IsRequired();
+            builder.Property(x => x.PhongKtxId).IsRequired();
+            builder.Property(x => x.GiuongKtxId).IsRequired();
+            builder.Property(x => x.DonKtxId).IsRequired();
 
-            builder.Property(x => x.GiuongKtxId)
-                .IsRequired();
-
-            builder.Property(x => x.DonKtxId)
-                .IsRequired();
+            builder.Property(x => x.IdHocKy).IsRequired(false);
 
             builder.Property(x => x.NgayBatDau)
                 .IsRequired()
                 .HasColumnType("date");
 
-            builder.Property(x => x.NgayHetHan)
+            builder.Property(x => x.NgayRoiKtx)
                 .IsRequired()
                 .HasColumnType("date");
 
             builder.Property(x => x.TrangThai)
+                .HasConversion<string>()
                 .HasMaxLength(50)
-                .HasDefaultValue("DangO");
+                .IsRequired()
+                .HasDefaultValue(KtxCutruTrangThai.DangO);
 
             builder.Property(x => x.GhiChu)
                 .HasMaxLength(500);
@@ -47,6 +48,11 @@ namespace EMS.Infrastructure.Configurations.KtxConfiguration
                 .HasForeignKey(x => x.SinhVienId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            builder.HasOne(x => x.PhongKtx)
+                .WithMany()
+                .HasForeignKey(x => x.PhongKtxId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             builder.HasOne(x => x.GiuongKtx)
                 .WithMany(g => g.CuTruKtxs)
                 .HasForeignKey(x => x.GiuongKtxId)
@@ -55,6 +61,11 @@ namespace EMS.Infrastructure.Configurations.KtxConfiguration
             builder.HasOne(x => x.DonKtx)
                 .WithMany()
                 .HasForeignKey(x => x.DonKtxId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(x => x.HocKy)
+                .WithMany()
+                .HasForeignKey(x => x.IdHocKy)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

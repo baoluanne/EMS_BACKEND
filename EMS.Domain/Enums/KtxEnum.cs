@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace EMS.Domain.Enums
 {
-
     public enum KtxDonTrangThai
     {
         ChoDuyet = 0,
@@ -22,5 +21,16 @@ namespace EMS.Domain.Enums
         ChuyenPhong = 2,
         RoiKtx = 3
     }
-}
 
+    public enum KtxCutruTrangThai
+    {
+        DangO = 0,
+        DaRa = 1
+    }
+    public enum KtxGiuongTrangThai
+    {
+        Trong = 0,
+        DaCoNguoi = 1,
+        BaoTri = 2
+    }
+}

@@ -28,25 +28,21 @@ namespace EMS.Infrastructure.Configurations.KtxConfiguration
             builder.Property(x => x.TrangThai)
                 .HasDefaultValue(0);
 
-            // Foreign Key to Tang
             builder.HasOne(x => x.Tang)
                 .WithMany(t => t.KtxPhongs)
                 .HasForeignKey(x => x.TangKtxId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Relationship: One Phong -> Many Giuongs
-            builder.HasMany(x => x.KtxGiuongs)
+            builder.HasMany(x => x.Giuongs)
                 .WithOne(g => g.Phong)
                 .HasForeignKey(g => g.PhongKtxId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Relationship: One Phong -> Many ChiSoDienNuocs
             builder.HasMany(x => x.ChiSoDienNuocs)
                 .WithOne(c => c.Phong)
                 .HasForeignKey(c => c.PhongKtxId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Relationship: One Phong -> Many YeuCauSuaChuas
             builder.HasMany(x => x.YeuCauSuaChuas)
                 .WithOne(y => y.Phong)
                 .HasForeignKey(y => y.PhongKtxId)

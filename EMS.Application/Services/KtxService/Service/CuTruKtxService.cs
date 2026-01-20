@@ -22,10 +22,12 @@ namespace EMS.Application.Services.KtxService.Service
         protected override Task UpdateEntityProperties(KtxCutru existingEntity, KtxCutru newEntity)
         {
             existingEntity.SinhVienId = newEntity.SinhVienId;
+            existingEntity.PhongKtxId = newEntity.PhongKtxId;
             existingEntity.GiuongKtxId = newEntity.GiuongKtxId;
             existingEntity.DonKtxId = newEntity.DonKtxId;
+            existingEntity.IdHocKy = newEntity.IdHocKy;
             existingEntity.NgayBatDau = newEntity.NgayBatDau;
-            existingEntity.NgayHetHan = newEntity.NgayHetHan;
+            existingEntity.NgayRoiKtx = newEntity.NgayRoiKtx;
             existingEntity.TrangThai = newEntity.TrangThai;
             existingEntity.GhiChu = newEntity.GhiChu;
             return Task.CompletedTask;

@@ -49,6 +49,10 @@ namespace EMS.Infrastructure.Configurations.KtxConfiguration
             builder.Property(x => x.GhiChu)
                 .HasMaxLength(500);
 
+            builder.Ignore(x => x.PhongYeuCauId);
+            builder.Ignore(x => x.PhongHienTaiId);
+            builder.Ignore(x => x.PhongYeuCau);
+
             builder.HasOne(x => x.SinhVien)
                 .WithMany()
                 .HasForeignKey(x => x.IdSinhVien)
