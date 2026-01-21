@@ -8,6 +8,7 @@ using EMS.Domain.Interfaces.Storages;
 using EMS.Domain.Models;
 using EMS.Infrastructure.DataAccess;
 using EMS.Infrastructure.EmailServices;
+using EMS.Infrastructure.Persistence.Repositories.KtxManagement;
 using EMS.Infrastructure.Repositories;
 using EMS.Infrastructure.Repositories.Base;
 using EMS.Infrastructure.Repositories.EquipmentManagement;
@@ -118,6 +119,7 @@ public static class DependencyInjection
         services.AddScoped<IDonRoiKtxRepository, DonRoiKtxRepository>();
         services.AddScoped<ICuTruKtxRepository, CuTruKtxRepository>();
         services.AddScoped<IYeuCauSuaChuaRepository, YeuCauSuaChuaRepository>();
+        services.AddScoped<IKtxCuTruLichSuRepository, KtxCuTruLichSuRepository>();
         
         services.AddScoped<IChiTietKiemKeRepository, ChiTietKiemKeRepository>();
         services.AddScoped<IChiTietPhieuMuonRepository, ChiTietPhieuMuonRepository>();

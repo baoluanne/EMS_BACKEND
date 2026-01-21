@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using EMS.Domain.Entities.Base;
 using EMS.Domain.Entities.StudentManagement;
 using EMS.Domain.Enums;

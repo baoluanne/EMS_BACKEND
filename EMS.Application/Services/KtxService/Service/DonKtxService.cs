@@ -17,6 +17,9 @@ namespace EMS.Application.Services.KtxService.Service
         private readonly IDonRoiKtxRepository _roiKtxRepo;
         private readonly ICuTruKtxRepository _cutruRepo;
         private readonly IGiuongKtxRepository _giuongKtxRepo;
+        private readonly IKtxCuTruLichSuRepository _lichSuRepo;
+
+        #region public method
 
         public DonKtxService(
             IUnitOfWork unitOfWork,
@@ -26,7 +29,8 @@ namespace EMS.Application.Services.KtxService.Service
             IDonGiaHanRepository giaHanRepo,
             IDonRoiKtxRepository roiKtxRepo,
             IGiuongKtxRepository giuongrepo,
-            ICuTruKtxRepository cutruRepo)
+            ICuTruKtxRepository cutruRepo,
+            IKtxCuTruLichSuRepository lichSuRepo)
             : base(unitOfWork, repository)
         {
             _repository = repository;
@@ -36,6 +40,7 @@ namespace EMS.Application.Services.KtxService.Service
             _roiKtxRepo = roiKtxRepo;
             _cutruRepo = cutruRepo;
             _giuongKtxRepo = giuongrepo;
+            _lichSuRepo = lichSuRepo;
         }
 
         public override async Task<Result<KtxDon>> CreateAsync(KtxDon entity)
@@ -46,7 +51,7 @@ namespace EMS.Application.Services.KtxService.Service
                 {
                     entity.MaDon = GenerateMaDon(entity.LoaiDon);
                 }
-                entity.NgayGuiDon = DateTime.Now;
+                entity.NgayGuiDon = DateTime.UtcNow;
                 entity.TrangThai = KtxDonTrangThai.ChoDuyet;
 
                 Repository.Add(entity);
@@ -83,6 +88,7 @@ namespace EMS.Application.Services.KtxService.Service
                 {
                     entity.GiaHan!.DonKtxId = entity.Id;
                     _giaHanRepo.Add(entity.GiaHan);
+
                 }
                 else if (entity.LoaiDon == KtxLoaiDon.RoiKtx)
                 {
@@ -97,7 +103,9 @@ namespace EMS.Application.Services.KtxService.Service
                     entity.RoiKtx = new KtxDonRoiKtx
                     {
                         DonKtxId = entity.Id,
-                        NgayRoiThucTe = DateTime.Now
+                        NgayRoiThucTe = DateTime.UtcNow,
+                        PhongHienTaiId = currentStay.PhongKtxId,
+                        GiuongHienTaiId = currentStay.GiuongKtxId
                     };
                     _roiKtxRepo.Add(entity.RoiKtx);
                 }
@@ -123,11 +131,15 @@ namespace EMS.Application.Services.KtxService.Service
                     return new Result<bool>(new Exception("Không tìm thấy đơn"));
 
                 don.TrangThai = KtxDonTrangThai.DaDuyet;
-                don.NgayDuyet = DateTime.Now;
+                don.NgayDuyet = DateTime.UtcNow;
                 don.PhongDuocDuyetId = phongDuyetId;
                 don.GiuongDuocDuyetId = giuongDuyetId;
 
                 DateTime ngayRoiKtxDuKien = don.HocKy?.DenNgay ?? don.NgayHetHan;
+                ngayRoiKtxDuKien = EnsureUtc(ngayRoiKtxDuKien);
+
+                don.NgayBatDau = EnsureUtc(don.NgayBatDau);
+                don.NgayHetHan = EnsureUtc(don.NgayHetHan);
 
                 switch (don.LoaiDon)
                 {
@@ -158,88 +170,6 @@ namespace EMS.Application.Services.KtxService.Service
             }
         }
 
-        private async Task ProcessNewRegistration(KtxDon don, Guid? phongId, Guid? giuongId, DateTime ngayRoiKtx)
-        {
-            var giuong = await _giuongKtxRepo.GetByIdAsync(giuongId!);
-            if (giuong != null)
-            {
-                giuong.TrangThai = KtxGiuongTrangThai.DaCoNguoi;
-                giuong.SinhVienId = don.IdSinhVien;
-                _giuongKtxRepo.Update(giuong);
-            }
-
-            _cutruRepo.Add(new KtxCutru
-            {
-                SinhVienId = don.IdSinhVien,
-                DonKtxId = don.Id,
-                IdHocKy = don.IdHocKy,
-                PhongKtxId = phongId!.Value,
-                GiuongKtxId = giuongId!.Value,
-                NgayBatDau = don.NgayBatDau,
-                NgayRoiKtx = ngayRoiKtx,
-                TrangThai = KtxCutruTrangThai.DangO,
-                GhiChu = $"Duyệt từ đơn {don.MaDon}"
-            });
-        }
-
-        private async Task ProcessRoomTransfer(KtxDon don, Guid? phongId, Guid? giuongId, DateTime ngayRoiKtx)
-        {
-            var oldStay = await _cutruRepo.GetFirstAsync(
-                predicate: x => x.SinhVienId == don.IdSinhVien && x.TrangThai == KtxCutruTrangThai.DangO);
-
-            if (oldStay != null)
-            {
-                oldStay.TrangThai = KtxCutruTrangThai.DaRa;
-                oldStay.NgayRoiKtx = DateTime.Now;
-                _cutruRepo.Update(oldStay);
-
-                var oldGiuong = await _giuongKtxRepo.GetByIdAsync(oldStay.GiuongKtxId);
-                if (oldGiuong != null)
-                {
-                    oldGiuong.TrangThai = KtxGiuongTrangThai.Trong;
-                    oldGiuong.SinhVienId = null;
-                    _giuongKtxRepo.Update(oldGiuong);
-                }
-            }
-
-            await ProcessNewRegistration(don, phongId, giuongId, ngayRoiKtx);
-        }
-
-        private async Task ProcessExtension(KtxDon don, DateTime ngayRoiKtxMoi)
-        {
-            var stay = await _cutruRepo.GetFirstAsync(
-                predicate: x => x.SinhVienId == don.IdSinhVien && x.TrangThai == KtxCutruTrangThai.DangO);
-
-            if (stay != null)
-            {
-                stay.IdHocKy = don.IdHocKy;
-                stay.NgayRoiKtx = ngayRoiKtxMoi;
-                stay.DonKtxId = don.Id;
-                _cutruRepo.Update(stay);
-            }
-        }
-
-        private async Task ProcessCheckOut(KtxDon don)
-        {
-            var stay = await _cutruRepo.GetFirstAsync(
-                predicate: x => x.SinhVienId == don.IdSinhVien && x.TrangThai == KtxCutruTrangThai.DangO);
-
-            if (stay != null)
-            {
-                stay.TrangThai = KtxCutruTrangThai.DaRa;
-                stay.NgayRoiKtx = DateTime.Now;
-                _cutruRepo.Update(stay);
-
-                var giuong = await _giuongKtxRepo.GetByIdAsync(stay.GiuongKtxId);
-                if (giuong != null)
-                {
-                    giuong.TrangThai = KtxGiuongTrangThai.Trong;
-                    giuong.SinhVienId = null;
-                    _giuongKtxRepo.Update(giuong);
-                }
-            }
-        }
-
         public async Task<Result<bool>> RejectRequestAsync(Guid id, string ghiChu)
         {
             try
@@ -249,7 +179,7 @@ namespace EMS.Application.Services.KtxService.Service
                     return new Result<bool>(new Exception("Không tìm thấy đơn"));
 
                 don.TrangThai = KtxDonTrangThai.TuChoi;
-                don.NgayDuyet = DateTime.Now;
+                don.NgayDuyet = DateTime.UtcNow;
                 don.GhiChu = ghiChu;
 
                 _repository.Update(don);
@@ -259,6 +189,141 @@ namespace EMS.Application.Services.KtxService.Service
             catch (Exception ex)
             {
                 return new Result<bool>(ex);
+            }
+        }
+
+        #endregion
+
+
+        #region private methods 
+
+        private async Task ProcessNewRegistration(KtxDon don, Guid? phongId, Guid? giuongId, DateTime ngayRoiKtx)
+        {
+            ngayRoiKtx = EnsureUtc(ngayRoiKtx);
+
+            var giuong = await _giuongKtxRepo.GetByIdAsync(giuongId!);
+            if (giuong != null)
+            {
+                giuong.TrangThai = KtxGiuongTrangThai.DaCoNguoi;
+                giuong.SinhVienId = don.IdSinhVien;
+                _giuongKtxRepo.Update(giuong);
+            }
+
+            var cuTru = new KtxCutru
+            {
+                Id = Guid.NewGuid(),
+                SinhVienId = don.IdSinhVien,
+                DonKtxId = don.Id,
+                IdHocKy = don.IdHocKy,
+                PhongKtxId = phongId!.Value,
+                GiuongKtxId = giuongId!.Value,
+                NgayBatDau = EnsureUtc(don.NgayBatDau),
+                NgayRoiKtx = ngayRoiKtx,
+                TrangThai = KtxCutruTrangThai.DangO,
+                GhiChu = $"Duyệt từ đơn {don.MaDon}"
+            };
+            _cutruRepo.Add(cuTru);
+
+            var lichSu = new KtxCuTruLichSu
+            {
+                CuTruId = cuTru.Id,
+                SinhVienId = don.IdSinhVien,
+                DonKtxId = don.Id,
+                LoaiDon = don.LoaiDon,
+                PhongMoiId = phongId!.Value,
+                GiuongMoiId = giuongId!.Value,
+                IdHocKy = don.IdHocKy,
+                NgayBatDau = EnsureUtc(don.NgayBatDau),
+                NgayRoiDuKien = ngayRoiKtx,
+                TrangThai = KtxCutruTrangThai.DangO,
+                NgayGhiLichSu = DateTime.UtcNow,
+                GhiChu = $"Đăng ký mới từ đơn {don.MaDon}"
+            };
+            _lichSuRepo.Add(lichSu);
+        }
+
+        private async Task ProcessRoomTransfer(KtxDon don, Guid? phongId, Guid? giuongId, DateTime ngayRoiKtx)
+        {
+            ngayRoiKtx = EnsureUtc(ngayRoiKtx);
+
+            var oldStay = await _cutruRepo.GetFirstAsync(
+                predicate: x => x.SinhVienId == don.IdSinhVien && x.TrangThai == KtxCutruTrangThai.DangO);
+
+            if (oldStay != null)
+            {
+                var lichSu = new KtxCuTruLichSu
+                {
+                    CuTruId = oldStay.Id,
+                    SinhVienId = don.IdSinhVien,
+                    DonKtxId = don.Id,
+                    LoaiDon = don.LoaiDon,
+                    PhongCuId = oldStay.PhongKtxId,
+                    GiuongCuId = oldStay.GiuongKtxId,
+                    PhongMoiId = phongId!.Value,
+                    GiuongMoiId = giuongId!.Value,
+                    IdHocKy = oldStay.IdHocKy,
+                    NgayBatDau = EnsureUtc(oldStay.NgayBatDau),
+                    NgayRoiDuKien = ngayRoiKtx,
+                    TrangThai = KtxCutruTrangThai.DangO,
+                    NgayGhiLichSu = DateTime.UtcNow,
+                    GhiChu = $"Chuyển phòng từ đơn {don.MaDon}"
+                };
+                _lichSuRepo.Add(lichSu);
+
+                var oldGiuong = await _giuongKtxRepo.GetByIdAsync(oldStay.GiuongKtxId);
+                if (oldGiuong != null)
+                {
+                    oldGiuong.TrangThai = KtxGiuongTrangThai.Trong;
+                    oldGiuong.SinhVienId = null;
+                    _giuongKtxRepo.Update(oldGiuong);
+                }
+
+                oldStay.PhongKtxId = phongId!.Value;
+                oldStay.GiuongKtxId = giuongId!.Value;
+                oldStay.DonKtxId = don.Id;
+                oldStay.NgayRoiKtx = ngayRoiKtx;
+                _cutruRepo.Update(oldStay);
+
+                var giuong = await _giuongKtxRepo.GetByIdAsync(giuongId!);
+                if (giuong != null)
+                {
+                    giuong.TrangThai = KtxGiuongTrangThai.DaCoNguoi;
+                    giuong.SinhVienId = don.IdSinhVien;
+                    _giuongKtxRepo.Update(giuong);
+                }
+            }
+        }
+
+        private async Task ProcessExtension(KtxDon don, DateTime ngayRoiKtxMoi)
+        {
+            ngayRoiKtxMoi = EnsureUtc(ngayRoiKtxMoi);
+
+            var stay = await _cutruRepo.GetFirstAsync(
+                predicate: x => x.SinhVienId == don.IdSinhVien && x.TrangThai == KtxCutruTrangThai.DangO);
+
+            if (stay != null)
+            {
+                var lichSu = new KtxCuTruLichSu
+                {
+                    CuTruId = stay.Id,
+                    SinhVienId = don.IdSinhVien,
+                    DonKtxId = don.Id,
+                    LoaiDon = don.LoaiDon,
+                    PhongMoiId = stay.PhongKtxId,
+                    GiuongMoiId = stay.GiuongKtxId,
+                    IdHocKy = don.IdHocKy,
+                    NgayBatDau = EnsureUtc(stay.NgayBatDau),
+                    NgayRoiDuKien = ngayRoiKtxMoi,
+                    TrangThai = KtxCutruTrangThai.DangO,
+                    NgayGhiLichSu = DateTime.UtcNow,
+                    GhiChu = $"Gia hạn từ đơn {don.MaDon}"
+                };
+                _lichSuRepo.Add(lichSu);
+
+                stay.IdHocKy = don.IdHocKy;
+                stay.NgayRoiKtx = ngayRoiKtxMoi;
+                stay.DonKtxId = don.Id;
+                _cutruRepo.Update(stay);
             }
         }
 
@@ -272,21 +337,77 @@ namespace EMS.Application.Services.KtxService.Service
                 KtxLoaiDon.RoiKtx => "DRK",
                 _ => "DON"
             };
-            return $"{prefix}-{DateTime.Now:yyyyMMddHHmmss}";
+            return $"{prefix}-{DateTime.UtcNow:yyyyMMddHHmmss}";
         }
+
+        private DateTime EnsureUtc(DateTime dateTime)
+        {
+            if (dateTime.Kind == DateTimeKind.Unspecified)
+                return DateTime.SpecifyKind(dateTime, DateTimeKind.Utc);
+            if (dateTime.Kind == DateTimeKind.Local)
+                return dateTime.ToUniversalTime();
+            return dateTime;
+        }
+
+        private async Task ProcessCheckOut(KtxDon don)
+        {
+            var stay = await _cutruRepo.GetFirstAsync(
+                predicate: x => x.SinhVienId == don.IdSinhVien && x.TrangThai == KtxCutruTrangThai.DangO);
+
+            if (stay != null)
+            {
+                var lichSu = new KtxCuTruLichSu
+                {
+                    CuTruId = stay.Id,
+                    SinhVienId = don.IdSinhVien,
+                    DonKtxId = don.Id,
+                    LoaiDon = don.LoaiDon,
+                    PhongMoiId = stay.PhongKtxId,
+                    GiuongMoiId = stay.GiuongKtxId,
+                    IdHocKy = stay.IdHocKy,
+                    NgayBatDau = EnsureUtc(stay.NgayBatDau),
+                    NgayRoiDuKien = EnsureUtc(stay.NgayRoiKtx),
+                    NgayRoiThucTe = DateTime.UtcNow,
+                    TrangThai = KtxCutruTrangThai.DaRa,
+                    NgayGhiLichSu = DateTime.UtcNow,
+                    GhiChu = $"Rời KTX từ đơn {don.MaDon}"
+                };
+                _lichSuRepo.Add(lichSu);
+
+                stay.TrangThai = KtxCutruTrangThai.DaRa;
+                stay.NgayRoiKtx = DateTime.UtcNow;
+                _cutruRepo.Update(stay);
+
+                var giuong = await _giuongKtxRepo.GetByIdAsync(stay.GiuongKtxId);
+                if (giuong != null)
+                {
+                    giuong.TrangThai = KtxGiuongTrangThai.Trong;
+                    giuong.SinhVienId = null;
+                    _giuongKtxRepo.Update(giuong);
+                }
+            }
+        }
+
+        #endregion
+        
+
+        #region protected
 
         protected override Task UpdateEntityProperties(KtxDon existingEntity, KtxDon newEntity)
         {
             existingEntity.LoaiDon = newEntity.LoaiDon;
             existingEntity.TrangThai = newEntity.TrangThai;
             existingEntity.NgayDuyet = newEntity.NgayDuyet;
-            existingEntity.NgayBatDau = newEntity.NgayBatDau;
-            existingEntity.NgayHetHan = newEntity.NgayHetHan;
+            existingEntity.NgayBatDau = EnsureUtc(newEntity.NgayBatDau);
+            existingEntity.NgayHetHan = EnsureUtc(newEntity.NgayHetHan);
             existingEntity.IdGoiDichVu = newEntity.IdGoiDichVu;
             existingEntity.PhongDuocDuyetId = newEntity.PhongDuocDuyetId;
             existingEntity.GiuongDuocDuyetId = newEntity.GiuongDuocDuyetId;
             existingEntity.GhiChu = newEntity.GhiChu;
             return Task.CompletedTask;
         }
+
+        #endregion 
+
     }
 }

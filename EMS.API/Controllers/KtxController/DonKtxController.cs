@@ -19,9 +19,7 @@ namespace EMS.API.Controllers.KtxController
             _donKtxService = service;
         }
         [HttpGet("pagination")]
-        public virtual async Task<IActionResult> GetPagination(
-                    [FromQuery] PaginationRequest request,
-                    [FromQuery] DonKtxFilter filter)
+        public virtual async Task<IActionResult> GetPagination([FromQuery] PaginationRequest request,[FromQuery] DonKtxFilter filter)
         {
             var result = await Service.GetPaginatedAsync(
                 request,

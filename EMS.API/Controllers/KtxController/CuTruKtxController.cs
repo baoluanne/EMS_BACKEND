@@ -1,17 +1,59 @@
 ﻿using EMS.API.Controllers.Base;
 using EMS.Application.Services.KtxService;
+using EMS.Application.Services.KtxService.Service;
 using EMS.Domain.Entities.KtxManagement;
+using EMS.Domain.Enums;
+using EMS.Domain.Extensions;
 using EMS.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
-[Route("api/cu-tru-ktx")]
-[ApiController]
-public class CuTruKtxController : BaseController<KtxCutru>
+namespace EMS.API.Controllers.KtxManagement
 {
-    private readonly ICuTruKtxService _service;
-    public CuTruKtxController(ICuTruKtxService service) : base(service)
+    public class CuTruKtxController : BaseController<KtxCutru>
     {
-        _service = service;
+        private readonly ICuTruKtxService _service;
+
+        public CuTruKtxController(ICuTruKtxService service) : base(service)
+        {
+            _service = service;
+        }
+
+        [HttpGet("pagination")]
+        public async Task<IActionResult> GetPagination(
+            [FromQuery] PaginationRequest request,
+            [FromQuery] CuTruFilter filter)
+        {
+            var result = await Service.GetPaginatedAsync(
+                request,
+                filter: q =>
+                    (filter.TrangThai == null || q.TrangThai.ToString() == filter.TrangThai)
+                    && (filter.SinhVienId == null || q.SinhVienId == filter.SinhVienId)
+                    && (string.IsNullOrEmpty(filter.Keyword) ||
+                        q.SinhVien.HoDem.Contains(filter.Keyword) ||
+                        q.SinhVien.Ten.Contains(filter.Keyword) ||
+                        q.SinhVien.MaSinhVien.Contains(filter.Keyword) ||
+                        q.PhongKtx.MaPhong.Contains(filter.Keyword))
+                    && (filter.TuNgay == null || q.NgayBatDau >= filter.TuNgay)
+                    && (filter.DenNgay == null || q.NgayBatDau <= filter.DenNgay),
+                include: i => i
+                    .Include(x => x.SinhVien)
+                    .Include(x => x.PhongKtx)
+                    .Include(x => x.GiuongKtx)
+                    .Include(x => x.HocKy),
+                orderBy: x => x.NgayTao,
+                isDescending: true);
+
+            return result.ToResult();
+        }
     }
 
+    public class CuTruFilter
+    {
+        public string? TrangThai { get; set; }
+        public Guid? SinhVienId { get; set; }
+        public string? Keyword { get; set; }
+        public DateTime? TuNgay { get; set; }
+        public DateTime? DenNgay { get; set; }
+    }
 }
