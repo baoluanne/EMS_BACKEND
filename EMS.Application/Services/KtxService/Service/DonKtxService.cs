@@ -54,8 +54,10 @@ namespace EMS.Application.Services.KtxService.Service
                 entity.NgayGuiDon = DateTime.UtcNow;
                 entity.TrangThai = KtxDonTrangThai.ChoDuyet;
 
+                // Lưu đơn chính trước
                 Repository.Add(entity);
 
+                // Xử lý các bảng phụ theo loại đơn
                 if (entity.LoaiDon == KtxLoaiDon.DangKyMoi && entity.PhongYeuCauId.HasValue)
                 {
                     entity.DangKyMoi = new KtxDonDangKyMoi
@@ -65,49 +67,50 @@ namespace EMS.Application.Services.KtxService.Service
                     };
                     _dangKyMoiRepo.Add(entity.DangKyMoi);
                 }
-                else if (entity.LoaiDon == KtxLoaiDon.ChuyenPhong && entity.PhongYeuCauId.HasValue)
+                else if (entity.LoaiDon == KtxLoaiDon.ChuyenPhong || entity.LoaiDon == KtxLoaiDon.GiaHan || entity.LoaiDon == KtxLoaiDon.RoiKtx)
                 {
+                    // Cả 3 loại đơn này đều cần thông tin cư trú hiện tại
                     var currentStay = await _cutruRepo.GetFirstAsync(
                         predicate: x => x.SinhVienId == entity.IdSinhVien && x.TrangThai == KtxCutruTrangThai.DangO);
 
                     if (currentStay == null)
                     {
-                        return new Result<KtxDon>(new Exception("Sinh viên hiện không nội trú tại ký túc xá"));
+                        return new Result<KtxDon>(new Exception("Sinh viên hiện không nội trú tại ký túc xá, không thể thực hiện thao tác này."));
                     }
 
-                    entity.ChuyenPhong = new KtxDonChuyenPhong
+                    if (entity.LoaiDon == KtxLoaiDon.ChuyenPhong && entity.PhongYeuCauId.HasValue)
                     {
-                        DonKtxId = entity.Id,
-                        PhongYeuCauId = entity.PhongYeuCauId.Value,
-                        PhongHienTaiId = currentStay.PhongKtxId,
-                        GiuongHienTaiId = currentStay.GiuongKtxId
-                    };
-                    _chuyenPhongRepo.Add(entity.ChuyenPhong);
-                }
-                else if (entity.LoaiDon == KtxLoaiDon.GiaHan)
-                {
-                    entity.GiaHan!.DonKtxId = entity.Id;
-                    _giaHanRepo.Add(entity.GiaHan);
-
-                }
-                else if (entity.LoaiDon == KtxLoaiDon.RoiKtx)
-                {
-                    var currentStay = await _cutruRepo.GetFirstAsync(
-                        predicate: x => x.SinhVienId == entity.IdSinhVien && x.TrangThai == KtxCutruTrangThai.DangO);
-
-                    if (currentStay == null)
-                    {
-                        return new Result<KtxDon>(new Exception("Sinh viên hiện không nội trú tại ký túc xá"));
+                        entity.ChuyenPhong = new KtxDonChuyenPhong
+                        {
+                            DonKtxId = entity.Id,
+                            PhongYeuCauId = entity.PhongYeuCauId.Value,
+                            PhongHienTaiId = currentStay.PhongKtxId,
+                            GiuongHienTaiId = currentStay.GiuongKtxId
+                        };
+                        _chuyenPhongRepo.Add(entity.ChuyenPhong);
                     }
-
-                    entity.RoiKtx = new KtxDonRoiKtx
+                    else if (entity.LoaiDon == KtxLoaiDon.GiaHan)
                     {
-                        DonKtxId = entity.Id,
-                        NgayRoiThucTe = DateTime.UtcNow,
-                        PhongHienTaiId = currentStay.PhongKtxId,
-                        GiuongHienTaiId = currentStay.GiuongKtxId
-                    };
-                    _roiKtxRepo.Add(entity.RoiKtx);
+                        // FIX: Khởi tạo object GiaHan và gán phòng/giường hiện tại
+                        entity.GiaHan = new KtxDonGiaHan
+                        {
+                            DonKtxId = entity.Id,
+                            PhongHienTaiId = currentStay.PhongKtxId,
+                            GiuongHienTaiId = currentStay.GiuongKtxId
+                        };
+                        _giaHanRepo.Add(entity.GiaHan);
+                    }
+                    else if (entity.LoaiDon == KtxLoaiDon.RoiKtx)
+                    {
+                        entity.RoiKtx = new KtxDonRoiKtx
+                        {
+                            DonKtxId = entity.Id,
+                            NgayRoiThucTe = entity.NgayBatDau,
+                            PhongHienTaiId = currentStay.PhongKtxId,
+                            GiuongHienTaiId = currentStay.GiuongKtxId
+                        };
+                        _roiKtxRepo.Add(entity.RoiKtx);
+                    }
                 }
 
                 await UnitOfWork.CommitAsync();
@@ -261,8 +264,8 @@ namespace EMS.Application.Services.KtxService.Service
                     GiuongCuId = oldStay.GiuongKtxId,
                     PhongMoiId = phongId!.Value,
                     GiuongMoiId = giuongId!.Value,
-                    IdHocKy = oldStay.IdHocKy,
-                    NgayBatDau = EnsureUtc(oldStay.NgayBatDau),
+                    IdHocKy = oldStay!.IdHocKy,
+                    NgayBatDau = EnsureUtc(don.NgayBatDau),
                     NgayRoiDuKien = ngayRoiKtx,
                     TrangThai = KtxCutruTrangThai.DangO,
                     NgayGhiLichSu = DateTime.UtcNow,
@@ -389,7 +392,7 @@ namespace EMS.Application.Services.KtxService.Service
         }
 
         #endregion
-        
+
 
         #region protected
 

@@ -1,8 +1,6 @@
 ﻿using EMS.API.Controllers.Base;
 using EMS.Application.Services.KtxService;
-using EMS.Application.Services.KtxService.Service;
 using EMS.Domain.Entities.KtxManagement;
-using EMS.Domain.Enums;
 using EMS.Domain.Extensions;
 using EMS.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +16,6 @@ namespace EMS.API.Controllers.KtxManagement
         {
             _service = service;
         }
-
         [HttpGet("pagination")]
         public async Task<IActionResult> GetPagination(
             [FromQuery] PaginationRequest request,
@@ -45,6 +42,13 @@ namespace EMS.API.Controllers.KtxManagement
                 isDescending: true);
 
             return result.ToResult();
+        }
+
+        [HttpGet("history/{sinhVienId:guid}")]
+        public async Task<IActionResult> GetHistory(Guid sinhVienId)
+        {
+            var result = await _service.GetResidencyHistoryAsync(sinhVienId);
+            return Ok(new { result = result });
         }
     }
 
