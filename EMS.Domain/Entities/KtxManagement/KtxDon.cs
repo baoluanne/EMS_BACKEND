@@ -27,6 +27,8 @@ namespace EMS.Domain.Entities.KtxManagement
         [NotMapped]
         public Guid? PhongYeuCauId { get; set; }
         [NotMapped]
+        public Guid? GiuongYeuCauId { get; set; }
+        [NotMapped]
         public Guid? PhongHienTaiId { get; set; }
         [NotMapped]
         public virtual KtxPhong? PhongYeuCau
@@ -35,6 +37,16 @@ namespace EMS.Domain.Entities.KtxManagement
             {
                 if (LoaiDon == KtxLoaiDon.DangKyMoi) return DangKyMoi?.PhongYeuCau;
                 if (LoaiDon == KtxLoaiDon.ChuyenPhong) return ChuyenPhong?.PhongYeuCau;
+                return null;
+            }
+        }
+        [NotMapped]
+        public virtual KtxGiuong? GiuongYeuCau
+        {
+            get
+            {
+                if (LoaiDon == KtxLoaiDon.DangKyMoi) return DangKyMoi?.GiuongYeuCau;
+                if (LoaiDon == KtxLoaiDon.ChuyenPhong) return ChuyenPhong?.GiuongYeuCau;
                 return null;
             }
         }

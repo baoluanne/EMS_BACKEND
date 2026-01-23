@@ -14,32 +14,30 @@ namespace EMS.API.Controllers.KtxController
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class GiuongKtxController : BaseController<KtxGiuong>
+    public class GiuongKtxController(IGiuongKtxService service) : BaseController<KtxGiuong>(service)
     {
-        private readonly IGiuongKtxService _service;
+        private readonly IGiuongKtxService _service = service;
 
-        public GiuongKtxController(IGiuongKtxService service) : base(service)
-        {
-            _service = service;
-        }
-        public override async Task<IActionResult> GetAll()
-        {
-            var result = await Service.GetAllAsync();
-            return result.ToResult();
-        }
         [HttpGet("pagination")]
         public virtual async Task<IActionResult> GetPagination(
-    [FromQuery] PaginationRequest request,
-    [FromQuery] GiuongFilter filter)
+            [FromQuery] PaginationRequest request,
+            [FromQuery] GiuongFilter filter)
         {
-            var result = await Service.GetPaginatedAsync(
+            Guid? phongGuid = null;
+            if (!string.IsNullOrEmpty(filter.PhongId) && Guid.TryParse(filter.PhongId, out var parsedGuid))
+            {
+                phongGuid = parsedGuid;
+            }
+
+            var result = await _service.GetPaginatedAsync(
                 request,
                 filter: q =>
                     (string.IsNullOrEmpty(filter.MaGiuong) || q.MaGiuong!.ToLower().Contains(filter.MaGiuong.ToLower()))
-                    && (string.IsNullOrEmpty(filter.PhongId) || q.PhongKtxId.ToString() == filter.PhongId)
+                    && (phongGuid == null || q.PhongKtxId == phongGuid)
                     && (filter.TrangThai == null || q.TrangThai == filter.TrangThai),
                 include: q => q.Include(x => x.Phong)
             );
+
             return result.ToResult();
         }
     }

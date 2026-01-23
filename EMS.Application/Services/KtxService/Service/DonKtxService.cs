@@ -1,7 +1,9 @@
 ﻿using EMS.Application.Services.Base;
+using EMS.Domain.Entities;
 using EMS.Domain.Entities.KtxManagement;
 using EMS.Domain.Enums;
 using EMS.Domain.Interfaces.DataAccess;
+using EMS.Domain.Interfaces.Repositories;
 using EMS.Domain.Interfaces.Repositories.KtxManagement;
 using LanguageExt.Common;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +20,7 @@ namespace EMS.Application.Services.KtxService.Service
         private readonly ICuTruKtxRepository _cutruRepo;
         private readonly IGiuongKtxRepository _giuongKtxRepo;
         private readonly IKtxCuTruLichSuRepository _lichSuRepo;
+        private readonly IHocKyRepository _hockyRepo;
 
         #region public method
 
@@ -30,7 +33,8 @@ namespace EMS.Application.Services.KtxService.Service
             IDonRoiKtxRepository roiKtxRepo,
             IGiuongKtxRepository giuongrepo,
             ICuTruKtxRepository cutruRepo,
-            IKtxCuTruLichSuRepository lichSuRepo)
+            IKtxCuTruLichSuRepository lichSuRepo,
+            IHocKyRepository hocKyRepo)
             : base(unitOfWork, repository)
         {
             _repository = repository;
@@ -41,6 +45,7 @@ namespace EMS.Application.Services.KtxService.Service
             _cutruRepo = cutruRepo;
             _giuongKtxRepo = giuongrepo;
             _lichSuRepo = lichSuRepo;
+            _hockyRepo = hocKyRepo;
         }
 
         public override async Task<Result<KtxDon>> CreateAsync(KtxDon entity)
@@ -53,23 +58,28 @@ namespace EMS.Application.Services.KtxService.Service
                 }
                 entity.NgayGuiDon = DateTime.UtcNow;
                 entity.TrangThai = KtxDonTrangThai.ChoDuyet;
-
-                // Lưu đơn chính trước
                 Repository.Add(entity);
 
-                // Xử lý các bảng phụ theo loại đơn
+                var hocKy = await _hockyRepo.GetByIdAsync(entity.IdHocKy);
                 if (entity.LoaiDon == KtxLoaiDon.DangKyMoi && entity.PhongYeuCauId.HasValue)
                 {
+                    var giuongId = (entity.GiuongYeuCauId == Guid.Empty) ? null : entity.GiuongYeuCauId;
+
                     entity.DangKyMoi = new KtxDonDangKyMoi
                     {
                         DonKtxId = entity.Id,
-                        PhongYeuCauId = entity.PhongYeuCauId.Value
+                        PhongYeuCauId = entity.PhongYeuCauId.Value,
+                        GiuongYeuCauId = giuongId
                     };
                     _dangKyMoiRepo.Add(entity.DangKyMoi);
+                    if (hocKy != null && hocKy.TuNgay.HasValue)
+                    {
+                        entity.NgayBatDau = EnsureUtc(hocKy.TuNgay.Value);
+                    }
+
                 }
                 else if (entity.LoaiDon == KtxLoaiDon.ChuyenPhong || entity.LoaiDon == KtxLoaiDon.GiaHan || entity.LoaiDon == KtxLoaiDon.RoiKtx)
                 {
-                    // Cả 3 loại đơn này đều cần thông tin cư trú hiện tại
                     var currentStay = await _cutruRepo.GetFirstAsync(
                         predicate: x => x.SinhVienId == entity.IdSinhVien && x.TrangThai == KtxCutruTrangThai.DangO);
 
@@ -80,18 +90,21 @@ namespace EMS.Application.Services.KtxService.Service
 
                     if (entity.LoaiDon == KtxLoaiDon.ChuyenPhong && entity.PhongYeuCauId.HasValue)
                     {
+                        var giuongId = (entity.GiuongYeuCauId == Guid.Empty) ? null : entity.GiuongYeuCauId;
+
                         entity.ChuyenPhong = new KtxDonChuyenPhong
                         {
                             DonKtxId = entity.Id,
                             PhongYeuCauId = entity.PhongYeuCauId.Value,
+                            GiuongYeuCauId = giuongId,
                             PhongHienTaiId = currentStay.PhongKtxId,
                             GiuongHienTaiId = currentStay.GiuongKtxId
                         };
                         _chuyenPhongRepo.Add(entity.ChuyenPhong);
+                        entity.NgayBatDau = EnsureUtc(DateTime.UtcNow);
                     }
                     else if (entity.LoaiDon == KtxLoaiDon.GiaHan)
                     {
-                        // FIX: Khởi tạo object GiaHan và gán phòng/giường hiện tại
                         entity.GiaHan = new KtxDonGiaHan
                         {
                             DonKtxId = entity.Id,
@@ -99,6 +112,11 @@ namespace EMS.Application.Services.KtxService.Service
                             GiuongHienTaiId = currentStay.GiuongKtxId
                         };
                         _giaHanRepo.Add(entity.GiaHan);
+                        if (hocKy != null && hocKy.TuNgay.HasValue)
+                        {
+                            entity.NgayBatDau = EnsureUtc(hocKy.TuNgay.Value);
+                        }
+
                     }
                     else if (entity.LoaiDon == KtxLoaiDon.RoiKtx)
                     {
@@ -110,6 +128,7 @@ namespace EMS.Application.Services.KtxService.Service
                             GiuongHienTaiId = currentStay.GiuongKtxId
                         };
                         _roiKtxRepo.Add(entity.RoiKtx);
+                        entity.NgayBatDau = EnsureUtc(DateTime.UtcNow);
                     }
                 }
 

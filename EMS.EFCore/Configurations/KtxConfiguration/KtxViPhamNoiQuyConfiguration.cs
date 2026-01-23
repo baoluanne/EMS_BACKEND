@@ -9,11 +9,11 @@ namespace EMS.Infrastructure.Configurations.KtxConfiguration
         public void Configure(EntityTypeBuilder<KtxViPhamNoiQuy> builder)
         {
             builder.ToTable("KtxViPhamNoiQuy");
-
             builder.HasKey(x => x.Id);
 
-            builder.Property(x => x.SinhVienId)
-                .IsRequired();
+            builder.Property(x => x.MaBienBan)
+                .IsRequired()
+                .HasMaxLength(50);
 
             builder.Property(x => x.NoiDungViPham)
                 .IsRequired()
@@ -22,12 +22,12 @@ namespace EMS.Infrastructure.Configurations.KtxConfiguration
             builder.Property(x => x.HinhThucXuLy)
                 .HasMaxLength(500);
 
-            builder.Property(x => x.DiemTru)
+            builder.Property(x => x.LanViPham)
                 .IsRequired()
-                .HasDefaultValue(0);
+                .HasDefaultValue(1);
 
-            builder.Property(x => x.NgayViPham)
-                .IsRequired();
+            builder.Property(x => x.DiemTru)
+                .HasDefaultValue(0);
 
             builder.HasOne(x => x.SinhVien)
                 .WithMany()

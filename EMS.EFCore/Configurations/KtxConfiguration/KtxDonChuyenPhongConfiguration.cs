@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EMS.Domain.Entities.KtxManagement;
+﻿using EMS.Domain.Entities.KtxManagement;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace EMS.EFCore.Configurations.KtxConfiguration
+namespace EMS.Infrastructure.Configurations.KtxConfiguration
 {
     public class KtxDonChuyenPhongConfiguration : IEntityTypeConfiguration<KtxDonChuyenPhong>
     {
@@ -17,22 +12,15 @@ namespace EMS.EFCore.Configurations.KtxConfiguration
 
             builder.HasKey(x => x.Id);
 
-            builder.Property(x => x.DonKtxId)
-                .IsRequired();
+            builder.Property(x => x.DonKtxId).IsRequired();
+            builder.Property(x => x.PhongHienTaiId).IsRequired();
+            builder.Property(x => x.GiuongHienTaiId).IsRequired();
+            builder.Property(x => x.PhongYeuCauId).IsRequired();
 
-            builder.Property(x => x.PhongHienTaiId)
-                .IsRequired();
+            builder.Property(x => x.GiuongYeuCauId).IsRequired(false);
 
-            builder.Property(x => x.GiuongHienTaiId)
-                .IsRequired();
+            builder.Property(x => x.LyDoChuyenPhong).HasMaxLength(500);
 
-            builder.Property(x => x.PhongYeuCauId)
-                .IsRequired();
-
-            builder.Property(x => x.LyDoChuyenPhong)
-                .HasMaxLength(500);
-
-            // Foreign Keys
             builder.HasOne(x => x.DonKtx)
                 .WithOne(d => d.ChuyenPhong)
                 .HasForeignKey<KtxDonChuyenPhong>(d => d.DonKtxId)
@@ -53,8 +41,12 @@ namespace EMS.EFCore.Configurations.KtxConfiguration
                 .HasForeignKey(x => x.PhongYeuCauId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasIndex(x => x.DonKtxId)
-                .IsUnique();
+            builder.HasOne(x => x.GiuongYeuCau)
+                .WithMany()
+                .HasForeignKey(x => x.GiuongYeuCauId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasIndex(x => x.DonKtxId).IsUnique();
         }
     }
 }

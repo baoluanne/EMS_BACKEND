@@ -52,6 +52,7 @@ namespace EMS.Infrastructure.Configurations.KtxConfiguration
             builder.Ignore(x => x.PhongYeuCauId);
             builder.Ignore(x => x.PhongHienTaiId);
             builder.Ignore(x => x.PhongYeuCau);
+            builder.Ignore(x => x.GiuongYeuCauId);
 
             builder.HasOne(x => x.SinhVien)
                 .WithMany()
