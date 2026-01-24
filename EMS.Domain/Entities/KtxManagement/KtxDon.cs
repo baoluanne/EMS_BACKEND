@@ -11,7 +11,7 @@ namespace EMS.Domain.Entities.KtxManagement
         [ForeignKey("IdSinhVien")]
         public virtual SinhVien? SinhVien { get; set; } = null!;
 
-        public Guid IdHocKy { get; set; }
+        public Guid? IdHocKy { get; set; }
         [ForeignKey("IdHocKy")]
         public virtual HocKy? HocKy { get; set; } = null!;
 

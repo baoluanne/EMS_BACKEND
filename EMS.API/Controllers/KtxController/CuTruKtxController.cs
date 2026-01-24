@@ -18,8 +18,8 @@ namespace EMS.API.Controllers.KtxManagement
         }
         [HttpGet("pagination")]
         public async Task<IActionResult> GetPagination(
-    [FromQuery] PaginationRequest request,
-    [FromQuery] CuTruFilter filter)
+            [FromQuery] PaginationRequest request,
+            [FromQuery] CuTruFilter filter)
         {
             int? trangThaiInt = null;
             if (!string.IsNullOrEmpty(filter.TrangThai) && int.TryParse(filter.TrangThai, out var tt))
@@ -30,16 +30,25 @@ namespace EMS.API.Controllers.KtxManagement
             var result = await Service.GetPaginatedAsync(
                 request,
                 filter: q =>
-                    (filter.PhongId == null || q.PhongKtxId == filter.PhongId) &&
-                    (trangThaiInt == null || (int)q.TrangThai == trangThaiInt)
-                    && (filter.SinhVienId == null || q.SinhVienId == filter.SinhVienId)
-                    && (string.IsNullOrEmpty(filter.Keyword) ||
-                        q.SinhVien.HoDem.Contains(filter.Keyword) ||
-                        q.SinhVien.Ten.Contains(filter.Keyword) ||
-                        q.SinhVien.MaSinhVien.Contains(filter.Keyword) ||
-                        q.PhongKtx.MaPhong.Contains(filter.Keyword))
-                    && (filter.TuNgay == null || q.NgayBatDau >= filter.TuNgay)
-                    && (filter.DenNgay == null || q.NgayBatDau <= filter.DenNgay),
+                    (string.IsNullOrEmpty(filter.Keyword) ||
+                        q.SinhVien.HoDem.ToLower().Contains(filter.Keyword.ToLower()) ||
+                        q.SinhVien.Ten.ToLower().Contains(filter.Keyword.ToLower()) ||
+                        q.SinhVien.MaSinhVien.ToLower().ToLower().Contains(filter.Keyword.ToLower()) ||
+                        q.PhongKtx.MaPhong.ToLower().Contains(filter.Keyword.ToLower()) ||
+                        q.GiuongKtx.MaGiuong.ToLower().Contains(filter.Keyword.ToLower())) &&
+                    (string.IsNullOrEmpty(filter.MaSinhVien) ||
+                        q.SinhVien.MaSinhVien.ToLower().Contains(filter.MaSinhVien.ToLower())) &&
+                    (string.IsNullOrEmpty(filter.HoTen) ||
+                        q.SinhVien.HoDem.ToLower().Contains(filter.HoTen.ToLower()) ||
+                        q.SinhVien.Ten.ToLower().Contains(filter.HoTen.ToLower())) &&
+                    (string.IsNullOrEmpty(filter.MaPhong) ||
+                        q.PhongKtx.MaPhong.ToLower().Contains(filter.MaPhong.ToLower())) &&
+                    (string.IsNullOrEmpty(filter.MaGiuong) ||
+                        q.GiuongKtx.MaGiuong.ToLower().Contains(filter.MaGiuong.ToLower())) &&
+                    (trangThaiInt == null || (int)q.TrangThai == trangThaiInt) &&
+                    (filter.SinhVienId == null || q.SinhVienId == filter.SinhVienId) &&
+                    (filter.TuNgay == null || q.NgayBatDau >= filter.TuNgay) &&
+                    (filter.DenNgay == null || q.NgayBatDau <= filter.DenNgay),
                 include: i => i
                     .Include(x => x.SinhVien)
                     .Include(x => x.PhongKtx)
@@ -47,24 +56,26 @@ namespace EMS.API.Controllers.KtxManagement
                     .Include(x => x.HocKy),
                 orderBy: x => x.NgayTao,
                 isDescending: true);
+
             return result.ToResult();
         }
-
         [HttpGet("history/{sinhVienId:guid}")]
         public async Task<IActionResult> GetHistory(Guid sinhVienId)
         {
             var result = await _service.GetResidencyHistoryAsync(sinhVienId);
             return Ok(new { result = result });
         }
-    }
-
-    public class CuTruFilter
-    {
-        public string? TrangThai { get; set; }
-        public Guid? SinhVienId { get; set; }
-        public string? Keyword { get; set; }
-        public Guid? PhongId { get; set; }
-        public DateTime? TuNgay { get; set; }
-        public DateTime? DenNgay { get; set; }
+        public class CuTruFilter
+        {
+            public string? TrangThai { get; set; }
+            public Guid? SinhVienId { get; set; }
+            public string? Keyword { get; set; }
+            public string? MaPhong { get; set; }  // Thêm dòng này
+            public string? MaSinhVien { get; set; }  // Thêm dòng này
+            public string? HoTen { get; set; }  // Thêm dòng này
+            public string? MaGiuong { get; set; }  // Thêm dòng này
+            public DateTime? TuNgay { get; set; }
+            public DateTime? DenNgay { get; set; }
+        }
     }
 }

@@ -123,7 +123,7 @@ namespace EMS.Application.Services.KtxService.Service
                         entity.RoiKtx = new KtxDonRoiKtx
                         {
                             DonKtxId = entity.Id,
-                            NgayRoiThucTe = entity.NgayBatDau,
+                            NgayRoiThucTe = EnsureUtc(DateTime.UtcNow),
                             PhongHienTaiId = currentStay.PhongKtxId,
                             GiuongHienTaiId = currentStay.GiuongKtxId
                         };
