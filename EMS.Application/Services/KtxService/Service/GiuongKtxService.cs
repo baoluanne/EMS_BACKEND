@@ -22,9 +22,16 @@ public class GiuongKtxService : BaseService<KtxGiuong>, IGiuongKtxService
 
     protected override Task UpdateEntityProperties(KtxGiuong existingEntity, KtxGiuong newEntity)
     {
-        existingEntity.MaGiuong = newEntity.MaGiuong;
+        existingEntity.MaGiuong = FormatMaGiuong(newEntity.MaGiuong);
         existingEntity.SinhVienId = newEntity.SinhVienId;
         existingEntity.PhongKtxId = newEntity.PhongKtxId;
         return Task.CompletedTask;
+    }
+    private string FormatMaGiuong(string? ma)
+    {
+        if (string.IsNullOrEmpty(ma)) return ma ?? "";
+        if (int.TryParse(ma.Trim(), out int num))
+            return num.ToString("D2");
+        return ma; // nếu không phải số thì giữ nguyên
     }
 }

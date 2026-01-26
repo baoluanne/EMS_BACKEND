@@ -35,7 +35,22 @@ namespace EMS.Domain.Entities.KtxManagement
             KtxGiuongTrangThai.DaCoNguoi => "Đã có người",
             _ => "Không xác định"
         };
+        [NotMapped]
+        public string MaGiuongDisplay
+        {
+            get
+            {
+                if (Phong == null)
+                    return "Chưa có thông tin phòng";
 
+                var maPhongDisplay = Phong.MaPhongDisplay; // Dùng property ở trên
+                var maGiuongFormatted = string.IsNullOrEmpty(MaGiuong)
+                    ? ""
+                    : (int.TryParse(MaGiuong.Trim(), out int num) ? num.ToString("D2") : MaGiuong.PadLeft(2, '0'));
+
+                return $"{maPhongDisplay}-{maGiuongFormatted}";
+            }
+        }
         [NotMapped]
         public string ThongTinHopDongHienTai => HopDongHienTai != null
             ? $"{HopDongHienTai.SinhVien?.HoDem +" " +HopDongHienTai.SinhVien?.Ten} - Từ {HopDongHienTai.NgayBatDau:dd/MM/yyyy} đến {HopDongHienTai.NgayRoiKtx:dd/MM/yyyy}"

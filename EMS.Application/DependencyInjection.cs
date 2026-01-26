@@ -134,7 +134,7 @@ public static class DependencyInjection
         services.AddScoped<IDonDangKyMoiService, DonDangKyMoiService>();
         services.AddScoped<IDonRoiService, DonRoiService>();
         services.AddScoped<IChiSoDienNuocService, ChiSoDienNuocService>();
-        services.AddScoped<IViPhamNoiQuyKTXService, ViPhamNoiQuyService>();
+        services.AddScoped<IViPhamNoiQuyService, ViPhamNoiQuyService>();
         services.AddScoped<ICuTruKtxService, CuTruKtxService>();
         services.AddScoped<IYeuCauSuaChuaService, YeuCauSuaChuaService>();
         services.AddScoped<IKtxCuTruLichSuService, KtxCuTruLichSuService>();

@@ -33,4 +33,13 @@ namespace EMS.Domain.Enums
         DaCoNguoi = 1,
         BaoTri = 2
     }
+    public enum LoaiViPhamNoiQuy
+    {
+        SuDungChatCam = 1,
+        GayMatTratTu = 2, 
+        KhongVeDungGio = 3, 
+        NauAnTrongPhong = 4,  
+        DuaNguoiLaVaoPhong = 5 
+    }
+
 }

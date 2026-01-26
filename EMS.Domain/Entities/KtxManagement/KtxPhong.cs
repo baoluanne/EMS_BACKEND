@@ -20,5 +20,15 @@ namespace EMS.Domain.Entities.KtxManagement
 
         public virtual ICollection<KtxChiSoDienNuoc> ChiSoDienNuocs { get; set; } = new List<KtxChiSoDienNuoc>();
         public virtual ICollection<KtxYeuCauSuaChua> YeuCauSuaChuas { get; set; } = new List<KtxYeuCauSuaChua>();
+        [NotMapped]
+        public string MaPhongDisplay
+        {
+            get
+            {
+                var soGiuong = SoLuongGiuong ?? 0;
+                var maSoPhong = MaPhong ?? "";
+                return $"R{soGiuong}-{maSoPhong}";
+            }
+        }
     }
 }

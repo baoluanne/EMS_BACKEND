@@ -3,7 +3,7 @@ using EMS.Domain.Entities.KtxManagement;
 
 namespace EMS.Application.Services.KtxService
 {
-    public interface IViPhamNoiQuyKTXService : IBaseService<KtxViPhamNoiQuy>
+    public interface IViPhamNoiQuyService : IBaseService<KtxViPhamNoiQuy>
     {
     }
 }

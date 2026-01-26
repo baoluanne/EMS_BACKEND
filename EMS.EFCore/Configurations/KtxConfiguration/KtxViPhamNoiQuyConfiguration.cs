@@ -11,9 +11,14 @@ namespace EMS.Infrastructure.Configurations.KtxConfiguration
             builder.ToTable("KtxViPhamNoiQuy");
             builder.HasKey(x => x.Id);
 
+            // Cấu hình trường mới: LoaiViPham
+            builder.Property(x => x.LoaiViPham)
+                .IsRequired()
+                .HasComment("Loại hành vi vi phạm dựa trên Enum");
+
             builder.Property(x => x.MaBienBan)
                 .IsRequired()
-                .HasMaxLength(50);
+                .HasMaxLength(100); // Tăng lên 100 vì mã tự sinh dài hơn (VP-PREFIX-YYYYMMDD-LX)
 
             builder.Property(x => x.NoiDungViPham)
                 .IsRequired()
@@ -29,10 +34,15 @@ namespace EMS.Infrastructure.Configurations.KtxConfiguration
             builder.Property(x => x.DiemTru)
                 .HasDefaultValue(0);
 
+            // Cấu hình quan hệ với SinhVien
             builder.HasOne(x => x.SinhVien)
-                .WithMany()
+                .WithMany() // Một sinh viên có thể có nhiều biên bản vi phạm
                 .HasForeignKey(x => x.SinhVienId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // Index để tìm kiếm nhanh theo mã biên bản hoặc sinh viên
+            builder.HasIndex(x => x.MaBienBan).IsUnique();
+            builder.HasIndex(x => x.SinhVienId);
 
             builder.HasQueryFilter(x => !x.IsDeleted);
         }
