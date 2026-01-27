@@ -10,49 +10,52 @@ namespace EMS.Application.Services.KtxService.Service
     public class ViPhamNoiQuyService : BaseService<KtxViPhamNoiQuy>, IViPhamNoiQuyService
     {
         private readonly IViPhamNoiQuyKTXRepository _repository;
+        private readonly ICuTruKtxRepository _cuTruRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public ViPhamNoiQuyService(IUnitOfWork unitOfWork, IViPhamNoiQuyKTXRepository repository)
+        public ViPhamNoiQuyService(IUnitOfWork unitOfWork, IViPhamNoiQuyKTXRepository repository, ICuTruKtxRepository cuTruRepository)
             : base(unitOfWork, repository)
         {
             _repository = repository;
+            _cuTruRepository = cuTruRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public override async Task<Result<KtxViPhamNoiQuy>> CreateAsync(KtxViPhamNoiQuy entity)
         {
             try
             {
-                var allViPham = await _repository.ListAsync(filter: x =>
+                var currentStay = await _cuTruRepository.GetFirstAsync(x =>
                     x.SinhVienId == entity.SinhVienId &&
-                    x.LoaiViPham == entity.LoaiViPham);
+                    x.TrangThai == KtxCutruTrangThai.DangO);
 
+                var allViPham = await _repository.ListAsync(filter: x => x.SinhVienId == entity.SinhVienId);
                 entity.LanViPham = allViPham.Count + 1;
 
                 if (string.IsNullOrEmpty(entity.MaBienBan))
-                {
                     entity.MaBienBan = GenerateMaBienBan(entity.LoaiViPham, entity.LanViPham);
-                }
 
                 if (entity.DiemTru == 0)
-                {
                     entity.DiemTru = GetDefaultDiemTru(entity.LoaiViPham);
-                }
 
-                if (entity.NgayViPham == default)
+                if (currentStay != null)
                 {
-                    entity.NgayViPham = DateTime.UtcNow;
+                    entity.CuTruId = currentStay.Id;
+                    currentStay.TongDiemViPham += entity.DiemTru;
+                    _cuTruRepository.Update(currentStay);
                 }
 
-                Repository.Add(entity);
+                _repository.Add(entity);
+
                 await UnitOfWork.CommitAsync();
 
                 return new Result<KtxViPhamNoiQuy>(entity);
             }
             catch (Exception ex)
             {
-                return new Result<KtxViPhamNoiQuy>(ex.InnerException ?? ex);
+                return new Result<KtxViPhamNoiQuy>(ex);
             }
         }
-
         private string GenerateMaBienBan(LoaiViPhamNoiQuy loai, int lan)
         {
             var prefix = loai switch

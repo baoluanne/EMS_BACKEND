@@ -48,7 +48,9 @@ namespace EMS.API.Controllers.KtxManagement
                     (trangThaiInt == null || (int)q.TrangThai == trangThaiInt) &&
                     (filter.SinhVienId == null || q.SinhVienId == filter.SinhVienId) &&
                     (filter.TuNgay == null || q.NgayBatDau >= filter.TuNgay) &&
-                    (filter.DenNgay == null || q.NgayBatDau <= filter.DenNgay),
+                    (filter.DenNgay == null || q.NgayBatDau <= filter.DenNgay)&&
+                    (filter.ViPhamKtx == null ||(filter.ViPhamKtx == 1? q.TongDiemViPham > 0: q.TongDiemViPham >= filter.ViPhamKtx))&&
+                    (filter.ViPhamKtx == null || q.TongDiemViPham >= filter.ViPhamKtx ),
                 include: i => i
                     .Include(x => x.SinhVien)
                     .Include(x => x.PhongKtx)
@@ -76,6 +78,7 @@ namespace EMS.API.Controllers.KtxManagement
             public string? MaGiuong { get; set; }  // Thêm dòng này
             public DateTime? TuNgay { get; set; }
             public DateTime? DenNgay { get; set; }
+            public int? ViPhamKtx { get; set; }
         }
     }
 }

@@ -10,6 +10,9 @@ namespace EMS.Domain.Entities.KtxManagement
     {
         public Guid SinhVienId { get; set; }
         [ForeignKey("SinhVienId")]
+        public Guid? CuTruId { get; set; }
+        [ForeignKey("CuTruId")]
+        public virtual KtxCutru? CuTru { get; set; }
         public virtual SinhVien? SinhVien { get; set; } = null!;
 
         public string MaBienBan { get; set; } = string.Empty;

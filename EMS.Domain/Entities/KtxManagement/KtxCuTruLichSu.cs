@@ -49,5 +49,7 @@ namespace EMS.Domain.Entities.KtxManagement
         public KtxCutruTrangThai TrangThai { get; set; }
         public string? GhiChu { get; set; }
         public DateTime NgayGhiLichSu { get; set; }
+        [NotMapped] 
+        public int DiemViPhamHocKy { get; set; }
     }
 }

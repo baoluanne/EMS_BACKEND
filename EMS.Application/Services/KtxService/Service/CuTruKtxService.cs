@@ -28,16 +28,23 @@ namespace EMS.Application.Services.KtxService.Service
 
         public async Task<List<KtxCuTruLichSu>> GetResidencyHistoryAsync(Guid sinhVienId)
         {
-            return await _lichSuRepository.GetListAsync(
-                filter: x => x.SinhVienId == sinhVienId,
-                include: i => i
-                    .Include(x => x.SinhVien)
-                    .Include(x => x.DonKtx)
-                    .Include(x => x.PhongMoi)
-                    .Include(x => x.GiuongMoi)
-                    .Include(x => x.PhongCu)
-                    .Include(x => x.GiuongCu)
-                    .Include(x => x.HocKy));
+            var lichSuList = await _lichSuRepository.GetListAsync(
+         filter: x => x.SinhVienId == sinhVienId,
+         include: i => i
+             .Include(x => x.SinhVien)
+             .Include(x => x.DonKtx)
+             .Include(x => x.PhongMoi)
+             .Include(x => x.GiuongMoi)
+             .Include(x => x.HocKy));
+
+            var cuTruList = await _repository.GetListAsync(filter: x => x.SinhVienId == sinhVienId);
+            foreach (var ls in lichSuList)
+            {
+                var diem = cuTruList.FirstOrDefault(c => c.IdHocKy == ls.IdHocKy)?.TongDiemViPham;
+                ls.DiemViPhamHocKy = diem ?? 0;
+            }
+            return lichSuList;
+
         }
 
         public async Task<List<KtxCuTruLichSu>> GetResidencyHistoryByDonAsync(Guid donId)

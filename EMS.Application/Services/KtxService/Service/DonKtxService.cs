@@ -392,7 +392,7 @@ namespace EMS.Application.Services.KtxService.Service
                     NgayRoiThucTe = DateTime.UtcNow,
                     TrangThai = KtxCutruTrangThai.DaRa,
                     NgayGhiLichSu = DateTime.UtcNow,
-                    GhiChu = $"Rời KTX từ đơn {don.MaDon}"
+                    GhiChu = $"Rời KTX từ đơn {don.MaDon}. Tổng điểm vi phạm tích lũy: {stay.TongDiemViPham}"
                 };
                 _lichSuRepo.Add(lichSu);
 

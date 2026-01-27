@@ -53,4 +53,13 @@ namespace EMS.Application.Services.KtxService
     {
         public string GhiChu { get; set; } = string.Empty;
     }
+    public class BatchCreatePhongModel
+    {
+        public Guid TangKtxId { get; set; }
+        public int SoLuongPhong { get; set; }
+        public int SoGiuongMoiPhong { get; set; }
+        public string? LoaiPhong { get; set; }
+        public string? TienToMaPhong { get; set; }
+        public int BatDauTuSo { get; set; }
+    }
 }

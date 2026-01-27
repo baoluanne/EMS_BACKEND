@@ -33,6 +33,7 @@ namespace EMS.Domain.Entities.KtxManagement
         public KtxCutruTrangThai TrangThai { get; set; } = KtxCutruTrangThai.DangO;
 
         public string? GhiChu { get; set; }
+        public int TongDiemViPham { get; set; } = 0;
 
         [NotMapped]
         public string ThoiGianLuuTru => (HocKy != null && HocKy.TuNgay.HasValue && HocKy.DenNgay.HasValue)

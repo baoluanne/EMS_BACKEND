@@ -32,10 +32,11 @@ namespace EMS.API.Controllers.KtxController
             var result = await _service.GetPaginatedAsync(
                 request,
                 filter: q =>
-                    (string.IsNullOrEmpty(filter.MaGiuong) || q.MaGiuong!.ToLower().Contains(filter.MaGiuong.ToLower()))
+                    (string.IsNullOrEmpty(filter.SinhVienId) || q.SinhVienId.ToString().ToLower().Contains(filter.SinhVienId.ToLower()))
+                    &&(string.IsNullOrEmpty(filter.MaGiuong) || q.MaGiuong!.ToLower().Contains(filter.MaGiuong.ToLower()))
                     && (phongGuid == null || q.PhongKtxId == phongGuid)
                     && (filter.TrangThai == null || q.TrangThai == filter.TrangThai),
-                include: q => q.Include(x => x.Phong)
+                include: q => q.Include(x => x.Phong).Include(x => x.SinhVien).Include(x => x.CuTruKtxs)
             );
 
             return result.ToResult();
@@ -46,6 +47,8 @@ public class GiuongFilter
 {
     public string? MaGiuong { get; set; }
     public string? SinhVienId { get; set; }
+    public string? SinhVien {  get; set; }
+    public string? CuTrukts { get; set; }
     public string? PhongId { get; set; }
     public KtxGiuongTrangThai? TrangThai { get; set; }
 }

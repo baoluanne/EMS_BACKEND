@@ -24,6 +24,7 @@ namespace EMS.API.Controllers.KtxManagement
             var result = await _service.GetPaginatedAsync(
                 request,
                 filter: q =>
+                    (filter.SinhVienId == null || q.SinhVienId == filter.SinhVienId) &&
                     (string.IsNullOrEmpty(filter.MaBienBan) || q.MaBienBan.ToLower().Contains(filter.MaBienBan.ToLower())) &&
                     (string.IsNullOrEmpty(filter.MaSinhVien) || q.SinhVien!.MaSinhVien.ToLower().Contains(filter.MaSinhVien.ToLower())) &&
                     (string.IsNullOrEmpty(filter.HoTen) || (q.SinhVien!.HoDem + " " + q.SinhVien.Ten).ToLower().Contains(filter.HoTen.ToLower())) &&
@@ -55,6 +56,7 @@ namespace EMS.API.Controllers.KtxManagement
     }
     public class ViPhamNoiQuyFilter
     {
+        public Guid? SinhVienId { get; set; }
         public string? MaBienBan { get; set; }
         public string? MaSinhVien { get; set; }
         public string? HoTen { get; set; }
