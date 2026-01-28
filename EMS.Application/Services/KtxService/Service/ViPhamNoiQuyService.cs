@@ -29,24 +29,22 @@ namespace EMS.Application.Services.KtxService.Service
                     x.SinhVienId == entity.SinhVienId &&
                     x.TrangThai == KtxCutruTrangThai.DangO);
 
-                var allViPham = await _repository.ListAsync(filter: x => x.SinhVienId == entity.SinhVienId);
+                var allViPham = await _repository.GetListAsync(filter: x => x.SinhVienId == entity.SinhVienId);
                 entity.LanViPham = allViPham.Count + 1;
-
-                if (string.IsNullOrEmpty(entity.MaBienBan))
-                    entity.MaBienBan = GenerateMaBienBan(entity.LoaiViPham, entity.LanViPham);
-
-                if (entity.DiemTru == 0)
-                    entity.DiemTru = GetDefaultDiemTru(entity.LoaiViPham);
 
                 if (currentStay != null)
                 {
                     entity.CuTruId = currentStay.Id;
-                    currentStay.TongDiemViPham += entity.DiemTru;
+                    entity.IdHocKy = currentStay.IdHocKy;
+
+                    currentStay.TongDiemViPham = allViPham.Sum(x => x.DiemTru) + entity.DiemTru;
                     _cuTruRepository.Update(currentStay);
                 }
 
-                _repository.Add(entity);
+                if (string.IsNullOrEmpty(entity.MaBienBan))
+                    entity.MaBienBan = GenerateMaBienBan(entity.LoaiViPham, entity.LanViPham);
 
+                _repository.Add(entity);
                 await UnitOfWork.CommitAsync();
 
                 return new Result<KtxViPhamNoiQuy>(entity);
@@ -87,8 +85,6 @@ namespace EMS.Application.Services.KtxService.Service
         protected override Task UpdateEntityProperties(KtxViPhamNoiQuy existingEntity, KtxViPhamNoiQuy newEntity)
         {
             existingEntity.SinhVienId = newEntity.SinhVienId;
-            existingEntity.NoiDungViPham = newEntity.NoiDungViPham;
-            existingEntity.HinhThucXuLy = newEntity.HinhThucXuLy;
             existingEntity.DiemTru = newEntity.DiemTru;
             existingEntity.NgayViPham = newEntity.NgayViPham;
             existingEntity.LoaiViPham = newEntity.LoaiViPham;

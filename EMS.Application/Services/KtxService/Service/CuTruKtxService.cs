@@ -13,15 +13,18 @@ namespace EMS.Application.Services.KtxService.Service
     {
         private readonly ICuTruKtxRepository _repository;
         private readonly IKtxCuTruLichSuRepository _lichSuRepository;
+        private readonly IViPhamNoiQuyKTXRepository _viPhamRepository;
 
         public CuTruKtxService(
             IUnitOfWork unitOfWork,
             ICuTruKtxRepository repository,
-            IKtxCuTruLichSuRepository lichSuRepository)
+            IKtxCuTruLichSuRepository lichSuRepository,
+            IViPhamNoiQuyKTXRepository viPhamRepository)
             : base(unitOfWork, repository)
         {
             _repository = repository;
             _lichSuRepository = lichSuRepository;
+            _viPhamRepository = viPhamRepository;
         }
 
 
@@ -29,24 +32,25 @@ namespace EMS.Application.Services.KtxService.Service
         public async Task<List<KtxCuTruLichSu>> GetResidencyHistoryAsync(Guid sinhVienId)
         {
             var lichSuList = await _lichSuRepository.GetListAsync(
-         filter: x => x.SinhVienId == sinhVienId,
-         include: i => i
-             .Include(x => x.SinhVien)
-             .Include(x => x.DonKtx)
-             .Include(x => x.PhongMoi)
-             .Include(x => x.GiuongMoi)
-             .Include(x => x.HocKy));
+                filter: x => x.SinhVienId == sinhVienId,
+                include: i => i
+                    .Include(x => x.SinhVien)
+                    .Include(x => x.DonKtx)
+                    .Include(x => x.PhongMoi)
+                    .Include(x => x.GiuongMoi)
+                    .Include(x => x.HocKy));
 
-            var cuTruList = await _repository.GetListAsync(filter: x => x.SinhVienId == sinhVienId);
+            var allViPham = await _viPhamRepository.GetListAsync(filter: x => x.SinhVienId == sinhVienId);
+
             foreach (var ls in lichSuList)
             {
-                var diem = cuTruList.FirstOrDefault(c => c.IdHocKy == ls.IdHocKy)?.TongDiemViPham;
-                ls.DiemViPhamHocKy = diem ?? 0;
+                ls.DiemViPhamHocKy = allViPham
+                    .Where(v => v.IdHocKy == ls.IdHocKy)
+                    .Sum(v => v.DiemTru);
             }
-            return lichSuList;
 
+            return lichSuList.OrderByDescending(x => x.NgayGhiLichSu).ToList();
         }
-
         public async Task<List<KtxCuTruLichSu>> GetResidencyHistoryByDonAsync(Guid donId)
         {
             return await _lichSuRepository.GetListAsync(
