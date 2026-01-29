@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using EMS.Application.Services.Base;
 using EMS.Application.Services.EquipService.Dtos;
@@ -77,26 +78,30 @@ namespace EMS.Application.Services.EquipService.Service
 
             return new Result<List<TSTBThietBi>>(list);
         }
-        public async Task<Result<bool>> PhanVaoPhongAsync(Guid phongHocId, List<Guid> thietBiIds)
+        public async Task<Result<bool>> PhanVaoPhongAsync(Guid targetId, List<Guid> thietBiIds, bool isKtx)
         {
             try
             {
                 var thietBis = await Repository.ListAsync(filter: x => thietBiIds.Contains(x.Id));
-
                 foreach (var tb in thietBis)
                 {
-                    tb.PhongHocId = phongHocId;
+                    if (isKtx)
+                    {
+                        tb.PhongKtxId = targetId;
+                        tb.PhongHocId = null;
+                    }
+                    else
+                    {
+                        tb.PhongHocId = targetId;
+                        tb.PhongKtxId = null;
+                    }
                     tb.TrangThai = TrangThaiThietBiEnum.DangSuDung;
                     Repository.Update(tb);
                 }
-
                 await UnitOfWork.CommitAsync();
                 return new Result<bool>(true);
             }
-            catch (Exception ex)
-            {
-                return new Result<bool>(ex);
-            }
+            catch (Exception ex) { return new Result<bool>(ex); }
         }
     }
 }

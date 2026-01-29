@@ -33,7 +33,10 @@ namespace EMS.Domain.Entities.EquipmentManagement
 
         public Guid? PhongHocId { get; set; }
         public virtual PhongHoc? PhongHoc { get; set; }
-        
+
+        public Guid? PhongKtxId { get; set; }
+        public virtual KtxPhong? PhongKtx { get; set; }
+
         public virtual ICollection<TSTBChiTietPhieuMuon> ChiTietPhieuMuons { get; set; } = new List<TSTBChiTietPhieuMuon>();
         public virtual ICollection<TSTBPhieuBaoTri> PhieuBaoTris { get; set; } = new List<TSTBPhieuBaoTri>();
         public virtual ICollection<TSTBChiTietKiemKe> ChiTietKiemKes { get; set; } = new List<TSTBChiTietKiemKe>();

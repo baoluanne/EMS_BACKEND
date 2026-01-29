@@ -12,7 +12,7 @@ namespace EMS.Application.Services.EquipService
 {
     public interface IThietBiService : IBaseService<TSTBThietBi>
     {
-        Task<Result<bool>> PhanVaoPhongAsync(Guid phongHocId, List<Guid> thietBiIds);
+        Task<Result<bool>> PhanVaoPhongAsync(Guid targetId, List<Guid> thietBiIds, bool isKtx);
         Task<Result<List<TSTBThietBi>>> NhapHangLoatAsync(NhapHangLoatDto dto);
 
     }

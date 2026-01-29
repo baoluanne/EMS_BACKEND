@@ -52,15 +52,16 @@ namespace EMS.Application.Services.KtxService.Service
         {
             try
             {
+                var hocKy = await _hockyRepo.GetFirstAsync(i => i.Id == entity.IdHocKy);
                 if (string.IsNullOrEmpty(entity.MaDon))
                 {
                     entity.MaDon = GenerateMaDon(entity.LoaiDon);
                 }
                 entity.NgayGuiDon = DateTime.UtcNow;
                 entity.TrangThai = KtxDonTrangThai.ChoDuyet;
+                entity.NgayHetHan = EnsureUtc(hocKy.DenNgay.Value);
                 Repository.Add(entity);
 
-                var hocKy = await _hockyRepo.GetByIdAsync(entity.IdHocKy);
                 if (entity.LoaiDon == KtxLoaiDon.DangKyMoi && entity.PhongYeuCauId.HasValue)
                 {
                     var giuongId = (entity.GiuongYeuCauId == Guid.Empty) ? null : entity.GiuongYeuCauId;
@@ -78,14 +79,19 @@ namespace EMS.Application.Services.KtxService.Service
                     }
 
                 }
-                else if (entity.LoaiDon == KtxLoaiDon.ChuyenPhong || entity.LoaiDon == KtxLoaiDon.GiaHan || entity.LoaiDon == KtxLoaiDon.RoiKtx)
+
+                else if (entity.LoaiDon == KtxLoaiDon.ChuyenPhong 
+                    || entity.LoaiDon == KtxLoaiDon.GiaHan 
+                    || entity.LoaiDon == KtxLoaiDon.RoiKtx)
                 {
                     var currentStay = await _cutruRepo.GetFirstAsync(
                         predicate: x => x.SinhVienId == entity.IdSinhVien && x.TrangThai == KtxCutruTrangThai.DangO);
 
                     if (currentStay == null)
                     {
-                        return new Result<KtxDon>(new Exception("Sinh viên hiện không nội trú tại ký túc xá, không thể thực hiện thao tác này."));
+                        return new Result<KtxDon>(new Exception("" +
+                            "Sinh viên hiện không nội trú tại ký túc xá, " +
+                            "không thể thực hiện thao tác này."));
                     }
 
                     if (entity.LoaiDon == KtxLoaiDon.ChuyenPhong && entity.PhongYeuCauId.HasValue)
@@ -109,7 +115,7 @@ namespace EMS.Application.Services.KtxService.Service
                         {
                             DonKtxId = entity.Id,
                             PhongHienTaiId = currentStay.PhongKtxId,
-                            GiuongHienTaiId = currentStay.GiuongKtxId
+                            GiuongHienTaiId = currentStay.GiuongKtxId,
                         };
                         _giaHanRepo.Add(entity.GiaHan);
                         if (hocKy != null && hocKy.TuNgay.HasValue)
@@ -158,10 +164,9 @@ namespace EMS.Application.Services.KtxService.Service
                 don.GiuongDuocDuyetId = giuongDuyetId;
 
                 DateTime ngayRoiKtxDuKien = don.HocKy?.DenNgay ?? don.NgayHetHan;
-                ngayRoiKtxDuKien = EnsureUtc(ngayRoiKtxDuKien);
 
                 don.NgayBatDau = EnsureUtc(don.NgayBatDau);
-                don.NgayHetHan = EnsureUtc(don.NgayHetHan);
+                don.NgayHetHan = EnsureUtc(ngayRoiKtxDuKien);
 
                 switch (don.LoaiDon)
                 {
@@ -322,7 +327,6 @@ namespace EMS.Application.Services.KtxService.Service
 
             var stay = await _cutruRepo.GetFirstAsync(
                 predicate: x => x.SinhVienId == don.IdSinhVien && x.TrangThai == KtxCutruTrangThai.DangO);
-
             if (stay != null)
             {
                 var lichSu = new KtxCuTruLichSu
@@ -335,7 +339,6 @@ namespace EMS.Application.Services.KtxService.Service
                     GiuongMoiId = stay.GiuongKtxId,
                     IdHocKy = don.IdHocKy,
                     NgayBatDau = EnsureUtc(stay.NgayBatDau),
-                    NgayRoiDuKien = ngayRoiKtxMoi,
                     TrangThai = KtxCutruTrangThai.DangO,
                     NgayGhiLichSu = DateTime.UtcNow,
                     GhiChu = $"Gia hạn từ đơn {don.MaDon}"

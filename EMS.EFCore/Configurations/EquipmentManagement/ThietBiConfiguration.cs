@@ -61,6 +61,10 @@ namespace EMS.EFCore.Configurations.EquipmentManagement
                 .WithOne(x => x.ThietBi)
                 .HasForeignKey(x => x.ThietBiId)
                 .OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne(x => x.PhongKtx)
+                .WithMany()
+                .HasForeignKey(x => x.PhongKtxId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
