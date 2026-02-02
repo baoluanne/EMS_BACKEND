@@ -6,7 +6,7 @@ public class KtxPhong : AuditableEntity
 {
     public Guid TangKtxId { get; set; }
     [ForeignKey("TangKtxId")]
-    public virtual KtxTang Tang { get; set; } = null!;
+    public virtual KtxTang? Tang { get; set; } = null!;
     public string? MaPhong { get; set; }
     public int? SoLuongGiuong { get; set; }
     public string? LoaiPhong { get; set; }

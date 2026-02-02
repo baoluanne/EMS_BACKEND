@@ -23,67 +23,115 @@ public class PhongKtxService : BaseService<KtxPhong>, IPhongKtxService
         _giuongRepo = giuongRepo;
         _tangRepo = tangRepo;
     }
+
+    public override async Task<Result<KtxPhong>> CreateAsync(KtxPhong entity)
+    {
+        try
+        {
+            var tang = await _tangRepo.GetByIdAsync(entity.TangKtxId);
+            if (tang == null) return new Result<KtxPhong>(new NotFoundException("Tầng không tồn tại."));
+
+            if (!string.IsNullOrEmpty(tang.LoaiTang) && !tang.LoaiTang.ToLower().Contains("hỗn hợp"))
+            {
+                if (entity.LoaiPhong != tang.LoaiTang)
+                {
+                    return new Result<KtxPhong>(new Exception($"Tầng này quy định dành cho {tang.LoaiTang}. Không thể tạo phòng loại {entity.LoaiPhong}."));
+                }
+            }
+
+            var existing = await _repository.GetFirstAsync(p => p.TangKtxId == entity.TangKtxId && p.MaPhong == entity.MaPhong);
+            if (existing != null) return new Result<KtxPhong>(new Exception("Mã phòng đã tồn tại trên tầng này."));
+
+            entity.Id = Guid.NewGuid();
+            entity.Giuongs = new List<KtxGiuong>();
+
+            int bedCount = entity.SoLuongGiuong ?? 0;
+            for (int i = 1; i <= bedCount; i++)
+            {
+                entity.Giuongs.Add(new KtxGiuong
+                {
+                    Id = Guid.NewGuid(),
+                    PhongKtxId = entity.Id,
+                    MaGiuong = $"{entity.MaPhong}-{i:D2}",
+                    TrangThai = KtxGiuongTrangThai.Trong,
+                    NgayTao = DateTime.UtcNow,
+                    IsDeleted = false
+                });
+            }
+
+            Repository.Add(entity);
+            await UnitOfWork.CommitAsync();
+
+            return new Result<KtxPhong>(entity);
+        }
+        catch (Exception ex)
+        {
+            return new Result<KtxPhong>(ex.InnerException ?? ex);
+        }
+    }
+
     public override async Task<Result<KtxPhong>> UpdateAsync(Guid id, KtxPhong entity)
     {
         try
         {
             var existingPhong = await _repository.GetFirstAsync(
                 predicate: i => i.Id == id,
-                include: i => i.Include(x => x.Giuongs)
+                include: i => i.Include(x => x.Giuongs).Include(x => x.Tang)
             );
 
             if (existingPhong == null)
                 return new Result<KtxPhong>(new NotFoundException("Phòng không tồn tại."));
 
-            if (existingPhong.MaPhong != entity.MaPhong)
+            if (existingPhong.Tang != null && !string.IsNullOrEmpty(existingPhong.Tang.LoaiTang))
             {
-                foreach (var bed in existingPhong.Giuongs.Where(g => !g.IsDeleted))
+                bool isFloorMixed = existingPhong.Tang.LoaiTang.ToLower().Contains("hỗn hợp");
+                if (!isFloorMixed && entity.LoaiPhong != existingPhong.Tang.LoaiTang)
                 {
-                    var bedIndex = bed.MaGiuong.Split('-').Last();
-                    bed.MaGiuong = $"{entity.MaPhong}-{bedIndex}";
-                    _giuongRepo.Update(bed);
+                    return new Result<KtxPhong>(new Exception($"Tầng này quy định dành cho {existingPhong.Tang.LoaiTang}. Không thể chuyển phòng sang loại {entity.LoaiPhong}."));
                 }
             }
 
-            int currentBedCount = existingPhong.Giuongs.Count(g => !g.IsDeleted);
+            bool isMaPhongChanged = existingPhong.MaPhong != entity.MaPhong;
+
             int newBedCount = entity.SoLuongGiuong ?? 0;
 
-            if (newBedCount < currentBedCount)
+            for (int i = 1; i <= Math.Max(newBedCount, existingPhong.Giuongs.Count); i++)
             {
-                int bedsToKill = currentBedCount - newBedCount;
+                var suffix = i.ToString("D2");
+                var targetMaGiuong = $"{entity.MaPhong}-{suffix}";
 
-                var eligibleToSoftDelete = existingPhong.Giuongs
-                    .Where(g => !g.IsDeleted && g.SinhVienId == null && g.TrangThai == KtxGiuongTrangThai.Trong)
-                    .OrderByDescending(g => g.MaGiuong)
-                    .Take(bedsToKill)
-                    .ToList();
+                var bed = existingPhong.Giuongs.FirstOrDefault(g => g.MaGiuong.EndsWith("-" + suffix));
 
-                if (eligibleToSoftDelete.Count < bedsToKill)
+                if (i <= newBedCount)
                 {
-                    return new Result<KtxPhong>(new Exception($"Không thể giảm xuống {newBedCount} giường vì hiện có quá nhiều giường đang có sinh viên ở."));
-                }
-
-                foreach (var bed in eligibleToSoftDelete)
-                {
-                    bed.IsDeleted = true;
-                    _giuongRepo.Update(bed);
-                }
-            }
-            else if (newBedCount > currentBedCount)
-            {
-                for (int i = currentBedCount + 1; i <= newBedCount; i++)
-                {
-                    var maGiuongNew = $"{entity.MaPhong}-{i:D2}";
-                    var newBed = new KtxGiuong
+                    if (bed != null)
                     {
-                        Id = Guid.NewGuid(),
-                        PhongKtxId = existingPhong.Id,
-                        MaGiuong = maGiuongNew,
-                        TrangThai = KtxGiuongTrangThai.Trong,
-                        NgayTao = DateTime.UtcNow,
-                        IsDeleted = false
-                    };
-                    _giuongRepo.Add(newBed);
+                        bed.IsDeleted = false;
+                        bed.MaGiuong = targetMaGiuong;
+                    }
+                    else
+                    {
+                        existingPhong.Giuongs.Add(new KtxGiuong
+                        {
+                            Id = Guid.NewGuid(),
+                            PhongKtxId = existingPhong.Id,
+                            MaGiuong = targetMaGiuong,
+                            TrangThai = KtxGiuongTrangThai.Trong,
+                            NgayTao = DateTime.UtcNow,
+                            IsDeleted = false
+                        });
+                    }
+                }
+                else
+                {
+                    if (bed != null && !bed.IsDeleted)
+                    {
+                        if (bed.SinhVienId != null)
+                        {
+                            return new Result<KtxPhong>(new Exception($"Không thể giảm xuống {newBedCount} giường vì giường {bed.MaGiuong} đang có sinh viên ở."));
+                        }
+                        bed.IsDeleted = true;
+                    }
                 }
             }
 
@@ -96,76 +144,18 @@ public class PhongKtxService : BaseService<KtxPhong>, IPhongKtxService
             }
 
             await UpdateEntityProperties(existingPhong, entity);
-            _repository.Update(existingPhong);
+
             await UnitOfWork.CommitAsync();
 
             return new Result<KtxPhong>(existingPhong);
         }
+        catch (DbUpdateConcurrencyException)
+        {
+            return new Result<KtxPhong>(new Exception("Dữ liệu đã bị thay đổi hoặc bản ghi không còn tồn tại. Vui lòng làm mới trang."));
+        }
         catch (Exception ex)
         {
             return new Result<KtxPhong>(ex.InnerException ?? ex);
-        }
-    }
-    public async Task<Result<List<KtxPhong>>> CreateBatchAsync(BatchCreatePhongModel model)
-    {
-        try
-        {
-            var tang = await _tangRepo.GetByIdAsync(model.TangKtxId);
-            if (tang == null) return new Result<List<KtxPhong>>(new NotFoundException("Tầng không tồn tại."));
-
-            var listPhongMoi = new List<KtxPhong>();
-
-            for (int i = 0; i < model.SoLuongPhong; i++)
-            {
-                var soThuTu = model.BatDauTuSo + i;
-                var maPhongFormatted = $"R{model.SoGiuongMoiPhong}-{model.TienToMaPhong}{soThuTu}";
-
-                var existing = await _repository.GetFirstAsync(p => p.TangKtxId == model.TangKtxId && p.MaPhong == maPhongFormatted);
-                if (existing != null) continue;
-
-                var phong = new KtxPhong
-                {
-                    Id = Guid.NewGuid(),
-                    TangKtxId = model.TangKtxId,
-                    Tang = tang,
-                    MaPhong = maPhongFormatted,
-                    SoLuongGiuong = model.SoGiuongMoiPhong,
-                    LoaiPhong = model.LoaiPhong,
-                    TrangThai = 0,
-                    Giuongs = new List<KtxGiuong>(),
-                    ChiSoDienNuocs = new List<KtxChiSoDienNuoc>(),
-                    YeuCauSuaChuas = new List<KtxYeuCauSuaChua>()
-                };
-
-                for (int j = 1; j <= model.SoGiuongMoiPhong; j++)
-                {
-                    var sttGiuong = j.ToString("D2");
-                    var maGiuongFormatted = $"{maPhongFormatted}-{sttGiuong}";
-
-                    phong.Giuongs.Add(new KtxGiuong
-                    {
-                        Id = Guid.NewGuid(),
-                        PhongKtxId = phong.Id,
-                        Phong = phong,
-                        MaGiuong = maGiuongFormatted,
-                        TrangThai = KtxGiuongTrangThai.Trong,
-                        CuTruKtxs = new List<KtxCutru>()
-                    });
-                }
-                listPhongMoi.Add(phong);
-            }
-
-            if (listPhongMoi.Any())
-            {
-                foreach (var p in listPhongMoi) _repository.Add(p);
-                await UnitOfWork.CommitAsync();
-            }
-
-            return new Result<List<KtxPhong>>(listPhongMoi);
-        }
-        catch (Exception ex)
-        {
-            return new Result<List<KtxPhong>>(ex.InnerException ?? ex);
         }
     }
     protected override Task UpdateEntityProperties(KtxPhong existingEntity, KtxPhong newEntity)
@@ -174,6 +164,7 @@ public class PhongKtxService : BaseService<KtxPhong>, IPhongKtxService
         existingEntity.MaPhong = newEntity.MaPhong;
         existingEntity.SoLuongGiuong = newEntity.SoLuongGiuong;
         existingEntity.LoaiPhong = newEntity.LoaiPhong;
+        existingEntity.TrangThai = newEntity.TrangThai;
         return Task.CompletedTask;
     }
 }

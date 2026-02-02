@@ -48,13 +48,6 @@ public class PhongKtxController(IPhongKtxService service) : BaseController<KtxPh
         return result.ToResult();
     }
 
-    [HttpPost("batch-create")]
-    public async Task<IActionResult> CreateBatch([FromBody] BatchCreatePhongModel model)
-    {
-        var result = await service.CreateBatchAsync(model);
-        return result.ToResult();
-    }
-
     public class PhongFilter
     {
         public string? MaPhong { get; set; }

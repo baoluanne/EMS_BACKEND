@@ -31,7 +31,8 @@ namespace EMS.Infrastructure.Configurations.KtxConfiguration
             builder.HasOne(x => x.Tang)
                 .WithMany(t => t.KtxPhongs)
                 .HasForeignKey(x => x.TangKtxId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Cascade).IsRequired(); // Thêm IsRequired để xác nhận TangKtxId không được null ở DB;
+
 
             builder.HasMany(x => x.Giuongs)
                 .WithOne(g => g.Phong)
