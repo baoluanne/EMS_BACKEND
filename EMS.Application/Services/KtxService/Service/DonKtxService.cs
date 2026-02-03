@@ -47,6 +47,44 @@ namespace EMS.Application.Services.KtxService.Service
             _lichSuRepo = lichSuRepo;
             _hockyRepo = hocKyRepo;
         }
+        public async Task<Result<bool>> ApproveMultipleRequestsAsync(List<Guid> ids)
+        {
+            try
+            {
+                var dons = await _repository.ListAsync(
+                    filter: x => ids.Contains(x.Id) && x.TrangThai == KtxDonTrangThai.ChoDuyet,
+                    include: query => query
+                        .Include(x => x.DangKyMoi)
+                        .Include(x => x.ChuyenPhong)
+                        .Include(x => x.HocKy)
+                );
+
+                foreach (var don in dons)
+                {
+                    Guid? phongDuyetId = null;
+                    Guid? giuongDuyetId = null;
+
+                    if (don.LoaiDon == KtxLoaiDon.DangKyMoi && don.DangKyMoi != null)
+                    {
+                        phongDuyetId = don.DangKyMoi.PhongYeuCauId;
+                        giuongDuyetId = don.DangKyMoi.GiuongYeuCauId;
+                    }
+                    else if (don.LoaiDon == KtxLoaiDon.ChuyenPhong && don.ChuyenPhong != null)
+                    {
+                        phongDuyetId = don.ChuyenPhong.PhongYeuCauId;
+                        giuongDuyetId = don.ChuyenPhong.GiuongYeuCauId;
+                    }
+
+                    await ApproveRequestAsync(don.Id, phongDuyetId, giuongDuyetId);
+                }
+
+                return new Result<bool>(true);
+            }
+            catch (Exception ex)
+            {
+                return new Result<bool>(ex.InnerException ?? ex);
+            }
+        }
 
         public override async Task<Result<KtxDon>> CreateAsync(KtxDon entity)
         {

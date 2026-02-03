@@ -59,6 +59,9 @@ public class PhongKtxService : BaseService<KtxPhong>, IPhongKtxService
                 });
             }
 
+            tang.SoLuongPhong = (tang.SoLuongPhong ?? 0) + 1;
+            _tangRepo.Update(tang);
+
             Repository.Add(entity);
             await UnitOfWork.CommitAsync();
 
@@ -91,16 +94,25 @@ public class PhongKtxService : BaseService<KtxPhong>, IPhongKtxService
                 }
             }
 
-            bool isMaPhongChanged = existingPhong.MaPhong != entity.MaPhong;
+            if (existingPhong.LoaiPhong != entity.LoaiPhong)
+            {
+                if (existingPhong.Giuongs.Any(g => !g.IsDeleted && g.SinhVienId != null))
+                {
+                    return new Result<KtxPhong>(new Exception("Không thể đổi loại phòng khi đang có sinh viên cư trú."));
+                }
+            }
 
             int newBedCount = entity.SoLuongGiuong ?? 0;
+            var allBedsInCollection = existingPhong.Giuongs.ToList();
 
-            for (int i = 1; i <= Math.Max(newBedCount, existingPhong.Giuongs.Count); i++)
+            int maxLoop = Math.Max(newBedCount, allBedsInCollection.Count);
+
+            for (int i = 1; i <= maxLoop; i++)
             {
                 var suffix = i.ToString("D2");
                 var targetMaGiuong = $"{entity.MaPhong}-{suffix}";
 
-                var bed = existingPhong.Giuongs.FirstOrDefault(g => g.MaGiuong.EndsWith("-" + suffix));
+                var bed = allBedsInCollection.FirstOrDefault(g => g.MaGiuong.EndsWith("-" + suffix));
 
                 if (i <= newBedCount)
                 {
@@ -108,6 +120,7 @@ public class PhongKtxService : BaseService<KtxPhong>, IPhongKtxService
                     {
                         bed.IsDeleted = false;
                         bed.MaGiuong = targetMaGiuong;
+                        _giuongRepo.Update(bed);
                     }
                     else
                     {
@@ -131,20 +144,12 @@ public class PhongKtxService : BaseService<KtxPhong>, IPhongKtxService
                             return new Result<KtxPhong>(new Exception($"Không thể giảm xuống {newBedCount} giường vì giường {bed.MaGiuong} đang có sinh viên ở."));
                         }
                         bed.IsDeleted = true;
+                        _giuongRepo.Update(bed);
                     }
                 }
             }
 
-            if (existingPhong.LoaiPhong != entity.LoaiPhong)
-            {
-                if (existingPhong.Giuongs.Any(g => !g.IsDeleted && g.SinhVienId != null))
-                {
-                    return new Result<KtxPhong>(new Exception("Không thể đổi loại phòng khi đang có sinh viên cư trú."));
-                }
-            }
-
             await UpdateEntityProperties(existingPhong, entity);
-
             await UnitOfWork.CommitAsync();
 
             return new Result<KtxPhong>(existingPhong);
@@ -158,6 +163,7 @@ public class PhongKtxService : BaseService<KtxPhong>, IPhongKtxService
             return new Result<KtxPhong>(ex.InnerException ?? ex);
         }
     }
+
     protected override Task UpdateEntityProperties(KtxPhong existingEntity, KtxPhong newEntity)
     {
         existingEntity.TangKtxId = newEntity.TangKtxId;
@@ -165,6 +171,7 @@ public class PhongKtxService : BaseService<KtxPhong>, IPhongKtxService
         existingEntity.SoLuongGiuong = newEntity.SoLuongGiuong;
         existingEntity.LoaiPhong = newEntity.LoaiPhong;
         existingEntity.TrangThai = newEntity.TrangThai;
+
         return Task.CompletedTask;
     }
 }

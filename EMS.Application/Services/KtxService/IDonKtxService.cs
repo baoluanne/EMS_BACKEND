@@ -15,5 +15,6 @@ namespace EMS.Application.Services.KtxService
     {
         Task<Result<bool>> ApproveRequestAsync(Guid id, Guid? phongDuyetId, Guid? giuongDuyetId);
         Task<Result<bool>> RejectRequestAsync(Guid id, string ghiChu);
+        Task<Result<bool>> ApproveMultipleRequestsAsync(List<Guid> ids);
     }
 }

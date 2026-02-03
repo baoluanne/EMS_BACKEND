@@ -18,10 +18,10 @@ namespace EMS.Infrastructure.Configurations.KtxConfiguration
                 .HasMaxLength(50);
 
             builder.Property(x => x.TrangThai)
-        .HasConversion<string>()
-        .HasMaxLength(50)
-        .IsRequired()
-        .HasDefaultValue(KtxGiuongTrangThai.Trong);
+                .HasConversion<string>()
+                .HasMaxLength(50)
+                .IsRequired()
+                .HasDefaultValue(KtxGiuongTrangThai.Trong);
 
             builder.HasOne(x => x.Phong)
                 .WithMany(p => p.Giuongs)
@@ -32,6 +32,9 @@ namespace EMS.Infrastructure.Configurations.KtxConfiguration
                 .WithMany()
                 .HasForeignKey(x => x.SinhVienId)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            builder.HasIndex(x => new { x.PhongKtxId, x.MaGiuong })
+                .IsUnique();
         }
     }
 }

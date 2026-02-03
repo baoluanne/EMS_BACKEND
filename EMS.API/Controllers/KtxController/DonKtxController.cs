@@ -67,6 +67,14 @@ namespace EMS.API.Controllers.KtxController
             var result = await _donKtxService.RejectRequestAsync(id, request.GhiChu);
             return result.ToResult();
         }
+        [HttpPost("bulk-approve")]
+        public async Task<IActionResult> BulkApprove([FromBody] List<Guid> ids)
+        {
+            if (ids == null || !ids.Any()) return BadRequest("Danh sách ID không được để trống.");
+
+            var result = await _donKtxService.ApproveMultipleRequestsAsync(ids);
+            return result.ToResult();
+        }
     }
     public class DonKtxFilter
     {
