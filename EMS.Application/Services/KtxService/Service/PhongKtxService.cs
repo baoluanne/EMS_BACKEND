@@ -103,49 +103,82 @@ public class PhongKtxService : BaseService<KtxPhong>, IPhongKtxService
             }
 
             int newBedCount = entity.SoLuongGiuong ?? 0;
-            var allBedsInCollection = existingPhong.Giuongs.ToList();
+            var activeBeds = existingPhong.Giuongs.Where(g => !g.IsDeleted).ToList();
+            int occupiedBedCount = activeBeds.Count(g => g.SinhVienId != null);
 
-            int maxLoop = Math.Max(newBedCount, allBedsInCollection.Count);
-
-            for (int i = 1; i <= maxLoop; i++)
+            if (newBedCount < occupiedBedCount)
             {
-                var suffix = i.ToString("D2");
-                var targetMaGiuong = $"{entity.MaPhong}-{suffix}";
+                return new Result<KtxPhong>(new Exception($"Không thể giảm xuống {newBedCount} giường vì hiện có {occupiedBedCount} sinh viên đang cư trú."));
+            }
 
-                var bed = allBedsInCollection.FirstOrDefault(g => g.MaGiuong.EndsWith("-" + suffix));
+            if (newBedCount < activeBeds.Count)
+            {
+                var emptyBeds = activeBeds
+                    .Where(g => g.SinhVienId == null)
+                    .OrderByDescending(g => g.MaGiuong)
+                    .ToList();
 
-                if (i <= newBedCount)
+                int bedsToRemove = activeBeds.Count - newBedCount;
+                for (int i = 0; i < Math.Min(bedsToRemove, emptyBeds.Count); i++)
                 {
-                    if (bed != null)
+                    emptyBeds[i].IsDeleted = true;
+                }
+            }
+            else if (newBedCount > activeBeds.Count)
+            {
+                int bedsToAdd = newBedCount - activeBeds.Count;
+
+                var deletedBeds = existingPhong.Giuongs
+                    .Where(g => g.IsDeleted)
+                    .OrderBy(g => g.MaGiuong)
+                    .Take(bedsToAdd)
+                    .ToList();
+
+                foreach (var bed in deletedBeds)
+                {
+                    bed.IsDeleted = false;
+                }
+
+                int remainingToAdd = bedsToAdd - deletedBeds.Count;
+                if (remainingToAdd > 0)
+                {
+                    int maxBedNumber = 0;
+                    if (existingPhong.Giuongs.Any())
                     {
-                        bed.IsDeleted = false;
-                        bed.MaGiuong = targetMaGiuong;
-                        _giuongRepo.Update(bed);
+                        maxBedNumber = existingPhong.Giuongs
+                            .Select(g => {
+                                var parts = g.MaGiuong.Split('-');
+                                return int.TryParse(parts.Last(), out int num) ? num : 0;
+                            })
+                            .DefaultIfEmpty(0)
+                            .Max();
                     }
-                    else
+
+                    for (int i = 1; i <= remainingToAdd; i++)
                     {
+                        var suffix = (maxBedNumber + i).ToString("D2");
                         existingPhong.Giuongs.Add(new KtxGiuong
                         {
                             Id = Guid.NewGuid(),
                             PhongKtxId = existingPhong.Id,
-                            MaGiuong = targetMaGiuong,
+                            MaGiuong = $"{entity.MaPhong}-{suffix}",
                             TrangThai = KtxGiuongTrangThai.Trong,
                             NgayTao = DateTime.UtcNow,
                             IsDeleted = false
                         });
                     }
                 }
-                else
+            }
+
+            foreach (var bed in existingPhong.Giuongs)
+            {
+                var parts = bed.MaGiuong.Split('-');
+                var suffix = parts.Last();
+                var newMaGiuong = $"{entity.MaPhong}-{suffix}";
+                
+                if (bed.MaGiuong != newMaGiuong)
                 {
-                    if (bed != null && !bed.IsDeleted)
-                    {
-                        if (bed.SinhVienId != null)
-                        {
-                            return new Result<KtxPhong>(new Exception($"Không thể giảm xuống {newBedCount} giường vì giường {bed.MaGiuong} đang có sinh viên ở."));
-                        }
-                        bed.IsDeleted = true;
-                        _giuongRepo.Update(bed);
-                    }
+                    bed.MaGiuong = newMaGiuong;
                 }
             }
 
