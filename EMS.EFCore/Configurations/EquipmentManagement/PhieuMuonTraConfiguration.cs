@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using EMS.Domain.Entities.EquipmentManagement;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -14,7 +10,7 @@ namespace EMS.EFCore.Configurations.EquipmentManagement
         public void Configure(EntityTypeBuilder<TSTBPhieuMuonTra> builder)
         {
             builder.HasKey(x => x.Id);
-            builder.Property(x => x.MaPhieu).IsRequired().HasMaxLength(20);
+            builder.Property(x => x.MaPhieu).HasMaxLength(20);
             builder.Property(x => x.LyDoMuon).HasMaxLength(500);
             builder.Property(x => x.GhiChu).HasMaxLength(500);
 
