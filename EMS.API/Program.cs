@@ -45,13 +45,25 @@ builder.Services
 builder.Services.AddAuthorization();
 
 // CORS
+//builder.Services.AddCors(options =>
+//{
+//    options.AddDefaultPolicy(
+//        policy =>
+//        {
+//            var origins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
+//            policy.WithOrigins(origins)
+//                .AllowAnyMethod()
+//                .AllowAnyHeader()
+//                .AllowCredentials();
+//        });
+//});
+
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(
         policy =>
         {
-            var origins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
-            policy.WithOrigins(origins)
+            policy.SetIsOriginAllowed(origin => true)
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials();

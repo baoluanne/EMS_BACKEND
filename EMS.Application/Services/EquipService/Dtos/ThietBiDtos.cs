@@ -25,4 +25,21 @@ namespace EMS.Application.Services.EquipService.Dtos
         public Guid? PhongHocId { get; set; }
         public string PrefixMaThietBi { get; set; }
     }
+    public class MobileScanResult
+    {
+        public Guid Id { get; set; }
+        public string MaThietBi { get; set; }
+        public string TenThietBi { get; set; }
+        public string Model { get; set; }
+        public string SerialNumber { get; set; }
+        public string HinhAnhUrl { get; set; }
+        public string TrangThaiText { get; set; }
+        public int TrangThaiCode { get; set; }
+        public string ViTri { get; set; } // Hiển thị: "Trong kho", "Phòng học", v.v.
+
+        // Các cờ cho phép (Backend quyết định logic này)
+        public bool AllowMuon { get; set; }
+        public bool AllowTra { get; set; }
+        public bool AllowThanhLy { get; set; }
+    }
 }

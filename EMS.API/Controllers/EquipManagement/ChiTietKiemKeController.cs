@@ -38,15 +38,5 @@ namespace EMS.API.Controllers.EquipManagement
                 error => BadRequest(error.Message)
             );
         }
-
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> Update(Guid id, [FromBody] TSTBChiTietKiemKe entity)
-        //{
-        //    var result = await _chiTietKiemKeService.UpdateAsync(id, entity);
-        //    return result.Match<IActionResult>(
-        //        success => Ok(success),
-        //        error => BadRequest(error.Message)
-        //    );
-        //}
     }
 }
