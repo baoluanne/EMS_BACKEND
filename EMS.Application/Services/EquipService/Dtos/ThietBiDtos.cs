@@ -42,4 +42,16 @@ namespace EMS.Application.Services.EquipService.Dtos
         public bool AllowTra { get; set; }
         public bool AllowThanhLy { get; set; }
     }
+    public class MobileBorrowRequest
+    {
+        public Guid ThietBiId { get; set; }
+        public string MaDoiTuong { get; set; }
+        private DateTime _ngayMuon;
+        public DateTime NgayMuon
+        {
+            get => _ngayMuon;
+            // Ép Kind thành Utc để không làm thay đổi giá trị giờ nhưng đúng chuẩn Postgres
+            set => _ngayMuon = DateTime.SpecifyKind(value, DateTimeKind.Utc);
+        }
+    }
 }

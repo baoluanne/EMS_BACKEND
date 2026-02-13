@@ -22,24 +22,28 @@ namespace EMS.Application.Services.EquipService.Service
                 using var transaction = await UnitOfWork.BeginTransactionAsync();
                 try
                 {
+                    // 1. Tự động sinh mã phiếu
                     entity.MaPhieu = $"PM-{DateTime.Now:yyyyMMdd}-{Guid.NewGuid().ToString()[..4].ToUpper()}";
 
                     var thietBiRepo = UnitOfWork.GetRepository<IThietBiRepository>();
 
+                    // 2. Duyệt chi tiết để kiểm tra và cập nhật trạng thái thiết bị
                     foreach (var chiTiet in entity.ChiTietPhieuMuons)
                     {
                         var thietBi = await thietBiRepo.GetByIdAsync(chiTiet.ThietBiId);
 
-                        if (thietBi == null || (thietBi.TrangThai != TrangThaiThietBiEnum.MoiNhap))
-                        {
-                            throw new Exception($"Thiết bị {thietBi?.MaThietBi} không sẵn sàng để mượn.");
-                        }
+                        if (thietBi == null)
+                            throw new Exception("Thiết bị không tồn tại.");
 
+                        if (thietBi.TrangThai != TrangThaiThietBiEnum.MoiNhap)
+                            throw new Exception($"Thiết bị {thietBi.MaThietBi} hiện không sẵn sàng để mượn.");
+
+                        // Cập nhật trạng thái thiết bị
                         thietBi.TrangThai = TrangThaiThietBiEnum.DangSuDung;
                         thietBiRepo.Update(thietBi);
                     }
 
-                    entity.TrangThai = TrangThaiPhieuMuonEnum.DangMuon;
+                    // 3. Gọi hàm Create của Base để lưu Entity PhieuMuonTra vào DB
                     var result = await base.CreateAsync(entity);
 
                     await transaction.CommitAsync();
@@ -48,7 +52,7 @@ namespace EMS.Application.Services.EquipService.Service
                 catch (Exception ex)
                 {
                     await transaction.RollbackAsync();
-                    return new Result<TSTBPhieuMuonTra>(ex.InnerException ?? ex);
+                    return new Result<TSTBPhieuMuonTra>(ex);
                 }
             });
         }
