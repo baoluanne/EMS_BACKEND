@@ -14,17 +14,20 @@ namespace EMS.EFCore.Configurations.EquipmentManagement
         public void Configure(EntityTypeBuilder<TSTBChiTietPhieuMuon> builder)
         {
             builder.HasKey(x => x.Id);
+
             builder.Property(x => x.TinhTrangKhiMuon).HasMaxLength(200);
             builder.Property(x => x.TinhTrangKhiTra).HasMaxLength(200);
             builder.Property(x => x.GhiChuChiTiet).HasMaxLength(500);
-
+            builder.Property(x => x.IsDaTra)
+                .IsRequired()
+                .HasDefaultValue(false);
+            builder.Property(x => x.NgayTraThucTe)
+                .IsRequired(false);
             builder.HasQueryFilter(x => !x.IsDeleted);
-
             builder.HasOne(x => x.PhieuMuonTra)
                 .WithMany(x => x.ChiTietPhieuMuons)
                 .HasForeignKey(x => x.PhieuMuonTraId)
                 .OnDelete(DeleteBehavior.Cascade);
-
             builder.HasOne(x => x.ThietBi)
                 .WithMany(x => x.ChiTietPhieuMuons)
                 .HasForeignKey(x => x.ThietBiId)

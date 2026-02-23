@@ -34,11 +34,8 @@ namespace EMS.Domain.Enums.EquipmentManagement
 
     public enum TrangThaiPhieuMuonEnum
     {
-        ChoDuyet = 0,
-        DaDuyet = 1,
-        DangMuon = 2,
-        DaTra = 3,
-        QuaHan = 4,
-        Huy = 5
+        DangMuon = 0,
+        DaTra = 1,
+        QuaHan = 2,
     }
 }

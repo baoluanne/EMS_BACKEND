@@ -24,6 +24,8 @@ namespace EMS.Application.Services.EquipService.Service
             existingEntity.TinhTrangKhiMuon = newEntity.TinhTrangKhiMuon;
             existingEntity.TinhTrangKhiTra = newEntity.TinhTrangKhiTra;
             existingEntity.GhiChuChiTiet = newEntity.GhiChuChiTiet;
+            existingEntity.NgayTraThucTe = newEntity.NgayTraThucTe;
+            existingEntity.IsDaTra = newEntity.IsDaTra;
             return Task.CompletedTask;
         }
     }

@@ -43,9 +43,6 @@ namespace EMS.API.Controllers.Mobile
                 Guid? sinhVienId = null;
                 Guid? giangVienId = null;
                 LoaiDoiTuongMuonEnum loaiDoiTuong;
-
-                // 1. Phân loại và truy vấn ID chính xác
-                // Lưu ý: Kiểm tra mã đối tượng quét được để map vào đúng Repository
                 if (request.MaDoiTuong.StartsWith("SV", StringComparison.OrdinalIgnoreCase) ||
                     request.MaDoiTuong.StartsWith("HS", StringComparison.OrdinalIgnoreCase))
                 {
@@ -68,22 +65,20 @@ namespace EMS.API.Controllers.Mobile
                     loaiDoiTuong = LoaiDoiTuongMuonEnum.GiangVien;
                 }
 
-                // 2. Kiểm tra trạng thái thiết bị
                 var tbRes = await _thietBiService.GetByIdAsync(request.ThietBiId);
                 var thietBi = tbRes.Match(s => s, e => null);
 
                 if (thietBi == null || thietBi.TrangThai != TrangThaiThietBiEnum.MoiNhap)
                     return BadRequest(new { message = "Thiết bị không tồn tại hoặc không sẵn sàng để mượn" });
 
-                // 3. Khởi tạo Entity mượn trả
                 var now = DateTime.UtcNow;
                 var entity = new TSTBPhieuMuonTra
                 {
                     Id = Guid.NewGuid(),
                     LoaiDoiTuong = loaiDoiTuong,
-                    SinhVienId = sinhVienId, // Ép ID tìm được vào Entity
+                    SinhVienId = sinhVienId,
                     GiangVienId = giangVienId,
-                    NgayMuon = request.NgayMuon, // DTO đã xử lý Kind.Utc
+                    NgayMuon = request.NgayMuon,
                     TrangThai = TrangThaiPhieuMuonEnum.DangMuon,
                     GhiChu = $"Mobile Scan: {request.MaDoiTuong}",
                     NgayTao = now,
@@ -101,10 +96,8 @@ namespace EMS.API.Controllers.Mobile
                     }
                 };
 
-                // LOG KIỂM TRA TRƯỚC KHI GỌI SERVICE
                 Console.WriteLine($"[CONTROLLER DEBUG] Send to Service - SV_ID: {entity.SinhVienId}");
 
-                // 4. Thực thi lưu trữ qua Service
                 var result = await _phieuMuonTraService.CreateAsync(entity);
 
                 return result.Match<IActionResult>(

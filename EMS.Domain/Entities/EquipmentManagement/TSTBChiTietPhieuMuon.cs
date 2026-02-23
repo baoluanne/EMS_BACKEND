@@ -14,5 +14,7 @@ namespace EMS.Domain.Entities.EquipmentManagement
         public string? TinhTrangKhiMuon { get; set; }
         public string? TinhTrangKhiTra { get; set; }
         public string? GhiChuChiTiet { get; set; }
+        public bool IsDaTra { get; set; } = false;
+        public DateTime? NgayTraThucTe { get; set; }
     }
 }
