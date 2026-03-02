@@ -1,11 +1,8 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using EMS.Application.Services.Base;
+﻿using EMS.Application.Services.Base;
 using EMS.Domain.Entities.EquipmentManagement;
 using EMS.Domain.Enums.EquipmentManagement;
+using EMS.Domain.Exceptions;
 using EMS.Domain.Interfaces.DataAccess;
-using EMS.Domain.Interfaces.Repositories.Base;
 using EMS.Domain.Interfaces.Repositories.EquipManagement;
 using LanguageExt.Common;
 using Microsoft.EntityFrameworkCore;
@@ -14,16 +11,8 @@ namespace EMS.Application.Services.EquipService.Service
 {
     public class PhieuThanhLyService : BaseService<TSTBPhieuThanhLy>, IPhieuThanhLyService
     {
-        private readonly IAuditRepository<TSTBThietBi> _thietBiRepository;
-
-        public PhieuThanhLyService(
-            IUnitOfWork unitOfWork,
-            IPhieuThanhLyRepository repository,
-            IAuditRepository<TSTBThietBi> thietBiRepository)
-            : base(unitOfWork, repository)
-        {
-            _thietBiRepository = thietBiRepository;
-        }
+        public PhieuThanhLyService(IUnitOfWork unitOfWork, IPhieuThanhLyRepository repository)
+            : base(unitOfWork, repository) { }
 
         public override async Task<Result<TSTBPhieuThanhLy>> CreateAsync(TSTBPhieuThanhLy entity)
         {
@@ -34,65 +23,98 @@ namespace EMS.Application.Services.EquipService.Service
                 using var transaction = await UnitOfWork.BeginTransactionAsync();
                 try
                 {
-                    if (entity.ChiTietThanhLys == null || !entity.ChiTietThanhLys.Any())
-                    {
-                        return new Result<TSTBPhieuThanhLy>(new Exception("Danh sách thanh lý trống"));
-                    }
+                    var thietBiRepo = UnitOfWork.GetRepository<IThietBiRepository>();
 
-                    decimal tongTien = 0;
+                    if (entity.TongTienThuHoi == 0 && entity.ChiTietThanhLys.Any())
+                    {
+                        entity.TongTienThuHoi = entity.ChiTietThanhLys.Sum(x => x.GiaBan);
+                    }
 
                     foreach (var chiTiet in entity.ChiTietThanhLys)
                     {
-                        var thietBi = await _thietBiRepository.GetByIdAsync(chiTiet.ThietBiId);
+                        var thietBi = await thietBiRepo.GetByIdAsync(chiTiet.ThietBiId);
+                        if (thietBi == null) throw new Exception("Thiết bị không tồn tại.");
 
-                        // 1. Kiểm tra tồn tại
-                        if (thietBi == null)
-                            throw new Exception($"Không tìm thấy thiết bị ID: {chiTiet.ThietBiId}");
-
-                        // 2. LOGIC MỚI: Chỉ cho phép thanh lý thiết bị đang Hỏng (Enum = 4)
-                        // Nếu bạn muốn cho phép cả "Chờ thanh lý" (Enum = 5) thì thêm vào điều kiện OR
-                        if (thietBi.TrangThai != TrangThaiThietBiEnum.Hong)
+                        if (thietBi.TrangThai != TrangThaiThietBiEnum.Hong &&
+                            thietBi.TrangThai != TrangThaiThietBiEnum.ChoThanhLy)
                         {
-                            throw new Exception($"Thiết bị {thietBi.MaThietBi} (Trạng thái: {thietBi.TrangThai}) không bị hỏng, không thể thanh lý.");
+                            throw new Exception($"Thiết bị {thietBi.MaThietBi} chưa ở trạng thái Hỏng hoặc Chờ thanh lý.");
                         }
 
-                        // 3. Xử lý logic giá trị
                         chiTiet.GiaTriConLai = thietBi.GiaTriKhauHao ?? 0;
-                        tongTien += chiTiet.GiaBan;
 
-                        // 4. Cập nhật trạng thái sang Đã Thanh Lý (Enum = 6)
                         thietBi.TrangThai = TrangThaiThietBiEnum.DaThanhLy;
-                        thietBi.NgayCapNhat = DateTime.UtcNow;
-                        _thietBiRepository.Update(thietBi);
+                        thietBiRepo.Update(thietBi);
                     }
 
-                    // Cập nhật Header
-                    entity.TongTienThuHoi = tongTien;
+                    await base.CreateAsync(entity);
 
-                    if (entity.Id == Guid.Empty) entity.Id = Guid.NewGuid();
-                    entity.NgayTao = DateTime.UtcNow;
-                    entity.NgayCapNhat = DateTime.UtcNow;
+                    var resultWithData = await Repository.GetFirstAsync(
+                        predicate: x => x.Id == entity.Id,
+                        include: query => query.Include(x => x.ChiTietThanhLys).ThenInclude(ct => ct.ThietBi)
+                    );
 
-                    Repository.Add(entity);
-
-                    await UnitOfWork.CommitAsync();
                     await transaction.CommitAsync();
-
-                    return new Result<TSTBPhieuThanhLy>(entity);
+                    return new Result<TSTBPhieuThanhLy>(resultWithData ?? entity);
                 }
                 catch (Exception ex)
                 {
                     await transaction.RollbackAsync();
-                    return new Result<TSTBPhieuThanhLy>(ex.InnerException ?? ex);
+                    return new Result<TSTBPhieuThanhLy>(ex);
+                }
+            });
+        }
+
+        public override async Task<Result<TSTBPhieuThanhLy>> UpdateAsync(Guid id, TSTBPhieuThanhLy entity)
+        {
+            var strategy = UnitOfWork.GetDbContext().Database.CreateExecutionStrategy();
+
+            return await strategy.ExecuteAsync(async () =>
+            {
+                using var transaction = await UnitOfWork.BeginTransactionAsync();
+                try
+                {
+                    var existingEntity = await Repository.GetFirstAsync(
+                        predicate: x => x.Id == id,
+                        include: query => query.Include(x => x.ChiTietThanhLys)
+                    );
+
+                    if (existingEntity == null)
+                        return new Result<TSTBPhieuThanhLy>(new NotFoundException($"ID {id} not found."));
+
+                    await UpdateEntityProperties(existingEntity, entity);
+
+                    foreach (var itemMoi in entity.ChiTietThanhLys)
+                    {
+                        var itemCu = existingEntity.ChiTietThanhLys.FirstOrDefault(x => x.ThietBiId == itemMoi.ThietBiId);
+                        if (itemCu != null)
+                        {
+                            itemCu.GiaBan = itemMoi.GiaBan;
+                            itemCu.GhiChu = itemMoi.GhiChu;
+                        }
+                    }
+
+                    existingEntity.TongTienThuHoi = existingEntity.ChiTietThanhLys.Sum(x => x.GiaBan);
+
+                    Repository.Update(existingEntity);
+                    await UnitOfWork.CommitAsync();
+                    await transaction.CommitAsync();
+
+                    return new Result<TSTBPhieuThanhLy>(existingEntity);
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    return new Result<TSTBPhieuThanhLy>(ex);
                 }
             });
         }
 
         protected override Task UpdateEntityProperties(TSTBPhieuThanhLy existingEntity, TSTBPhieuThanhLy newEntity)
         {
+            existingEntity.SoQuyetDinh = newEntity.SoQuyetDinh;
             existingEntity.NgayThanhLy = newEntity.NgayThanhLy;
             existingEntity.LyDo = newEntity.LyDo;
-            existingEntity.SoQuyetDinh = newEntity.SoQuyetDinh;
             return Task.CompletedTask;
         }
     }

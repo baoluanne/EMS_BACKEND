@@ -43,9 +43,9 @@ namespace EMS.API.Controllers.KtxController
                     .Include(x => x.ChuyenPhong)
                     .Include(x => x.GiaHan)
                     .Include(x => x.DangKyMoi)
-            .ThenInclude(dk => dk.PhongYeuCau).ThenInclude(p => p.Giuongs)
+            .ThenInclude(dk => dk.PhongYeuCau)
             .Include(x => x.ChuyenPhong)
-            .ThenInclude(cp => cp.PhongYeuCau).ThenInclude(p => p.Giuongs)
+            .ThenInclude(cp => cp.PhongYeuCau)
                     .Include(x => x.RoiKtx),
                 orderBy: x => x.NgayGuiDon,
                 isDescending: true

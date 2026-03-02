@@ -37,7 +37,7 @@ namespace EMS.Application.Services.EquipService.Service
                         if (thietBi.TrangThai != TrangThaiThietBiEnum.MoiNhap)
                             throw new Exception($"Thiết bị {thietBi.MaThietBi} hiện không sẵn sàng.");
 
-                        thietBi.TrangThai = TrangThaiThietBiEnum.DangSuDung;
+                        thietBi.TrangThai = TrangThaiThietBiEnum.DangMuon;
                         thietBiRepo.Update(thietBi);
                     }
                     await base.CreateAsync(entity);
@@ -97,7 +97,21 @@ namespace EMS.Application.Services.EquipService.Service
                                 var thietBi = await thietBiRepo.GetByIdAsync(itemMoi.ThietBiId);
                                 if (thietBi != null)
                                 {
-                                    thietBi.TrangThai = TrangThaiThietBiEnum.MoiNhap;
+                                    switch (itemCu.TinhTrangKhiTra)
+                                    {
+                                        case "Hỏng":
+                                            thietBi.TrangThai = TrangThaiThietBiEnum.Hong;
+                                            break;
+                                        case "Mất":
+                                            thietBi.TrangThai = TrangThaiThietBiEnum.Mat;
+                                            break;
+                                        case "Cần bảo trì":
+                                            thietBi.TrangThai = TrangThaiThietBiEnum.DangBaoTri;
+                                            break;
+                                        default:
+                                            thietBi.TrangThai = TrangThaiThietBiEnum.MoiNhap;
+                                            break;
+                                    }
                                     thietBiRepo.Update(thietBi);
                                 }
                             }
@@ -111,6 +125,7 @@ namespace EMS.Application.Services.EquipService.Service
                     existingEntity.TrangThai = existingEntity.ChiTietPhieuMuons.All(x => x.IsDaTra)
                         ? TrangThaiPhieuMuonEnum.DaTra
                         : TrangThaiPhieuMuonEnum.DangMuon;
+
                     if (existingEntity.TrangThai == TrangThaiPhieuMuonEnum.DaTra)
                         existingEntity.NgayTraThucTe = DateTime.UtcNow;
 

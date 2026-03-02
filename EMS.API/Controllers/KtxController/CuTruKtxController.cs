@@ -29,12 +29,19 @@ namespace EMS.API.Controllers.KtxManagement
                 trangThaiInt = tt;
             }
 
+            Guid? tangGuid = null;
+            if (!string.IsNullOrEmpty(filter.TangId) && Guid.TryParse(filter.TangId, out var tId))
+            {
+                tangGuid = tId;
+            }
+
             DateTime now = DateTime.Now;
             DateTime warningDate = now.AddDays(15);
 
             var result = await Service.GetPaginatedAsync(
                 request,
                 filter: q =>
+                    (tangGuid == null || q.PhongKtx.TangKtxId == tangGuid) &&
                     (string.IsNullOrEmpty(filter.Keyword) ||
                         q.SinhVien.HoDem.ToLower().Contains(filter.Keyword.ToLower()) ||
                         q.SinhVien.Ten.ToLower().Contains(filter.Keyword.ToLower()) ||
@@ -83,6 +90,7 @@ namespace EMS.API.Controllers.KtxManagement
             public string? MaSinhVien { get; set; }
             public string? HoTen { get; set; }
             public string? MaGiuong { get; set; }
+            public string? TangId { get; set; }
             public DateTime? TuNgay { get; set; }
             public DateTime? DenNgay { get; set; }
             public bool? IsSapHetHan { get; set; }

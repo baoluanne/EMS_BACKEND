@@ -1,11 +1,10 @@
 ﻿using EMS.API.Controllers.Base;
-using EMS.Application.Services.Base;
 using EMS.Application.Services.EquipService;
 using EMS.Domain.Entities.EquipmentManagement;
 using EMS.Domain.Extensions;
 using EMS.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
-using static EMS.API.Controllers.EquipManagement.ThietBiController;
+using Microsoft.EntityFrameworkCore;
 
 namespace EMS.API.Controllers.EquipManagement
 {
@@ -14,34 +13,45 @@ namespace EMS.API.Controllers.EquipManagement
         public DotKiemKeController(IDotKiemKeService service) : base(service)
         {
         }
-        public override async Task<IActionResult> GetAll()
-        {
-            var result = await Service.GetAllAsync();
-            return result.ToResult();
-        }
+
+        // ... (Giữ nguyên GetAll, AddFromRoom nếu cần)
 
         [HttpGet("pagination")]
-        public virtual async Task<IActionResult> GetPagination(
-    [FromQuery] PaginationRequest request,
-    [FromQuery] DotKiemKeFilter filter)
+        public async Task<IActionResult> GetPagination(
+            [FromQuery] PaginationRequest request,
+            [FromQuery] DotKiemKeFilter filter)
         {
             var result = await Service.GetPaginatedAsync(
                 request,
                 filter: q =>
-                (string.IsNullOrEmpty(filter.TenDotKiemKe) || q.TenDotKiemKe!.ToLower().Contains(filter.TenDotKiemKe.ToLower())) &&
-                (filter.NgayBatDau == null || q.NgayBatDau >= filter.NgayBatDau) &&
-                (filter.NgayKetThuc == null || q.NgayKetThuc <= filter.NgayKetThuc) &&
-                (filter.DaHoanThanh == null || q.DaHoanThanh == filter.DaHoanThanh)
-            );
+                    (string.IsNullOrEmpty(filter.TenDotKiemKe) || q.TenDotKiemKe!.ToLower().Contains(filter.TenDotKiemKe.ToLower())) &&
+                    (!filter.NgayBatDau.HasValue || q.NgayBatDau >= filter.NgayBatDau) &&
+                    (!filter.NgayKetThuc.HasValue || q.NgayKetThuc <= filter.NgayKetThuc) &&
+                    (!filter.DaHoanThanh.HasValue || q.DaHoanThanh == filter.DaHoanThanh),
+                include: i => i
+                    .Include(x => x.NguoiBatDau)
+                    .Include(x => x.ChiTietKiemKes).ThenInclude(ct => ct.ThietBi),
+                orderBy: x => x.NgayBatDau,
+                isDescending: true);
+
             return result.ToResult();
         }
 
-        [HttpPost("{id}/add-from-room/{phongHocId}")]
-        public async Task<IActionResult> AddFromRoom(Guid id, Guid phongHocId)
+        // --- NEW API ---
+        [HttpGet("active-phong-hoc")]
+        public async Task<IActionResult> GetActivePhongHoc()
         {
-            var result = await ((IDotKiemKeService)Service).AddDevicesFromRoomAsync(id, phongHocId);
+            var result = await ((IDotKiemKeService)Service).GetActivePhongHocsAsync();
             return result.ToResult();
         }
+
+        [HttpGet("active-phong-ktx")]
+        public async Task<IActionResult> GetActivePhongKtx()
+        {
+            var result = await ((IDotKiemKeService)Service).GetActivePhongKtxsAsync();
+            return result.ToResult();
+        }
+
         public class DotKiemKeFilter
         {
             public string? TenDotKiemKe { get; set; }

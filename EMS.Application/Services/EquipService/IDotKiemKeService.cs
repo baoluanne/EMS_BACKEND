@@ -11,6 +11,7 @@ namespace EMS.Application.Services.EquipService
 {
     public interface IDotKiemKeService : IBaseService<TSTBDotKiemKe>
     {
-        Task<Result<bool>> AddDevicesFromRoomAsync(Guid dotKiemKeId, Guid phongHocId);
+        Task<Result<IEnumerable<object>>> GetActivePhongHocsAsync();
+        Task<Result<IEnumerable<object>>> GetActivePhongKtxsAsync();
     }
 }
